@@ -45,10 +45,11 @@ class TripClipFormMessage extends StatelessWidget {
     final color = colorOverride ?? _color(kind, isDark);
 
     final svgAsset = switch (kind) {
+      TripClipFormMessageKind.neutral => null,
       TripClipFormMessageKind.error => 'assets/icons/cancel-circle.svg',
       TripClipFormMessageKind.warning => 'assets/icons/alert-circle.svg',
       TripClipFormMessageKind.success => 'assets/icons/check-circle.svg',
-      _ => null,
+      TripClipFormMessageKind.info => 'assets/icons/info-circle.svg',
     };
     final iconData = switch (kind) {
       TripClipFormMessageKind.neutral => Icons.highlight_off_outlined,
