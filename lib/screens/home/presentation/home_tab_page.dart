@@ -1,0 +1,347 @@
+import 'package:flutter/material.dart';
+
+import '../../../app/theme/trip_clip_colors.dart';
+import '../../../app/trip_clip_app.dart';
+import '../../../ui/components/app_card.dart';
+import '../../../ui/components/app_toast.dart';
+import '../../../ui/components/buttons/trip_clip_auxiliary_buttons.dart';
+import '../../../ui/components/buttons/trip_clip_button.dart';
+import '../../../ui/components/buttons/trip_clip_button_models.dart';
+import '../../../ui/components/forms/trip_clip_forms.dart';
+import '../../../ui/foundations/app_spacing.dart';
+
+class HomeTabPage extends StatelessWidget {
+  const HomeTabPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.tripClipColors;
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: AppSpacing.xl),
+                Text('Theme', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment(value: ThemeMode.light, label: Text('Light')),
+                    ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+                    ButtonSegment(value: ThemeMode.system, label: Text('System')),
+                  ],
+                  selected: {TripClipAppScope.of(context).themeMode},
+                  onSelectionChanged: (s) {
+                    TripClipAppScope.of(context).applyThemeMode(s.first);
+                  },
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Pill buttons', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    TripClipButton(
+                      variant: TripClipButtonVariant.primary,
+                      label: 'Primary',
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.primary,
+                      label: 'Primary',
+                      svgAsset: 'assets/icons/heart24.svg',
+                      iconPlacement: TripClipButtonIconPlacement.leading,
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.primaryAlternative,
+                      label: 'Orange',
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.secondary,
+                      label: 'Outlined',
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.tertiary,
+                      label: 'Tertiary',
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.destructive,
+                      label: 'Delete',
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.primary,
+                      svgAsset: 'assets/icons/heart24.svg',
+                      iconPlacement: TripClipButtonIconPlacement.iconOnly,
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.destructive,
+                      label: 'Delete',
+                      svgAsset: 'assets/icons/heart24.svg',
+                      iconPlacement: TripClipButtonIconPlacement.trailing,
+                      onPressed: () {},
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.primary,
+                      label: 'Delete',
+                      svgAsset: 'assets/icons/heart24.svg',
+                      iconPlacement: TripClipButtonIconPlacement.trailing,
+                      onPressed: null,
+                    ),
+               
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                TripClipButton(
+                  variant: TripClipButtonVariant.primary,
+                  label: 'Full width primary',
+                  expanded: true,
+                  onPressed: () {},
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Auxiliary controls', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TripClipLabeledCircleActionButton(
+                      svgAsset: 'assets/icons/heart24.svg',
+                      label: 'Label',
+                      onPressed: () {},
+                    ),
+                    TripClipLabeledCircleActionButton(
+                      svgAsset: 'assets/icons/heart24.svg',
+                      label: 'Active',
+                      selected: true,
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Wrap(
+                  spacing: AppSpacing.md,
+                  runSpacing: AppSpacing.sm,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    TripClipFavoriteListButton(
+                      isFavorite: false,
+                      svgAsset: 'assets/icons/heart24.svg',
+                      onPressed: () {},
+                    ),
+                    TripClipFavoriteListButton(
+                      isFavorite: true,
+                      svgAsset: 'assets/icons/heart24.svg',
+                      onPressed: () {},
+                    ),
+                    TripClipSubNavButton(
+                      svgAsset: 'assets/icons/arrow-up-down.svg',
+                      label: 'Sort',
+                      onPressed: () {},
+                    ),
+                    TripClipSubNavButton(
+                      svgAsset: 'assets/icons/arrow-up-down.svg',
+                      label: 'Label',
+                      selected: true,
+                      onPressed: () {},
+                    ),
+                    TripClipSquareIconButton(
+                      svgAsset: 'assets/icons/pencil-edit.svg',
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Toasts', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    TripClipButton(
+                      variant: TripClipButtonVariant.secondary,
+                      label: 'Error',
+                      onPressed: () => AppToast.show(
+                        context,
+                        message: 'Something went wrong.',
+                        kind: AppToastKind.error,
+                      ),
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.secondary,
+                      label: 'Warning',
+                      onPressed: () => AppToast.show(
+                        context,
+                        message: 'Please review this action.',
+                        kind: AppToastKind.warning,
+                      ),
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.secondary,
+                      label: 'Success',
+                      onPressed: () => AppToast.show(
+                        context,
+                        message: 'Saved successfully.',
+                        kind: AppToastKind.success,
+                      ),
+                    ),
+                    TripClipButton(
+                      variant: TripClipButtonVariant.secondary,
+                      label: 'Info',
+                      onPressed: () => AppToast.show(
+                        context,
+                        message: 'FYI: new policy is available.',
+                        kind: AppToastKind.info,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Form inputs', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                TripClipFormInput(
+                  label: 'Insert Label',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Insert Label',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  status: TripClipFormStatus.error,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Insert Label',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  status: TripClipFormStatus.warning,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Insert Label',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  status: TripClipFormStatus.success,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Insert Label',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Disabled field',
+                  enabled: false,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Large field',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  density: TripClipFormDensity.large,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Large error field',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  status: TripClipFormStatus.error,
+                  density: TripClipFormDensity.large,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Large warning field',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  status: TripClipFormStatus.warning,
+                  density: TripClipFormDensity.large,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipFormInput(
+                  label: 'Large success field',
+                  hintText: 'Insert placeholder...',
+                  helperText: 'Insert text',
+                  status: TripClipFormStatus.success,
+                  density: TripClipFormDensity.large,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text('Atom input', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                TripClipAtomInput(
+                  hintText: 'Insert placeholder...',
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipAtomInput(
+                  hintText: 'XXX',
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text('Form messages', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                const TripClipFormMessage(
+                  text: 'Insert text',
+                  kind: TripClipFormMessageKind.neutral,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const TripClipFormMessage(
+                  text: 'Insert text',
+                  kind: TripClipFormMessageKind.error,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const TripClipFormMessage(
+                  text: 'Insert text',
+                  kind: TripClipFormMessageKind.warning,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const TripClipFormMessage(
+                  text: 'Insert text',
+                  kind: TripClipFormMessageKind.success,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const TripClipFormMessage(
+                  text: 'Insert text',
+                  kind: TripClipFormMessageKind.info,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Container(
+                  height: 160,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colors.surfaceMuted,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: colors.borderSubtle,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  child: Text(
+                    'Placeholder surface',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

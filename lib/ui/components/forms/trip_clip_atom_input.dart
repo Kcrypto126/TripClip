@@ -1,0 +1,261 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../foundations/app_spacing.dart';
+import 'trip_clip_form_models.dart';
+import 'trip_clip_form_tokens.dart';
+
+/// `form-atom-input` — row with optional [leading] / [trailing] (defaults: [defaultLeadingIconAsset], [defaultTrailingIconAsset]).
+///
+/// Padding **8×16**, leading gap **4px**, no gap before trailing. Icons **24px**.  
+/// Text **16/24**, w400. Colors match [TripClipFormInput] / [TripClipFormFieldDecoration.field].
+/// Editable like [TripClipFormInput]: if [controller] is null, an internal controller is created.
+/// Use [readOnly] to block typing; optional [onTap] does not disable editing unless [readOnly] is true.
+///
+/// Toggle icons with [showLeading] / [showTrailing]. Swap default SVGs with [leadingIconAsset] / [trailingIconAsset],
+/// or pass custom widgets via [leading] / [trailing] (they win over asset paths).
+class TripClipAtomInput extends StatefulWidget {
+  const TripClipAtomInput({
+    super.key,
+    this.controller,
+    this.hintText,
+    this.leading,
+    this.trailing,
+    this.showLeading = true,
+    this.showTrailing = true,
+    this.leadingIconAsset,
+    this.trailingIconAsset,
+    this.onTap,
+    this.readOnly = false,
+    this.enabled = true,
+    this.status = TripClipFormStatus.none,
+    this.obscureText = false,
+    this.keyboardType,
+    this.textInputAction,
+    this.onSubmitted,
+  });
+
+  /// Default SVG when [showLeading] is true and [leading] is null.
+  static const String defaultLeadingIconAsset = 'assets/icons/user1.svg';
+
+  /// Default SVG when [showTrailing] is true and [trailing] is null.
+  static const String defaultTrailingIconAsset = 'assets/icons/chevron-down.svg';
+
+  final TextEditingController? controller;
+  final String? hintText;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool showLeading;
+  final bool showTrailing;
+  /// Asset path for the leading icon (SVG under `assets/`). Ignored if [leading] is non-null.
+  final String? leadingIconAsset;
+  /// Asset path for the trailing icon (SVG under `assets/`). Ignored if [trailing] is non-null.
+  final String? trailingIconAsset;
+  final VoidCallback? onTap;
+  final bool readOnly;
+  final bool enabled;
+  final TripClipFormStatus status;
+  final bool obscureText;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
+
+  static const EdgeInsets padding = EdgeInsets.symmetric(
+    vertical: 8,
+    horizontal: 16,
+  );
+
+  /// Matches [TripClipFormInput] field radius.
+  static const double radius = 4;
+
+  @override
+  State<TripClipAtomInput> createState() => _TripClipAtomInputState();
+}
+
+class _TripClipAtomInputState extends State<TripClipAtomInput> {
+  final FocusNode _focusNode = FocusNode();
+  TextEditingController? _internal;
+  TextEditingController? _bound;
+
+  void _onFocusChanged() => setState(() {});
+
+  void _onControllerChanged() => setState(() {});
+
+  void _ensureBound() {
+    if (_bound != null) return;
+    _bindController();
+  }
+
+  void _bindController() {
+    _bound?.removeListener(_onControllerChanged);
+    if (widget.controller != null) {
+      _internal?.dispose();
+      _internal = null;
+      _bound = widget.controller;
+    } else {
+      _internal?.dispose();
+      _internal = TextEditingController();
+      _bound = _internal;
+    }
+    _bound!.addListener(_onControllerChanged);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChanged);
+    _bindController();
+  }
+
+  @override
+  void didUpdateWidget(covariant TripClipAtomInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      _bindController();
+    }
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    _ensureBound();
+  }
+
+  @override
+  void dispose() {
+    _bound?.removeListener(_onControllerChanged);
+    _internal?.dispose();
+    _focusNode.removeListener(_onFocusChanged);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  bool get _hasValue => _bound?.text.isNotEmpty ?? false;
+
+  @override
+  Widget build(BuildContext context) {
+    _ensureBound();
+    final controller = _bound!;
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final focused = _focusNode.hasFocus;
+    final dec = TripClipFormFieldDecoration.atom(
+      isDark: isDark,
+      enabled: widget.enabled,
+      focused: focused,
+      hasValue: _hasValue,
+      status: widget.status,
+    );
+
+    final showDisabledOpacity = !widget.enabled;
+
+    final fieldStyle = theme.textTheme.bodyLarge?.copyWith(
+          color: dec.foreground,
+          fontSize: 16,
+          height: 24 / 16,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0,
+        );
+
+    Widget? leading;
+    if (widget.showLeading) {
+      leading = widget.leading ??
+          _TripClipAtomSvg(
+            asset: widget.leadingIconAsset ?? TripClipAtomInput.defaultLeadingIconAsset,
+            color: dec.foreground,
+          );
+    }
+
+    Widget? trailing;
+    if (widget.showTrailing) {
+      trailing = widget.trailing ??
+          _TripClipAtomSvg(
+            asset: widget.trailingIconAsset ?? TripClipAtomInput.defaultTrailingIconAsset,
+            color: dec.foreground,
+          );
+    }
+
+    final paddedRow = Padding(
+      padding: TripClipAtomInput.padding,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ...? leading == null
+              ? null
+              : <Widget>[leading, const SizedBox(width: AppSpacing.xs)],
+          Expanded(
+            child: TextField(
+              controller: controller,
+              focusNode: _focusNode,
+              enabled: widget.enabled,
+              readOnly: widget.readOnly,
+              obscureText: widget.obscureText,
+              keyboardType: widget.keyboardType,
+              textInputAction: widget.textInputAction,
+              onSubmitted: widget.onSubmitted,
+              style: fieldStyle,
+              decoration: InputDecoration(
+                isDense: true,
+                border: InputBorder.none,
+                hintText: widget.hintText,
+                hintStyle: fieldStyle?.copyWith(color: dec.hintOrPlaceholder),
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ),
+          ?trailing,
+        ],
+      ),
+    );
+
+    Widget child = Container(
+      decoration: BoxDecoration(
+        color: dec.fill,
+        borderRadius: BorderRadius.circular(TripClipAtomInput.radius),
+        border: dec.borderWidth > 0
+            ? Border.all(color: dec.borderColor, width: dec.borderWidth)
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: widget.onTap != null
+            ? InkWell(
+                onTap: widget.enabled ? widget.onTap : null,
+                borderRadius: BorderRadius.circular(TripClipAtomInput.radius),
+                child: paddedRow,
+              )
+            : paddedRow,
+      ),
+    );
+
+    if (showDisabledOpacity) {
+      child = Opacity(opacity: 0.4, child: child);
+    }
+
+    return child;
+  }
+}
+
+class _TripClipAtomSvg extends StatelessWidget {
+  const _TripClipAtomSvg({
+    required this.asset,
+    required this.color,
+  });
+
+  final String asset;
+  final Color color;
+
+  static const double size = 24;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+    );
+  }
+}
