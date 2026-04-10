@@ -6,16 +6,6 @@ import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
 
 /// `form-atom-input` — row with optional [leading] / [trailing] (defaults: [defaultLeadingIconAsset], [defaultTrailingIconAsset]).
-///
-/// Padding **8×16**, leading gap **4px**, no gap before trailing. Icons **24px**.  
-/// Text **16/24**, w400. Colors match [TripClipFormInput] / [TripClipFormFieldDecoration.field].
-/// Editable like [TripClipFormInput]: if [controller] is null, an internal controller is created.
-/// Use [readOnly] to block typing; optional [onTap] does not disable editing unless [readOnly] is true.
-///
-/// Toggle icons with [showLeading] / [showTrailing]. Swap default SVGs with [leadingIconAsset] / [trailingIconAsset],
-/// or pass custom widgets via [leading] / [trailing] (they win over asset paths).
-/// For [TripClipFormStatus.error] / [warning] / [success], the default trailing icon is the matching circle glyph
-/// ([defaultTrailingIconAssetForStatus]); neutral uses [defaultTrailingIconAsset] (chevron).
 class TripClipAtomInput extends StatefulWidget {
   const TripClipAtomInput({
     super.key,
@@ -37,13 +27,10 @@ class TripClipAtomInput extends StatefulWidget {
     this.onSubmitted,
   });
 
-  /// Default SVG when [showLeading] is true and [leading] is null.
   static const String defaultLeadingIconAsset = 'assets/icons/user1.svg';
 
-  /// Default trailing SVG when [status] is [TripClipFormStatus.none] and [trailing] / [trailingIconAsset] are unset.
   static const String defaultTrailingIconAsset = 'assets/icons/chevron-down.svg';
 
-  /// Trailing SVG for semantic [status] when [trailing] / [trailingIconAsset] are unset (matches form helper icons).
   static String defaultTrailingIconAssetForStatus(TripClipFormStatus status) {
     return switch (status) {
       TripClipFormStatus.none => defaultTrailingIconAsset,
@@ -59,9 +46,7 @@ class TripClipAtomInput extends StatefulWidget {
   final Widget? trailing;
   final bool showLeading;
   final bool showTrailing;
-  /// Asset path for the leading icon (SVG under `assets/`). Ignored if [leading] is non-null.
   final String? leadingIconAsset;
-  /// Asset path for the trailing icon (SVG under `assets/`). Ignored if [trailing] is non-null.
   final String? trailingIconAsset;
   final VoidCallback? onTap;
   final bool readOnly;

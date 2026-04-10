@@ -305,6 +305,14 @@ class HomeTabPage extends StatelessWidget {
                   enabled: false,
                 ),
                 const SizedBox(height: AppSpacing.xl),
+                Text('Checkbox & radio', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                const _TripClipSelectionDemo(),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Form toggle & radio button', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                const _TripClipTogglePillDemo(),
+                const SizedBox(height: AppSpacing.xl),
                 Text('Theme', style: Theme.of(context).textTheme.labelLarge),
                 const SizedBox(height: AppSpacing.sm),
                 SegmentedButton<ThemeMode>(
@@ -399,6 +407,126 @@ class HomeTabPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TripClipTogglePillDemo extends StatefulWidget {
+  const _TripClipTogglePillDemo();
+
+  @override
+  State<_TripClipTogglePillDemo> createState() => _TripClipTogglePillDemoState();
+}
+
+class _TripClipTogglePillDemoState extends State<_TripClipTogglePillDemo> {
+  bool _toggleOff = false;
+  bool _toggleOn = true;
+  int _pill = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TripClipFormToggle(
+          label: 'Toggle label',
+          value: _toggleOff,
+          onChanged: (v) => setState(() => _toggleOff = v),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormToggle(
+          label: 'Toggle label',
+          value: _toggleOn,
+          onChanged: (v) => setState(() => _toggleOn = v),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormToggle(
+          label: 'Toggle label',
+          value: false,
+          onChanged: null,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            TripClipFormRadioButton(
+              selected: _pill == 0,
+              onPressed: () => setState(() => _pill = 0),
+              label: 'Business',
+            ),
+            TripClipFormRadioButton(
+              selected: _pill == 1,
+              onPressed: () => setState(() => _pill = 1),
+              label: 'Business',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _TripClipSelectionDemo extends StatefulWidget {
+  const _TripClipSelectionDemo();
+
+  @override
+  State<_TripClipSelectionDemo> createState() => _TripClipSelectionDemoState();
+}
+
+class _TripClipSelectionDemoState extends State<_TripClipSelectionDemo> {
+  bool _unchecked = false;
+  bool _checked = true;
+  int _radioGroup = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TripClipFormCheckbox(
+          value: _unchecked,
+          onChanged: (v) => setState(() => _unchecked = v),
+          label: 'Checkbox option label',
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormCheckbox(
+          value: _checked,
+          onChanged: (v) => setState(() => _checked = v),
+          label: 'Checkbox option label',
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormCheckbox(
+          value: false,
+          onChanged: null,
+          label: 'Checkbox option label',
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        TripClipFormRadio<int>(
+          value: 0,
+          groupValue: _radioGroup,
+          onChanged: (v) {
+            if (v != null) setState(() => _radioGroup = v);
+          },
+          label: 'Radio option label',
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormRadio<int>(
+          value: 1,
+          groupValue: _radioGroup,
+          onChanged: (v) {
+            if (v != null) setState(() => _radioGroup = v);
+          },
+          label: 'Radio option label',
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormRadio<int>(
+          value: 2,
+          groupValue: _radioGroup,
+          onChanged: null,
+          label: 'Radio option label',
+        ),
+      ],
     );
   }
 }
