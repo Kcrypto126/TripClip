@@ -14,6 +14,8 @@ import 'trip_clip_form_tokens.dart';
 ///
 /// Toggle icons with [showLeading] / [showTrailing]. Swap default SVGs with [leadingIconAsset] / [trailingIconAsset],
 /// or pass custom widgets via [leading] / [trailing] (they win over asset paths).
+/// For [TripClipFormStatus.error] / [warning] / [success], the default trailing icon is the matching circle glyph
+/// ([defaultTrailingIconAssetForStatus]); neutral uses [defaultTrailingIconAsset] (chevron).
 class TripClipAtomInput extends StatefulWidget {
   const TripClipAtomInput({
     super.key,
@@ -38,8 +40,18 @@ class TripClipAtomInput extends StatefulWidget {
   /// Default SVG when [showLeading] is true and [leading] is null.
   static const String defaultLeadingIconAsset = 'assets/icons/user1.svg';
 
-  /// Default SVG when [showTrailing] is true and [trailing] is null.
+  /// Default trailing SVG when [status] is [TripClipFormStatus.none] and [trailing] / [trailingIconAsset] are unset.
   static const String defaultTrailingIconAsset = 'assets/icons/chevron-down.svg';
+
+  /// Trailing SVG for semantic [status] when [trailing] / [trailingIconAsset] are unset (matches form helper icons).
+  static String defaultTrailingIconAssetForStatus(TripClipFormStatus status) {
+    return switch (status) {
+      TripClipFormStatus.none => defaultTrailingIconAsset,
+      TripClipFormStatus.error => 'assets/icons/cancel-circle.svg',
+      TripClipFormStatus.warning => 'assets/icons/alert-circle.svg',
+      TripClipFormStatus.success => 'assets/icons/check-circle.svg',
+    };
+  }
 
   final TextEditingController? controller;
   final String? hintText;
@@ -171,7 +183,8 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
     if (widget.showTrailing) {
       trailing = widget.trailing ??
           _TripClipAtomSvg(
-            asset: widget.trailingIconAsset ?? TripClipAtomInput.defaultTrailingIconAsset,
+            asset: widget.trailingIconAsset ??
+                TripClipAtomInput.defaultTrailingIconAssetForStatus(widget.status),
             color: dec.foreground,
           );
     }

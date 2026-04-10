@@ -26,20 +26,7 @@ class HomeTabPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: AppSpacing.xl),
-                Text('Theme', style: Theme.of(context).textTheme.labelLarge),
-                const SizedBox(height: AppSpacing.sm),
-                SegmentedButton<ThemeMode>(
-                  segments: const [
-                    ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-                    ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
-                    ButtonSegment(value: ThemeMode.system, label: Text('System')),
-                  ],
-                  selected: {TripClipAppScope.of(context).themeMode},
-                  onSelectionChanged: (s) {
-                    TripClipAppScope.of(context).applyThemeMode(s.first);
-                  },
-                ),
+                
                 const SizedBox(height: AppSpacing.xl),
                 Text('Pill buttons', style: Theme.of(context).textTheme.labelLarge),
                 const SizedBox(height: AppSpacing.sm),
@@ -281,15 +268,49 @@ class HomeTabPage extends StatelessWidget {
                   density: TripClipFormDensity.large,
                   onSubmitted: (_) {},
                 ),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Theme', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment(value: ThemeMode.light, label: Text('Light')),
+                    ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+                    ButtonSegment(value: ThemeMode.system, label: Text('System')),
+                  ],
+                  selected: {TripClipAppScope.of(context).themeMode},
+                  onSelectionChanged: (s) {
+                    TripClipAppScope.of(context).applyThemeMode(s.first);
+                  },
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 Text('Atom input', style: Theme.of(context).textTheme.labelLarge),
                 const SizedBox(height: AppSpacing.sm),
                 TripClipAtomInput(
                   hintText: 'Insert placeholder...',
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipAtomInput(
+                  hintText: 'Insert placeholder...',
+                  status: TripClipFormStatus.error,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipAtomInput(
+                  hintText: 'Insert placeholder...',
+                  status: TripClipFormStatus.warning,
+                  onSubmitted: (_) {},
+                ),
+                const SizedBox(height: AppSpacing.md),
+                TripClipAtomInput(
+                  hintText: 'Insert placeholder...',
+                  status: TripClipFormStatus.success,
+                  onSubmitted: (_) {},
                 ),
                 const SizedBox(height: AppSpacing.md),
                 TripClipAtomInput(
                   hintText: 'XXX',
+                  enabled: false,
                   onSubmitted: (_) {},
                 ),
                 const SizedBox(height: AppSpacing.lg),
