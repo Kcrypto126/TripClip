@@ -32,12 +32,12 @@ class TripClipFormCheckbox extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontSize: 16,
-          height: 24 / 16,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0,
-          color: isDark ? labelColorDark : labelColorLight,
-        );
+      fontSize: 16,
+      height: 24 / 16,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+      color: isDark ? labelColorDark : labelColorLight,
+    );
 
     Widget row = Semantics(
       label: label,
@@ -49,14 +49,9 @@ class TripClipFormCheckbox extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _TripClipCheckboxIcon(
-              value: value,
-              isDark: isDark,
-            ),
+            _TripClipCheckboxIcon(value: value, isDark: isDark),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(label, style: labelStyle),
-            ),
+            Expanded(child: Text(label, style: labelStyle)),
           ],
         ),
       ),
@@ -71,10 +66,7 @@ class TripClipFormCheckbox extends StatelessWidget {
 }
 
 class _TripClipCheckboxIcon extends StatelessWidget {
-  const _TripClipCheckboxIcon({
-    required this.value,
-    required this.isDark,
-  });
+  const _TripClipCheckboxIcon({required this.value, required this.isDark});
 
   final bool value;
   final bool isDark;

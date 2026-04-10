@@ -26,9 +26,11 @@ class HomeTabPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 const SizedBox(height: AppSpacing.xl),
-                Text('Pill buttons', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Pill buttons',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 Wrap(
                   spacing: AppSpacing.sm,
@@ -86,7 +88,6 @@ class HomeTabPage extends StatelessWidget {
                       iconPlacement: TripClipButtonIconPlacement.trailing,
                       onPressed: null,
                     ),
-               
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -97,7 +98,10 @@ class HomeTabPage extends StatelessWidget {
                   onPressed: () {},
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Auxiliary controls', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Auxiliary controls',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -194,7 +198,10 @@ class HomeTabPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Form inputs', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Form inputs',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 TripClipFormInput(
                   label: 'Insert Label',
@@ -269,7 +276,10 @@ class HomeTabPage extends StatelessWidget {
                   onSubmitted: (_) {},
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Form textarea', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Form textarea',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 TripClipFormTextarea(
                   label: 'Insert Text',
@@ -305,11 +315,17 @@ class HomeTabPage extends StatelessWidget {
                   enabled: false,
                 ),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Checkbox & radio', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Checkbox & radio',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 const _TripClipSelectionDemo(),
                 const SizedBox(height: AppSpacing.xl),
-                Text('Form toggle & radio button', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Form toggle & radio button',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 const _TripClipTogglePillDemo(),
                 const SizedBox(height: AppSpacing.xl),
@@ -319,7 +335,10 @@ class HomeTabPage extends StatelessWidget {
                   segments: const [
                     ButtonSegment(value: ThemeMode.light, label: Text('Light')),
                     ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
-                    ButtonSegment(value: ThemeMode.system, label: Text('System')),
+                    ButtonSegment(
+                      value: ThemeMode.system,
+                      label: Text('System'),
+                    ),
                   ],
                   selected: {TripClipAppScope.of(context).themeMode},
                   onSelectionChanged: (s) {
@@ -327,7 +346,10 @@ class HomeTabPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Text('Atom input', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Atom input',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 TripClipAtomInput(
                   hintText: 'Insert placeholder...',
@@ -358,7 +380,10 @@ class HomeTabPage extends StatelessWidget {
                   onSubmitted: (_) {},
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Text('Form messages', style: Theme.of(context).textTheme.labelLarge),
+                Text(
+                  'Form messages',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 const TripClipFormMessage(
                   text: 'Insert text',
@@ -415,7 +440,8 @@ class _TripClipTogglePillDemo extends StatefulWidget {
   const _TripClipTogglePillDemo();
 
   @override
-  State<_TripClipTogglePillDemo> createState() => _TripClipTogglePillDemoState();
+  State<_TripClipTogglePillDemo> createState() =>
+      _TripClipTogglePillDemoState();
 }
 
 class _TripClipTogglePillDemoState extends State<_TripClipTogglePillDemo> {
