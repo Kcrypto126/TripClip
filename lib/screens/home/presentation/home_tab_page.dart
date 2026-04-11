@@ -329,6 +329,13 @@ class HomeTabPage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.sm),
                 const _TripClipTogglePillDemo(),
                 const SizedBox(height: AppSpacing.xl),
+                Text(
+                  'Form slider',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const _TripClipSliderDemo(),
+                const SizedBox(height: AppSpacing.xl),
                 Text('Theme', style: Theme.of(context).textTheme.labelLarge),
                 const SizedBox(height: AppSpacing.sm),
                 SegmentedButton<ThemeMode>(
@@ -432,6 +439,46 @@ class HomeTabPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TripClipSliderDemo extends StatefulWidget {
+  const _TripClipSliderDemo();
+
+  @override
+  State<_TripClipSliderDemo> createState() => _TripClipSliderDemoState();
+}
+
+class _TripClipSliderDemoState extends State<_TripClipSliderDemo> {
+  double _distance = 25;
+  double _clip = 25;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TripClipFormSlider(
+          title: 'Distance from your location',
+          labelLeft: '1km',
+          labelRight: '50km',
+          value: _distance,
+          min: 1,
+          max: 50,
+          onChanged: (v) => setState(() => _distance = v),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TripClipFormSlider(
+          title: r'$ Clip',
+          labelLeft: r'AUD $1',
+          labelRight: r'AUD $50',
+          value: _clip,
+          min: 1,
+          max: 50,
+          onChanged: (v) => setState(() => _clip = v),
+        ),
+      ],
     );
   }
 }
