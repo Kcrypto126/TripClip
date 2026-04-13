@@ -7,6 +7,7 @@ import '../../../ui/components/app_toast.dart';
 import '../../../ui/components/buttons/trip_clip_auxiliary_buttons.dart';
 import '../../../ui/components/buttons/trip_clip_button.dart';
 import '../../../ui/components/buttons/trip_clip_button_models.dart';
+import '../../../ui/components/badges/trip_clip_badges.dart';
 import '../../../ui/components/forms/trip_clip_forms.dart';
 import '../../../ui/foundations/app_spacing.dart';
 
@@ -33,6 +34,72 @@ class HomeTabPage extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 const _TripClipFormCalendarDemo(),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
+                  'Badges',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    TripClipBadgeFilter(svgAsset: 'assets/icons/house.svg', label: 'Residential'),
+                    TripClipBadgeFilter(svgAsset: 'assets/icons/clock.svg', label: 'Resi'),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Badge status',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    TripClipBadgeStatus(
+                      label: 'Label',
+                      tone: TripClipBadgeStatusTone.danger,
+                      showLeadingIcon: false,
+                    ),
+                    TripClipBadgeStatus(
+                      label: 'Label',
+                      tone: TripClipBadgeStatusTone.warning,
+                      showTrailingIcon: false,
+                      svgAsset: 'assets/icons/house.svg',
+                    ),
+                    TripClipBadgeStatus(
+                      label: 'Label',
+                      tone: TripClipBadgeStatusTone.success,
+                    ),
+                    TripClipBadgeStatus(
+                      label: 'Label',
+                      tone: TripClipBadgeStatusTone.primary,
+                    ),
+                    TripClipBadgeStatus(
+                      label: 'Label',
+                      tone: TripClipBadgeStatusTone.neutral,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                Text('Theme', style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: AppSpacing.sm),
+                SegmentedButton<ThemeMode>(
+                  segments: const [
+                    ButtonSegment(value: ThemeMode.light, label: Text('Light')),
+                    ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+                    ButtonSegment(
+                      value: ThemeMode.system,
+                      label: Text('System'),
+                    ),
+                  ],
+                  selected: {TripClipAppScope.of(context).themeMode},
+                  onSelectionChanged: (s) {
+                    TripClipAppScope.of(context).applyThemeMode(s.first);
+                  },
+                ),
                 const SizedBox(height: AppSpacing.xl),
                 Text(
                   'Pill buttons',
