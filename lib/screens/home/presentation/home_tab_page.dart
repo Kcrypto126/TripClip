@@ -83,6 +83,52 @@ class HomeTabPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Badge clip',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    TripClipBadgeClip(label: r'$xxx'),
+                    TripClipBadgeClip(
+                      label: r'$xxx',
+                      flexibleLabel: 'Flexible',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Badge delivery timing',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    TripClipBadgeDeliveryTiming(label: 'Urgent'),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Badge counter',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    TripClipBadgeCounter(count: 9),
+                    TripClipBadgeCounter(count: 12),
+                    TripClipBadgeCounter(count: 100),
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.xl),
                 Text('Theme', style: Theme.of(context).textTheme.labelLarge),
                 const SizedBox(height: AppSpacing.sm),
