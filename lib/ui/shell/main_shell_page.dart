@@ -18,7 +18,7 @@ class MainShellPage extends StatefulWidget {
 }
 
 class _MainShellPageState extends State<MainShellPage> {
-  int _index = 2;
+  int _index = 0;
 
   static const _favorites = 3;
   static const _notifications = 9;

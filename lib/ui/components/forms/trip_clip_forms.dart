@@ -5,6 +5,7 @@ export 'trip_clip_form_radio.dart';
 export 'trip_clip_form_radio_button.dart';
 export 'trip_clip_form_slider.dart';
 export 'trip_clip_form_toggle.dart';
+export 'trip_clip_form_calendar.dart';
 export 'trip_clip_form_textarea.dart';
 export 'trip_clip_form_message.dart';
 export 'trip_clip_form_models.dart';

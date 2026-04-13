@@ -28,6 +28,13 @@ class HomeTabPage extends StatelessWidget {
               children: [
                 const SizedBox(height: AppSpacing.xl),
                 Text(
+                  'Form calendar',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                const _TripClipFormCalendarDemo(),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
                   'Pill buttons',
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
@@ -537,6 +544,15 @@ class _TripClipTogglePillDemoState extends State<_TripClipTogglePillDemo> {
         ),
       ],
     );
+  }
+}
+
+class _TripClipFormCalendarDemo extends StatelessWidget {
+  const _TripClipFormCalendarDemo();
+
+  @override
+  Widget build(BuildContext context) {
+    return const TripClipFormCalendar();
   }
 }
 
