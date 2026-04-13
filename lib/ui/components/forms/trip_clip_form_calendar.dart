@@ -74,9 +74,12 @@ class _TripClipFormCalendarState extends State<TripClipFormCalendar> {
 
   bool get _isLight => Theme.of(context).brightness == Brightness.light;
 
-  /// Chevrons + selected/today rings: `#0000D2` light, `#3F5BFF` dark.
+  /// Chevrons + selected-day outline: `#0000D2` light, `#3F5BFF` dark.
   Color get _calendarAccentColor =>
       _isLight ? TripClipPalette.primary500 : TripClipPalette.primary400;
+
+  Color get _todayCellBackground =>
+      _isLight ? TripClipPalette.tertiary500 : TripClipPalette.tertiary300;
 
   bool get _canGoPrev {
     final m = widget.minDate;
@@ -363,6 +366,7 @@ class _TripClipFormCalendarState extends State<TripClipFormCalendar> {
                       selected: _shownSelected,
                       today: today,
                       accentColor: _calendarAccentColor,
+                      todayBackground: _todayCellBackground,
                       onTap: _onDayTap,
                     ),
                   ],
@@ -392,6 +396,7 @@ class _DateCell extends StatelessWidget {
     required this.selected,
     required this.today,
     required this.accentColor,
+    required this.todayBackground,
     required this.onTap,
   });
 
@@ -402,6 +407,7 @@ class _DateCell extends StatelessWidget {
   final DateTime? selected;
   final DateTime today;
   final Color accentColor;
+  final Color todayBackground;
   final ValueChanged<DateTime> onTap;
 
   @override
@@ -413,16 +419,23 @@ class _DateCell extends StatelessWidget {
     final isToday = cell.date.year == today.year &&
         cell.date.month == today.month &&
         cell.date.day == today.day;
-    final fg = cell.inFocusedMonth ? inMonthColor : adjacentColor;
 
+    final Color fg;
+    final Color? fill;
     Border? border;
-    if (isSelected) {
-      border = Border.all(color: accentColor, width: 1.5);
-    } else if (isToday) {
-      border = Border.all(
-        color: accentColor.withValues(alpha: 0.45),
-        width: 1,
-      );
+
+    if (isToday) {
+      fg = Colors.white;
+      fill = todayBackground;
+      if (isSelected) {
+        border = Border.all(color: accentColor, width: 1.5);
+      }
+    } else {
+      fg = cell.inFocusedMonth ? inMonthColor : adjacentColor;
+      fill = null;
+      if (isSelected) {
+        border = Border.all(color: accentColor, width: 1.5);
+      }
     }
 
     return Material(
@@ -435,6 +448,7 @@ class _DateCell extends StatelessWidget {
           height: _kFormCalendarDateCell,
           alignment: Alignment.center,
           decoration: BoxDecoration(
+            color: fill,
             borderRadius: BorderRadius.circular(8),
             border: border,
           ),
