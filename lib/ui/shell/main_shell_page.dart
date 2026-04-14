@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/trip_clip_colors.dart';
 import '../components/trip_clip_bottom_nav_bar.dart';
-import '../components/trip_clip_home_app_bar.dart';
 import '../../screens/account/presentation/account_tab_page.dart';
 import '../../screens/activity/presentation/activity_tab_page.dart';
 import '../../screens/home/presentation/home_tab_page.dart';
@@ -19,25 +18,23 @@ class MainShellPage extends StatefulWidget {
 class _MainShellPageState extends State<MainShellPage> {
   int _index = 0;
 
-  static const _favorites = 3;
-  static const _notifications = 9;
   static const _activity = 7;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.tripClipColors.pageBackground,
-      appBar: TripClipHomeAppBar(
-        favoritesCount: _favorites,
-        notificationsCount: _notifications,
-      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: _tabBody(),
+            child: SafeArea(
+              top: _index != 0,
+              bottom: false,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: _tabBody(),
+              ),
             ),
           ),
           TripClipBottomNavBar(
