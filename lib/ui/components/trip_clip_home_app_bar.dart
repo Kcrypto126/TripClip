@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../app/theme/trip_clip_colors.dart';
 import '../../app/theme/trip_clip_palette.dart';
-import '../foundations/app_spacing.dart';
-import 'app_badge.dart';
-import 'trip_clip_logo_mark.dart';
+import 'badges/trip_clip_badge_counter.dart';
 
+/// Home header: logo (light/dark SVG), heart + bell with [TripClipBadgeCounter].
+///
+/// Reserves [MediaQuery] top padding so content sits below the status bar /
+/// notch (matches Material [AppBar] behavior).
 class TripClipHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TripClipHomeAppBar({
     super.key,
@@ -19,69 +23,125 @@ class TripClipHomeAppBar extends StatelessWidget implements PreferredSizeWidget 
   final VoidCallback? onFavoritesPressed;
   final VoidCallback? onNotificationsPressed;
 
+  /// Toolbar row height only (excluding status bar inset).
+  static const double toolbarHeight = 56;
+
+  static double _statusBarHeightLogicalPx() {
+    final views = WidgetsBinding.instance.platformDispatcher.views;
+    if (views.isEmpty) return 0;
+    final view = views.first;
+    return view.padding.top / view.devicePixelRatio;
+  }
+
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(toolbarHeight + _statusBarHeightLogicalPx());
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final light = Theme.of(context).brightness == Brightness.light;
+    final iconColor =
+        light ? TripClipPalette.neutral600 : TripClipPalette.neutral300;
+    final logoAsset = light
+        ? 'assets/icons/home-logo-light.svg'
+        : 'assets/icons/home-logo-dark.svg';
+    final bg = context.tripClipColors.pageBackground;
+    final topInset = MediaQuery.paddingOf(context).top;
 
-    return AppBar(
-      automaticallyImplyLeading: false,
-      titleSpacing: AppSpacing.lg,
-      title: Row(
-        children: [
-          const TripClipLogoMark(),
-          const SizedBox(width: AppSpacing.sm),
-          Text(
-            'TripClip',
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: TripClipPalette.primary500,
-              fontWeight: FontWeight.w700,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: topInset),
+        Material(
+          color: bg,
+          child: Container(
+            height: toolbarHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            alignment: Alignment.center,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SvgPicture.asset(
+                  logoAsset,
+                  width: 120,
+                  height: 26,
+                  fit: BoxFit.contain,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _HomeHeaderIconButton(
+                      svgAsset: 'assets/icons/heart24.svg',
+                      color: iconColor,
+                      badgeCount: favoritesCount,
+                      onPressed: onFavoritesPressed,
+                    ),
+                    const SizedBox(width: 4),
+                    _HomeHeaderIconButton(
+                      svgAsset: 'assets/icons/bell.svg',
+                      color: iconColor,
+                      badgeCount: notificationsCount,
+                      onPressed: onNotificationsPressed,
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 4),
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topRight,
-            children: [
-              IconButton(
-                onPressed: onFavoritesPressed,
-                icon: const Icon(Icons.favorite_border),
-              ),
-              if (favoritesCount > 0)
-                Positioned(
-                  top: 6,
-                  right: 6,
-                  child: AppBadge(count: favoritesCount),
-                ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: AppSpacing.sm),
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topRight,
-            children: [
-              IconButton(
-                onPressed: onNotificationsPressed,
-                icon: const Icon(Icons.notifications_none_rounded),
-              ),
-              if (notificationsCount > 0)
-                Positioned(
-                  top: 6,
-                  right: 6,
-                  child: AppBadge(count: notificationsCount),
-                ),
-            ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _HomeHeaderIconButton extends StatelessWidget {
+  const _HomeHeaderIconButton({
+    required this.svgAsset,
+    required this.color,
+    required this.badgeCount,
+    this.onPressed,
+  });
+
+  final String svgAsset;
+  final Color color;
+  final int badgeCount;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: onPressed,
+        customBorder: const CircleBorder(),
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              SvgPicture.asset(
+                svgAsset,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
+              if (badgeCount > 0)
+                Positioned(
+                  top: 4,
+                  right: 3,
+                  child: TripClipBadgeCounter(
+                    count: badgeCount,
+                    hideWhenZero: true,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
