@@ -8,6 +8,8 @@ import '../../../ui/components/buttons/trip_clip_auxiliary_buttons.dart';
 import '../../../ui/components/buttons/trip_clip_button.dart';
 import '../../../ui/components/buttons/trip_clip_button_models.dart';
 import '../../../ui/components/badges/trip_clip_badges.dart';
+import '../../../ui/components/trip_clip_chat_bubble.dart';
+import '../../../ui/components/trip_clip_avatar.dart';
 import '../../../ui/components/forms/trip_clip_forms.dart';
 import '../../../ui/components/trip_clip_home_app_bar.dart';
 import '../../../ui/components/trip_clip_steps_status_bar.dart';
@@ -73,7 +75,40 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 children: [
                   const SizedBox(height: AppSpacing.xl),
 
+                  Text(
+                    'Avatar',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const Wrap(
+                    spacing: AppSpacing.md,
+                    runSpacing: AppSpacing.md,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      TripClipAvatar(size: TripClipAvatarSize.s32),
+                      TripClipAvatar(size: TripClipAvatarSize.s40),
+                      TripClipAvatar(size: TripClipAvatarSize.s64),
+                      TripClipAvatar(size: TripClipAvatarSize.s128),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.xl),
+
+                  Text(
+                    'Chat bubble',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const TripClipChatBubble(
+                    side: TripClipChatBubbleSide.right,
+                    text: 'Insert traveller text here...Insert traveller text here...Insert traveller text here...',
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  const TripClipChatBubble(
+                    side: TripClipChatBubbleSide.left,
+                    text: 'Insert sender text here...',
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
                   Text(
                     'Form calendar',
                     style: Theme.of(context).textTheme.labelLarge,
