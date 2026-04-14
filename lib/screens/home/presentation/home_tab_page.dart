@@ -10,6 +10,7 @@ import '../../../ui/components/buttons/trip_clip_button_models.dart';
 import '../../../ui/components/badges/trip_clip_badges.dart';
 import '../../../ui/components/trip_clip_chat_bubble.dart';
 import '../../../ui/components/trip_clip_avatar.dart';
+import '../../../ui/components/cards/trip_clip_feature_card.dart';
 import '../../../ui/components/forms/trip_clip_forms.dart';
 import '../../../ui/components/trip_clip_home_app_bar.dart';
 import '../../../ui/components/trip_clip_steps_status_bar.dart';
@@ -45,9 +46,9 @@ class _HomeTabPageState extends State<HomeTabPage> {
           title: 'Title',
           includeStatusBarInset: false,
           onBack: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Title bar: back')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Title bar: back')));
           },
         ),
         TripClipStepsStatusBar(
@@ -65,7 +66,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
               const SnackBar(content: Text('Flow: already on step 0')),
             );
           },
-        ),        
+        ),
         Expanded(
           child: SingleChildScrollView(
             child: AppCard(
@@ -75,10 +76,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 children: [
                   const SizedBox(height: AppSpacing.xl),
 
-                  Text(
-                    'Avatar',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
+                  Text('Avatar', style: Theme.of(context).textTheme.labelLarge),
                   const SizedBox(height: AppSpacing.sm),
                   const Wrap(
                     spacing: AppSpacing.md,
@@ -100,12 +98,42 @@ class _HomeTabPageState extends State<HomeTabPage> {
                   const SizedBox(height: AppSpacing.sm),
                   const TripClipChatBubble(
                     side: TripClipChatBubbleSide.right,
-                    text: 'Insert traveller text here...Insert traveller text here...Insert traveller text here...',
+                    text:
+                        'Insert traveller text here...Insert traveller text here...Insert traveller text here...',
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   const TripClipChatBubble(
                     side: TripClipChatBubbleSide.left,
                     text: 'Insert sender text here...',
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  Text(
+                    'Feature card',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const TripClipFeatureCard(
+                    images: [
+                      AssetImage('assets/images/pump.png'),
+                      AssetImage('assets/images/pump.png'),
+                      AssetImage('assets/images/pump.png'),
+                      AssetImage('assets/images/pump.png'),
+                    ],
+                    heading: 'Spare Engine Parts:\nMelbourne to Cairns',
+                    badgeLabel: r'$750',
+                    badgeFlexibleLabel: 'Flexible',
+                    userName: 'Firstname Verylonglastname…',
+                    ratingText: '4.8 (55)',
+                    pickupLocation: 'Something Long G…',
+                    pickupDate: 'Something Long G…',
+                    pickupTime: 'Something Long G…',
+                    deliveryLocation: 'Something Long G…',
+                    deliveryDate: 'Something Long G…',
+                    deliveryTime: 'Something Long G…',
+                    itemsText: '5 Items',
+                    weightText: '10 kg',
+                    footerDateText: 'Jan 14, 2026',
                   ),
                   const SizedBox(height: AppSpacing.xl),
 

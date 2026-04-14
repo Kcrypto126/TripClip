@@ -24,25 +24,18 @@ class _MainShellPageState extends State<MainShellPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.tripClipColors.pageBackground,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SafeArea(
-              top: _index != 0,
-              bottom: false,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: _tabBody(),
-              ),
-            ),
-          ),
-          TripClipBottomNavBar(
-            currentIndex: _index,
-            onDestinationSelected: (i) => setState(() => _index = i),
-            activityBadgeCount: _activity,
-          ),
-        ],
+      body: SafeArea(
+        top: _index != 0,
+        bottom: false,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: _tabBody(),
+        ),
+      ),
+      bottomNavigationBar: TripClipBottomNavBar(
+        currentIndex: _index,
+        onDestinationSelected: (i) => setState(() => _index = i),
+        activityBadgeCount: _activity,
       ),
     );
   }
