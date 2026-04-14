@@ -11,6 +11,7 @@ import '../../../ui/components/badges/trip_clip_badges.dart';
 import '../../../ui/components/trip_clip_chat_bubble.dart';
 import '../../../ui/components/trip_clip_avatar.dart';
 import '../../../ui/components/cards/trip_clip_feature_card.dart';
+import '../../../ui/components/cards/trip_clip_result_card.dart';
 import '../../../ui/components/cards/trip_clip_semi_feature_card.dart';
 import '../../../ui/components/forms/trip_clip_forms.dart';
 import '../../../ui/components/trip_clip_home_app_bar.dart';
@@ -150,6 +151,23 @@ class _HomeTabPageState extends State<HomeTabPage> {
                     userName: 'User Name',
                     ratingText: '4.8 (55)',
                     pickupLocation: 'Brighton-Le-Sands NSW',
+                    deliveryLocation: 'Ringwood North VIC',
+                    itemsText: '3 Items',
+                    weightText: 'XX kg',
+                    footerDateText: 'Jan 14, 2026',
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  Text(
+                    'Result card',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const TripClipResultCard(
+                    heading: 'Spare Engine Parts: Melbourne to Cairns',
+                    badgeLabel: r'$750',
+                    badgeFlexibleLabel: 'Flexible',
+                    pickupLocation: 'Brighton-Le-Sands…',
                     deliveryLocation: 'Ringwood North VIC',
                     itemsText: '3 Items',
                     weightText: 'XX kg',

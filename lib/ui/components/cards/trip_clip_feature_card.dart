@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../trip_clip_avatar.dart';
+import 'trip_clip_card_divider.dart';
 
 class TripClipFeatureCard extends StatefulWidget {
   const TripClipFeatureCard({
@@ -124,13 +125,15 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.25),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: light
+            ? [
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -176,7 +179,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                     ),
                   ],
                 ),
-                _divider(dividerColor),
+                TripClipCardDivider(color: dividerColor),
                 Row(
                   children: [
                     const TripClipAvatar(size: TripClipAvatarSize.s32),
@@ -215,7 +218,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                     ],
                   ],
                 ),
-                _divider(dividerColor),
+                TripClipCardDivider(color: dividerColor),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -249,7 +252,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                     ),
                   ],
                 ),
-                _divider(dividerColor),
+                TripClipCardDivider(color: dividerColor),
                 Row(
                   children: [
                     _IconText(
@@ -282,14 +285,6 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _divider(Color color) {
-    return Container(
-      height: 1,
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      color: color,
     );
   }
 

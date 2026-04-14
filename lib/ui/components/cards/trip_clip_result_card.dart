@@ -4,36 +4,35 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
-import '../trip_clip_avatar.dart';
+import '../badges/trip_clip_badge_status.dart';
 import 'trip_clip_card_divider.dart';
 
-class TripClipSemiFeatureCard extends StatelessWidget {
-  const TripClipSemiFeatureCard({
+/// Result card: status + progress, heading + price badge, locations, footer stats.
+/// Styling matches [TripClipFeatureCard] / [TripClipSemiFeatureCard] (surface,
+/// shadow, dividers, badge clip, icon colors).
+class TripClipResultCard extends StatelessWidget {
+  const TripClipResultCard({
     super.key,
-    this.image = const AssetImage('assets/images/pump.png'),
+    this.statusLabel = 'Success',
+    this.progress = 0.35,
     required this.heading,
     required this.badgeLabel,
     this.badgeFlexibleLabel,
-    required this.userName,
-    this.ratingText,
-    this.verified = true,
     required this.pickupLocation,
     required this.deliveryLocation,
     required this.itemsText,
     required this.weightText,
     required this.footerDateText,
-  });
+  }) : assert(progress >= 0 && progress <= 1);
 
-  final ImageProvider<Object> image;
+  final String statusLabel;
+
+  /// 0…1 orange fill on the progress track.
+  final double progress;
 
   final String heading;
-
   final String badgeLabel;
   final String? badgeFlexibleLabel;
-
-  final String userName;
-  final String? ratingText;
-  final bool verified;
 
   final String pickupLocation;
   final String deliveryLocation;
@@ -41,6 +40,8 @@ class TripClipSemiFeatureCard extends StatelessWidget {
   final String itemsText;
   final String weightText;
   final String footerDateText;
+
+  static const double _progressHeight = 8;
 
   static TextStyle _rubik({
     required double size,
@@ -55,34 +56,6 @@ class TripClipSemiFeatureCard extends StatelessWidget {
     letterSpacing: letterSpacing,
     color: color,
   );
-
-  static Widget _verifiedAvatar({
-    required bool verified,
-    required Color badgeFill,
-  }) {
-    return SizedBox(
-      width: TripClipAvatarSize.s32.px,
-      height: TripClipAvatarSize.s32.px,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          const TripClipAvatar(size: TripClipAvatarSize.s32),
-          if (verified)
-            PositionedDirectional(
-              end: -4,
-              bottom: 1,
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/icons/verify.svg',
-                  width: 16,
-                  height: 16,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,16 +73,15 @@ class TripClipSemiFeatureCard extends StatelessWidget {
         ? TripClipPalette.neutral600
         : TripClipPalette.neutral300;
     final otherIconColor = iconBase;
-    final verifyColor = light
-        ? TripClipPalette.secondary500
-        : TripClipPalette.secondary400;
-
     final ratingTextColor = light
         ? TripClipPalette.neutral600
         : TripClipPalette.neutral300;
-
     final sectionTextColor = light ? TripClipPalette.tertiary500 : Colors.white;
     final footerTextColor = ratingTextColor;
+
+    final trackColor = light
+        ? TripClipPalette.neutral200
+        : TripClipPalette.neutral850;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -130,6 +102,39 @@ class TripClipSemiFeatureCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TripClipBadgeStatus(
+                label: statusLabel,
+                tone: TripClipBadgeStatusTone.success,
+                showLeadingIcon: false,
+                showTrailingIcon: false,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(_progressHeight / 2),
+              child: SizedBox(
+                height: _progressHeight,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ColoredBox(color: trackColor),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: FractionallySizedBox(
+                        widthFactor: progress.clamp(0.0, 1.0),
+                        heightFactor: 1,
+                        child: const ColoredBox(
+                          color: TripClipPalette.secondary500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -137,8 +142,8 @@ class TripClipSemiFeatureCard extends StatelessWidget {
                   child: Text(
                     heading,
                     style: _rubik(
-                      size: 22,
-                      lineHeight: 26,
+                      size: 18,
+                      lineHeight: 22,
                       weight: FontWeight.w600,
                       color: headingColor,
                     ),
@@ -155,53 +160,19 @@ class TripClipSemiFeatureCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: 120,
-                    height: 90,
-                    child: Image(image: image, fit: BoxFit.cover),
+                Expanded(
+                  child: _LocationLine(
+                    iconColor: otherIconColor,
+                    text: pickupLocation,
+                    textColor: sectionTextColor,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'PICKUP',
-                        style: _rubik(
-                          size: 12,
-                          lineHeight: 14,
-                          weight: FontWeight.w500,
-                          color: ratingTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _IconText(
-                        iconAsset: 'assets/icons/location.svg',
-                        iconColor: otherIconColor,
-                        text: pickupLocation,
-                        textColor: sectionTextColor,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'DELIVERY',
-                        style: _rubik(
-                          size: 12,
-                          lineHeight: 14,
-                          weight: FontWeight.w500,
-                          color: ratingTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _IconText(
-                        iconAsset: 'assets/icons/location.svg',
-                        iconColor: otherIconColor,
-                        text: deliveryLocation,
-                        textColor: sectionTextColor,
-                      ),
-                    ],
+                  child: _LocationLine(
+                    iconColor: otherIconColor,
+                    text: deliveryLocation,
+                    textColor: sectionTextColor,
                   ),
                 ),
               ],
@@ -209,16 +180,14 @@ class TripClipSemiFeatureCard extends StatelessWidget {
             TripClipCardDivider(color: dividerColor),
             Row(
               children: [
-                _verifiedAvatar(verified: verified, badgeFill: verifyColor),
-                const SizedBox(width: 12),
-                _IconText(
+                _FooterIconText(
                   iconAsset: 'assets/icons/package.svg',
                   iconColor: otherIconColor,
                   text: itemsText,
                   textColor: sectionTextColor,
                 ),
                 const SizedBox(width: 12),
-                _IconText(
+                _FooterIconText(
                   iconAsset: 'assets/icons/weight.svg',
                   iconColor: otherIconColor,
                   text: weightText,
@@ -243,8 +212,53 @@ class TripClipSemiFeatureCard extends StatelessWidget {
   }
 }
 
-class _IconText extends StatelessWidget {
-  const _IconText({
+class _LocationLine extends StatelessWidget {
+  const _LocationLine({
+    required this.iconColor,
+    required this.text,
+    required this.textColor,
+  });
+
+  final Color iconColor;
+  final String text;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: SvgPicture.asset(
+            'assets/icons/location.svg',
+            width: 16,
+            height: 16,
+            colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.rubik(
+              fontSize: 14,
+              height: 20 / 14,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0,
+              color: textColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FooterIconText extends StatelessWidget {
+  const _FooterIconText({
     required this.iconAsset,
     required this.iconColor,
     required this.text,
@@ -258,39 +272,27 @@ class _IconText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final maxW = constraints.maxWidth.isFinite ? constraints.maxWidth : 180;
-        final textMaxW = (maxW - 16 - 4).clamp(0, maxW);
-
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              iconAsset,
-              width: 16,
-              height: 16,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-            ),
-            const SizedBox(width: 4),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: textMaxW.toDouble()),
-              child: Text(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  height: 20 / 14,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0,
-                  color: textColor,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SvgPicture.asset(
+          iconAsset,
+          width: 16,
+          height: 16,
+          colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: GoogleFonts.rubik(
+            fontSize: 14,
+            height: 20 / 14,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 0,
+            color: textColor,
+          ),
+        ),
+      ],
     );
   }
 }
