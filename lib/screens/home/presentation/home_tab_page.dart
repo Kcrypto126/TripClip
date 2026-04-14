@@ -10,7 +10,6 @@ import '../../../ui/components/buttons/trip_clip_button_models.dart';
 import '../../../ui/components/badges/trip_clip_badges.dart';
 import '../../../ui/components/forms/trip_clip_forms.dart';
 import '../../../ui/components/trip_clip_home_app_bar.dart';
-import '../../../ui/components/trip_clip_loading_flow_strip.dart';
 import '../../../ui/components/trip_clip_steps_status_bar.dart';
 import '../../../ui/components/trip_clip_title_bar.dart';
 import '../../../ui/foundations/app_spacing.dart';
@@ -74,7 +73,6 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 children: [
                   const SizedBox(height: AppSpacing.xl),
 
-                  const TripClipLoadingFlowStrip(),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
                     'Form calendar',
