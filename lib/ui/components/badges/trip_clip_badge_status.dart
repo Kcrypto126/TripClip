@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Semantic tone for [TripClipBadgeStatus] (red → grey in design order).
 enum TripClipBadgeStatusTone {
   danger,
   warning,
@@ -10,7 +9,6 @@ enum TripClipBadgeStatusTone {
   neutral,
 }
 
-@immutable
 class _StatusToneColors {
   const _StatusToneColors({
     required this.lightBorder,
@@ -72,7 +70,6 @@ const Map<TripClipBadgeStatusTone, _StatusToneColors> _kToneColors = {
   ),
 };
 
-/// `badge-status` — optional leading/trailing heart icons around the label.
 class TripClipBadgeStatus extends StatelessWidget {
   const TripClipBadgeStatus({
     super.key,
@@ -86,13 +83,9 @@ class TripClipBadgeStatus extends StatelessWidget {
   final String label;
   final TripClipBadgeStatusTone tone;
 
-  /// Defaults to [heart24.svg] at **16×16** display size.
   final String svgAsset;
 
-  /// Heart before the label. Use with [showTrailingIcon] for left-only / right-only / both / none.
   final bool showLeadingIcon;
-
-  /// Heart after the label.
   final bool showTrailingIcon;
 
   @override

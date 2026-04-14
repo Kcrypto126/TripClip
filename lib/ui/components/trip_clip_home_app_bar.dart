@@ -5,10 +5,6 @@ import '../../app/theme/trip_clip_colors.dart';
 import '../../app/theme/trip_clip_palette.dart';
 import 'badges/trip_clip_badge_counter.dart';
 
-/// Home header: logo (light/dark SVG), heart + bell with [TripClipBadgeCounter].
-///
-/// Reserves [MediaQuery] top padding so content sits below the status bar /
-/// notch (matches Material [AppBar] behavior).
 class TripClipHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TripClipHomeAppBar({
     super.key,
@@ -23,7 +19,6 @@ class TripClipHomeAppBar extends StatelessWidget implements PreferredSizeWidget 
   final VoidCallback? onFavoritesPressed;
   final VoidCallback? onNotificationsPressed;
 
-  /// Toolbar row height only (excluding status bar inset).
   static const double toolbarHeight = 56;
 
   static double _statusBarHeightLogicalPx() {

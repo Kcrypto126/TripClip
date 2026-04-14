@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
 
-/// `badge-delivery-timing` — clock + label, orange pill with asymmetric corners.
 class TripClipBadgeDeliveryTiming extends StatelessWidget {
   const TripClipBadgeDeliveryTiming({
     super.key,
@@ -13,13 +12,11 @@ class TripClipBadgeDeliveryTiming extends StatelessWidget {
 
   final String label;
 
-  /// Defaults to [clock.svg] at **16×16** display size.
   final String svgAsset;
 
   static const Color _background = TripClipPalette.secondary500;
   static const Color _foreground = Color(0xFFFFFFFF);
 
-  /// CSS order: top-left, top-right, bottom-right, bottom-left → `0 4px 0 12px`.
   static const BorderRadius _radius = BorderRadius.only(
     topLeft: Radius.zero,
     topRight: Radius.circular(4),

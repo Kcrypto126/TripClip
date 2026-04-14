@@ -9,7 +9,6 @@ import '../../screens/home/presentation/home_tab_page.dart';
 import '../../screens/parcels/presentation/parcels_tab_page.dart';
 import '../../screens/trips/presentation/trips_tab_page.dart';
 
-/// Root frame: branded app bar, content, bottom navigation (TripClip spec).
 class MainShellPage extends StatefulWidget {
   const MainShellPage({super.key});
 

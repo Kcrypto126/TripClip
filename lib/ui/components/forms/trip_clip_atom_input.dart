@@ -5,7 +5,6 @@ import '../../foundations/app_spacing.dart';
 import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
 
-/// `form-atom-input` — row with optional [leading] / [trailing] (defaults: [defaultLeadingIconAsset], [defaultTrailingIconAsset]).
 class TripClipAtomInput extends StatefulWidget {
   const TripClipAtomInput({
     super.key,

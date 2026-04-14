@@ -5,7 +5,6 @@ import '../../app/theme/trip_clip_colors.dart';
 import '../../app/theme/trip_clip_palette.dart';
 import 'badges/trip_clip_badge_counter.dart';
 
-@immutable
 class _TripClipNavDestinationData {
   const _TripClipNavDestinationData(
     this.label,
@@ -49,9 +48,7 @@ const List<_TripClipNavDestinationData> _kDestinations = [
   ),
 ];
 
-/// TripClip bottom navigation: SVG default/active icons, optional [TripClipBadgeCounter] on Activity.
 class TripClipBottomNavBar extends StatelessWidget {
-  /// Design height of the nav strip (logical px), excluding system home-indicator inset.
   static const double height = 80;
 
   const TripClipBottomNavBar({
@@ -64,7 +61,6 @@ class TripClipBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  /// Shown on the Activity icon (top-right); use `0` to hide.
   final int activityBadgeCount;
 
   @override

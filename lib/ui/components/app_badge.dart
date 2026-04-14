@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/trip_clip_colors.dart';
 
-/// Small pill/circle badge (e.g. notification counts). Orange in TripClip brand.
 class AppBadge extends StatelessWidget {
   const AppBadge({
     super.key,

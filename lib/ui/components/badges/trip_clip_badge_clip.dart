@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
 
-/// `badge-clip` — orange pill with primary line and optional caption (e.g. price + “Flexible”).
 class TripClipBadgeClip extends StatelessWidget {
   const TripClipBadgeClip({
     super.key,
@@ -10,10 +9,7 @@ class TripClipBadgeClip extends StatelessWidget {
     this.flexibleLabel,
   });
 
-  /// Primary line (e.g. `\$xxx`) — 20px / semibold.
   final String label;
-
-  /// Optional second line — 12px / medium (e.g. `"Flexible"`).
   final String? flexibleLabel;
 
   static const Color _background = TripClipPalette.secondary500;

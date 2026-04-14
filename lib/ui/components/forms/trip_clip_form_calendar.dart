@@ -8,11 +8,6 @@ const double _kFormCalendarWeekCellW = 40;
 const double _kFormCalendarWeekCellH = 20;
 const double _kFormCalendarDateCell = 40;
 
-/// `form-calendar` — month grid with chevron navigation and Rubik typography.
-///
-/// Week starts Sunday (`Su`–`Sa`). When [selectedDate] is null, the calendar
-/// starts on the current month with today selected; today is also outlined when
-/// another day is selected.
 class TripClipFormCalendar extends StatefulWidget {
   const TripClipFormCalendar({
     super.key,

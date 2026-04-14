@@ -4,10 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'trip_clip_button_models.dart';
 import 'trip_clip_button_styles.dart';
 
-/// TripClip pill / circle buttons with full light·dark state styling.
-///
-/// Use [TripClipButtonIconPlacement.iconOnly] for circular icon-only controls.  
-/// Provide at most one of [icon] and [svgAsset]; SVGs follow [IconTheme] like [Icon].
 class TripClipButton extends StatelessWidget {
   const TripClipButton({
     super.key,

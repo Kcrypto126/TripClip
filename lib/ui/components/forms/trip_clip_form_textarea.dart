@@ -5,9 +5,6 @@ import 'trip_clip_form_message.dart';
 import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
 
-/// `form-input-textarea` — same chrome and typography as [TripClipFormInput], multiline [TextField].
-///
-/// Field padding **16×16**. Standard: value/hint **16/24** w400. Large: **36px** (line height 44).
 class TripClipFormTextarea extends StatefulWidget {
   const TripClipFormTextarea({
     super.key,
@@ -29,16 +26,12 @@ class TripClipFormTextarea extends StatefulWidget {
   final String? label;
   final String? hintText;
   final String? helperText;
-  /// When set with [helperText], shows [TripClipFormMessage] (icon + semantic color).
-  /// If null, helper is plain text; color comes from [status] via tokens.
   final TripClipFormMessageKind? helperKind;
   final TextEditingController? controller;
   final bool enabled;
   final TripClipFormStatus status;
   final TripClipFormDensity density;
-  /// Minimum visible lines (height grows with content up to [maxLines] if set).
   final int minLines;
-  /// When null, height grows with content after [minLines].
   final int? maxLines;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;

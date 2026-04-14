@@ -3,13 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// `form-toggle` — track **48×24**; inner thumb **24×18**, inset **3** vertical / **4** horizontal.
-/// Off: thumb **left**; on: thumb **right**.
-///
-/// **Light:** track `#DCE1E6` / `#141E46`; thumb `#141E46` / `#DCE1E6`.
-/// **Dark:** track `#2E343D` / `#7C86AE`; thumb `#7C86AE` / `#2E343D`.
-///
-/// Disabled: **40%** opacity when [onChanged] is null.
 class TripClipFormToggle extends StatelessWidget {
   const TripClipFormToggle({
     super.key,
@@ -28,13 +21,12 @@ class TripClipFormToggle extends StatelessWidget {
   static const double thumbWidth = 24;
   static const double thumbHeight = 18;
 
-  /// Vertical / horizontal padding of thumb inside the track.
   static const double padVertical = 3;
   static const double padHorizontal = 4;
 
   static const double _thumbLeftOff = padHorizontal;
   static const double _thumbLeftOn =
-      trackWidth - padHorizontal - thumbWidth; // 20
+      trackWidth - padHorizontal - thumbWidth;
 
   static const Color labelColorLight = Color(0xFF141E46);
   static const Color labelColorDark = Color(0xFFFFFFFF);

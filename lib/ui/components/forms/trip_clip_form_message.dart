@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// `form-atom-message`: icon + text row (helper / validation copy).
 enum TripClipFormMessageKind {
   neutral,
   error,
@@ -27,7 +26,6 @@ class TripClipFormMessage extends StatelessWidget {
   final double iconSize;
   final Color? colorOverride;
 
-  /// Insert text / helper: Rubik **14/20**, w400, letter-spacing **0**.
   static TextStyle helperStyle(BuildContext context, Color color) {
     final theme = Theme.of(context);
     return (theme.textTheme.bodySmall ?? const TextStyle()).copyWith(

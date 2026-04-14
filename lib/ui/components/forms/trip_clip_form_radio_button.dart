@@ -4,9 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// `form-radio-button` — fixed-width pill with SVG + label (not the circle [TripClipFormRadio]).
-///
-/// Padding **8×0**, **4px** radius, icon **24**, **4px** gap, label **14/20** w400. Content centered.
 class TripClipFormRadioButton extends StatelessWidget {
   const TripClipFormRadioButton({
     super.key,

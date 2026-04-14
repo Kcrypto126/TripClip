@@ -5,8 +5,6 @@ import 'trip_clip_form_message.dart';
 import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
 
-/// `form-input` / `form-input-large` — label, text field, optional helper line.
-/// Large: field padding **28×16**, value/hint **36px** (line height 44).
 class TripClipFormInput extends StatefulWidget {
   const TripClipFormInput({
     super.key,
@@ -27,8 +25,6 @@ class TripClipFormInput extends StatefulWidget {
   final String? label;
   final String? hintText;
   final String? helperText;
-  /// When set with [helperText], shows [TripClipFormMessage] (icon + semantic color).  
-  /// If null, helper is plain text using the same typography as default; color comes from [status] via tokens.
   final TripClipFormMessageKind? helperKind;
   final TextEditingController? controller;
   final bool enabled;
@@ -45,13 +41,11 @@ class TripClipFormInput extends StatefulWidget {
 
 class _TripClipFormInputState extends State<TripClipFormInput> {
   final FocusNode _focusNode = FocusNode();
-  /// Non-null after [_bindController] (runs from [initState] / [didUpdateWidget]).
   TextEditingController? _internal;
   TextEditingController? _bound;
 
   void _syncDecoration() => setState(() {});
 
-  /// Hot reload keeps [State] but does not re-run [initState]; new fields stay null until this runs.
   void _ensureBound() {
     if (_bound != null) return;
     _bindController();
@@ -119,7 +113,6 @@ class _TripClipFormInputState extends State<TripClipFormInput> {
       density: widget.density,
     );
 
-    /// Form label spec: Rubik **14/20**, w500, letter-spacing 0, lining + tabular figures.
     final labelStyle = theme.textTheme.bodySmall?.copyWith(
           color: dec.label,
           fontWeight: FontWeight.w500,
@@ -133,7 +126,6 @@ class _TripClipFormInputState extends State<TripClipFormInput> {
         );
 
     final isLarge = widget.density == TripClipFormDensity.large;
-    /// Standard: Rubik **16/24**. Large (`form-input-large`): **36px** text, padding **28×16**.
     final fieldFontSize = isLarge ? 36.0 : 16.0;
     final fieldLineHeight = isLarge ? 44 / 36 : 24 / 16;
     final fieldStyle = theme.textTheme.bodyLarge?.copyWith(

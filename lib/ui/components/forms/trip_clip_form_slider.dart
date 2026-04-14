@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// `form-slider` — card padding **24** vertical / **16** horizontal, radius **8**, **4px** track, **24px** thumb + shadow.
-///
-/// Optional [title] renders above the card (same typography as range labels).
 class TripClipFormSlider extends StatelessWidget {
   const TripClipFormSlider({
     super.key,

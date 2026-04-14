@@ -232,7 +232,6 @@ class TripClipFavoriteListButton extends StatelessWidget {
   }
 }
 
-/// Rounded filter / sub-navigation chip (`button-sub-navigation`).
 class TripClipSubNavButton extends StatelessWidget {
   const TripClipSubNavButton({
     super.key,
@@ -340,7 +339,6 @@ class TripClipSubNavButton extends StatelessWidget {
   }
 }
 
-/// Small rounded-square icon control (e.g. edit) from TripClip icon grid.
 class TripClipSquareIconButton extends StatefulWidget {
   const TripClipSquareIconButton({
     super.key,

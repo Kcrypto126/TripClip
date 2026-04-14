@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
 
-/// `badge-filter` — compact icon + label chip (e.g. category / filter tag).
 class TripClipBadgeFilter extends StatelessWidget {
   const TripClipBadgeFilter({
     super.key,
@@ -13,7 +12,6 @@ class TripClipBadgeFilter extends StatelessWidget {
 
   final String label;
 
-  /// Defaults to [house.svg] (16×16 asset).
   final String svgAsset;
 
   @override

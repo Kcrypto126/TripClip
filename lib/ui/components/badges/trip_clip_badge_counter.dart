@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
 
-/// `badge-counter` — circular count; diameter fits label + **4px** padding on all sides.
 class TripClipBadgeCounter extends StatelessWidget {
   const TripClipBadgeCounter({
     super.key,
@@ -13,10 +12,7 @@ class TripClipBadgeCounter extends StatelessWidget {
     this.maxCount = 99,
   });
 
-  /// Shown as a digit, or `"{maxCount}+"` when above [maxCount].
   final int count;
-
-  /// When true and [count] `<= 0`, returns [SizedBox.shrink].
   final bool hideWhenZero;
 
   final int maxCount;

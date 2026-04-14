@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../foundations/app_spacing.dart';
 
-/// Opinionated card wrapper using [ThemeData.cardTheme].
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,

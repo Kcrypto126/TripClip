@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import 'trip_clip_button_models.dart';
 
-/// Visual tokens and [ButtonStyle] factories for [TripClipButton].
 abstract final class TripClipButtonStyles {
   static const EdgeInsets contentPadding = EdgeInsets.symmetric(
     horizontal: 16,
@@ -46,7 +45,6 @@ abstract final class TripClipButtonStyles {
 
     final padding = contentPadding;
 
-    /// Icon-only: keep ≥48dp touch target; spec padding centers the 24dp icon.
     final minSize = iconOnly ? const Size(56, 56) : const Size(48, 44);
 
     final overlayClear = WidgetStateProperty.all<Color?>(Colors.transparent);

@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// `form-radio` — **24px** circle with **2px** outer padding, **8px** gap to label, **16/24** w400.
-///
-/// Selected: **1px** outer border, **#EFF2F5** / **#1F242B** ring, **2px** inset, inner dot **#141E46** / **#7C86AE**.
-/// Disabled: entire row at **40%** opacity (same pattern as [TripClipFormInput]).
 class TripClipFormRadio<T> extends StatelessWidget {
   const TripClipFormRadio({
     super.key,
@@ -25,10 +21,7 @@ class TripClipFormRadio<T> extends StatelessWidget {
   static const double _outerPadding = 2;
   static const double _selectedInnerInset = 2;
 
-  /// Light mode label (`#141E46`).
   static const Color labelColorLight = Color(0xFF141E46);
-
-  /// Dark mode label (`#FFFFFF`).
   static const Color labelColorDark = Color(0xFFFFFFFF);
 
   bool get _selected => groupValue == value;

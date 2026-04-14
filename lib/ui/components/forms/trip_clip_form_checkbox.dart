@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// `form-checkbox` — **24px** box with **4px** outer padding, **8px** gap to label, **16/24** w400.
-/// Label: **#141E46** (light) / **#FFFFFF** (dark).
-///
-/// Disabled: entire row at **40%** opacity (same pattern as [TripClipFormInput]).
 class TripClipFormCheckbox extends StatelessWidget {
   const TripClipFormCheckbox({
     super.key,

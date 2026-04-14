@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/trip_clip_palette.dart';
 
-/// Placeholder logo mark from brand dots (replace with SVG/asset when ready).
 class TripClipLogoMark extends StatelessWidget {
   const TripClipLogoMark({super.key, this.size = 28});
 

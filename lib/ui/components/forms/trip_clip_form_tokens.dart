@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import 'trip_clip_form_models.dart';
 
-@immutable
 class _FormSemanticChrome {
   const _FormSemanticChrome({
     required this.idleFill,
@@ -16,15 +15,12 @@ class _FormSemanticChrome {
 
   final Color idleFill;
   final Color idleBorder;
-  /// Border when the field has text or is focused (1px / 2px — same as default primary).
   final Color accentBorder;
   final Color foreground;
   final Color hintOrPlaceholder;
   final Color helper;
 }
 
-/// Resolved visuals for one form field state.
-@immutable
 class TripClipFormFieldDecoration {
   const TripClipFormFieldDecoration({
     required this.fill,
@@ -47,10 +43,6 @@ class TripClipFormFieldDecoration {
   static const double borderThin = 1;
   static const double borderFocus = 2;
 
-  /// Full `form-input` / `form-input-large` (with label + helper).
-  ///
-  /// **Active** (non-empty value): 1px primary border, white / `#14181F` fill.  
-  /// **Focused**: 2px primary border (same fills). **Default**: empty, idle chrome.
   static TripClipFormFieldDecoration field({
     required bool isDark,
     required bool enabled,
@@ -92,7 +84,6 @@ class TripClipFormFieldDecoration {
     return _fieldDefault(isDark: isDark, density: density);
   }
 
-  /// Error/warning/success have a single fixed style (no focus/filled variants).
   static TripClipFormFieldDecoration _semanticFixedField({
     required bool isDark,
     required _FormSemanticChrome chrome,
@@ -205,7 +196,6 @@ class TripClipFormFieldDecoration {
     );
   }
 
-  /// Has input text, not focused: 1px `#0000D2` / `#3F5BFF`, fill `#FFFFFF` / `#14181F`.
   static TripClipFormFieldDecoration _fieldActiveFilled({
     required bool isDark,
     required TripClipFormDensity density,
@@ -258,7 +248,6 @@ class TripClipFormFieldDecoration {
     );
   }
 
-  /// Same chrome as default; entire control uses **40%** opacity in [TripClipFormInput].
   static TripClipFormFieldDecoration _fieldDisabled({
     required bool isDark,
     required TripClipFormDensity density,
@@ -266,8 +255,6 @@ class TripClipFormFieldDecoration {
     return _fieldDefault(isDark: isDark, density: density);
   }
 
-  /// `form-atom-input` — fill/border/text colors match [field] for every [TripClipFormStatus]
-  /// (default idle / active / focus + semantic fixed styles + disabled).
   static TripClipFormFieldDecoration atom({
     required bool isDark,
     required bool enabled,

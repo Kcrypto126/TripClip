@@ -5,7 +5,6 @@ import '../foundations/app_spacing.dart';
 
 enum AppToastKind { error, warning, success, info }
 
-/// TripClip toast spec: semantic color bar, leading status icon, divider, close.
 class AppToast {
   AppToast._();
 
