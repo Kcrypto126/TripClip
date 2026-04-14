@@ -64,8 +64,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
               const SnackBar(content: Text('Flow: already on step 0')),
             );
           },
-        ),
-        const TripClipLoadingFlowStrip(),
+        ),        
         Expanded(
           child: SingleChildScrollView(
             child: AppCard(
@@ -73,6 +72,9 @@ class _HomeTabPageState extends State<HomeTabPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: AppSpacing.xl),
+
+                  const TripClipLoadingFlowStrip(),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
                     'Form calendar',
