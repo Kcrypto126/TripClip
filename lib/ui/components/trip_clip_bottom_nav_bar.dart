@@ -54,11 +54,16 @@ class TripClipBottomNavBar extends StatelessWidget {
   const TripClipBottomNavBar({
     super.key,
     required this.currentIndex,
+    this.selectedIndex,
     required this.onDestinationSelected,
     this.activityBadgeCount = 0,
   });
 
   final int currentIndex;
+
+  /// When provided, controls which destination appears active.
+  /// Set to null to render with no active destination.
+  final int? selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
   final int activityBadgeCount;
@@ -66,20 +71,22 @@ class TripClipBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final light = Theme.of(context).brightness == Brightness.light;
-    final defaultFg =
-        light ? TripClipPalette.neutral600 : TripClipPalette.neutral300;
-    final activeFg =
-        light ? TripClipPalette.primary500 : TripClipPalette.primary400;
-    final borderColor =
-        light ? TripClipPalette.neutral200 : TripClipPalette.neutral850;
+    final defaultFg = light
+        ? TripClipPalette.neutral600
+        : TripClipPalette.neutral300;
+    final activeFg = light
+        ? TripClipPalette.primary500
+        : TripClipPalette.primary400;
+    final borderColor = light
+        ? TripClipPalette.neutral200
+        : TripClipPalette.neutral850;
     final bg = context.tripClipColors.pageBackground;
+    final effectiveSelectedIndex = selectedIndex;
 
     return Container(
       decoration: BoxDecoration(
         color: bg,
-        border: Border(
-          top: BorderSide(color: borderColor, width: 1),
-        ),
+        border: Border(top: BorderSide(color: borderColor, width: 1)),
       ),
       child: SafeArea(
         top: false,
@@ -98,7 +105,9 @@ class TripClipBottomNavBar extends StatelessWidget {
                       alignment: Alignment.center,
                       child: _TripClipBottomNavItem(
                         data: _kDestinations[i],
-                        selected: currentIndex == i,
+                        selected:
+                            effectiveSelectedIndex != null &&
+                            effectiveSelectedIndex == i,
                         defaultForeground: defaultFg,
                         activeForeground: activeFg,
                         onTap: () => onDestinationSelected(i),
@@ -108,8 +117,8 @@ class TripClipBottomNavBar extends StatelessWidget {
                       ),
                     ),
                   ),
+                ],
               ],
-            ],
             ),
           ),
         ),
@@ -182,12 +191,12 @@ class _TripClipBottomNavItem extends StatelessWidget {
                 Text(
                   data.label,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        height: 20 / 14,
-                        letterSpacing: 0,
-                        color: fg,
-                      ),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    height: 20 / 14,
+                    letterSpacing: 0,
+                    color: fg,
+                  ),
                 ),
               ],
             ),

@@ -19,6 +19,7 @@ import '../../../ui/components/trip_clip_home_app_bar.dart';
 import '../../../ui/components/trip_clip_steps_status_bar.dart';
 import '../../../ui/components/trip_clip_title_bar.dart';
 import '../../../ui/foundations/app_spacing.dart';
+import '../../components/presentation/components_page.dart';
 
 class HomeTabPage extends StatefulWidget {
   const HomeTabPage({super.key});
@@ -44,6 +45,11 @@ class _HomeTabPageState extends State<HomeTabPage> {
         TripClipHomeAppBar(
           favoritesCount: _favorites,
           notificationsCount: _notifications,
+          onNotificationsPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ComponentsPage()),
+            );
+          },
         ),
         TripClipTitleBar(
           title: 'Title',
@@ -181,7 +187,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const TripClipHeadingCard(                    
+                  const TripClipHeadingCard(
                     heading: 'Title',
                     body: 'XXX Trips',
                     width: 200,

@@ -5,16 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/trip_clip_colors.dart';
 import '../../app/theme/trip_clip_palette.dart';
 
-/// Title bar with optional status-bar inset + 56px toolbar: back chevron, centered
-/// title only (no drawer / end actions). Metrics match [TripClipHomeAppBar]
-/// (padding **16**, toolbar height **56**; chevron tap **40×40**, icon **24** like
-/// the steps bar).
-///
-/// Set [includeStatusBarInset] to **false** when placing this below another bar that
-/// already accounts for the system status bar (e.g. [TripClipHomeAppBar]).
-///
-/// Title: **18px / 22px line / w600 / letter-spacing 0** — **#141E46** light,
-/// **#FFFFFF** dark.
 class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
   const TripClipTitleBar({
     super.key,
@@ -29,11 +19,7 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBack;
   final VoidCallback? onBack;
 
-  /// When **true** (default), prepends the system status-bar spacer. Use **false**
-  /// under another header that already includes it.
   final bool includeStatusBarInset;
-
-  /// When set, clips the bar (e.g. modal sheet top corners).
   final BorderRadius? clipBorderRadius;
 
   static const double toolbarHeight = 56;

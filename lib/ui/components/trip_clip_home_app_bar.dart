@@ -5,7 +5,8 @@ import '../../app/theme/trip_clip_colors.dart';
 import '../../app/theme/trip_clip_palette.dart';
 import 'badges/trip_clip_badge_counter.dart';
 
-class TripClipHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class TripClipHomeAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   const TripClipHomeAppBar({
     super.key,
     this.favoritesCount = 0,
@@ -35,8 +36,9 @@ class TripClipHomeAppBar extends StatelessWidget implements PreferredSizeWidget 
   @override
   Widget build(BuildContext context) {
     final light = Theme.of(context).brightness == Brightness.light;
-    final iconColor =
-        light ? TripClipPalette.neutral600 : TripClipPalette.neutral300;
+    final iconColor = light
+        ? TripClipPalette.neutral600
+        : TripClipPalette.neutral300;
     final logoAsset = light
         ? 'assets/icons/home-logo-light.svg'
         : 'assets/icons/home-logo-dark.svg';

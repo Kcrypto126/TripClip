@@ -17,6 +17,8 @@ class MainShellPage extends StatefulWidget {
 
 class _MainShellPageState extends State<MainShellPage> {
   int _index = 0;
+  final GlobalKey<NavigatorState> _bodyNavKey = GlobalKey<NavigatorState>();
+  bool _bodyCanPop = false;
 
   static const _activity = 7;
 
@@ -27,14 +29,36 @@ class _MainShellPageState extends State<MainShellPage> {
       body: SafeArea(
         top: _index != 0,
         bottom: false,
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: _tabBody(),
+        child: Navigator(
+          key: _bodyNavKey,
+          observers: [
+            _BodyNavObserver(
+              onCanPopChanged: (canPop) {
+                if (_bodyCanPop == canPop) return;
+                setState(() => _bodyCanPop = canPop);
+              },
+            ),
+          ],
+          onGenerateRoute: (settings) {
+            return MaterialPageRoute<void>(
+              settings: settings,
+              builder: (context) {
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _tabBody(),
+                );
+              },
+            );
+          },
         ),
       ),
       bottomNavigationBar: TripClipBottomNavBar(
         currentIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
+        selectedIndex: _bodyCanPop ? null : _index,
+        onDestinationSelected: (i) {
+          _bodyNavKey.currentState?.popUntil((r) => r.isFirst);
+          setState(() => _index = i);
+        },
         activityBadgeCount: _activity,
       ),
     );
@@ -49,5 +73,37 @@ class _MainShellPageState extends State<MainShellPage> {
       4 => const AccountTabPage(key: ValueKey('account')),
       _ => const HomeTabPage(key: ValueKey('home')),
     };
+  }
+}
+
+class _BodyNavObserver extends NavigatorObserver {
+  _BodyNavObserver({required this.onCanPopChanged});
+
+  final ValueChanged<bool> onCanPopChanged;
+
+  void _emit() => onCanPopChanged(navigator?.canPop() ?? false);
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    _emit();
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    _emit();
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didRemove(route, previousRoute);
+    _emit();
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    _emit();
   }
 }
