@@ -11,6 +11,7 @@ import '../../../ui/components/badges/trip_clip_badges.dart';
 import '../../../ui/components/trip_clip_chat_bubble.dart';
 import '../../../ui/components/trip_clip_avatar.dart';
 import '../../../ui/components/cards/trip_clip_feature_card.dart';
+import '../../../ui/components/cards/trip_clip_heading_card.dart';
 import '../../../ui/components/cards/trip_clip_result_card.dart';
 import '../../../ui/components/cards/trip_clip_semi_feature_card.dart';
 import '../../../ui/components/forms/trip_clip_forms.dart';
@@ -172,6 +173,18 @@ class _HomeTabPageState extends State<HomeTabPage> {
                     itemsText: '3 Items',
                     weightText: 'XX kg',
                     footerDateText: 'Jan 14, 2026',
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  Text(
+                    'Heading card',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const TripClipHeadingCard(                    
+                    heading: 'Title',
+                    body: 'XXX Trips',
+                    width: 200,
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
