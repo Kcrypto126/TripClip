@@ -1,6 +1,107 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/trip_clip_colors.dart';
+import '../../../ui/components/trip_clip_home_app_bar.dart';
+import '../../components/presentation/components_page.dart';
+
+class HomeTabPage extends StatelessWidget {
+  const HomeTabPage({super.key});
+
+  static const int _favorites = 3;
+  static const int _notifications = 9;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.tripClipColors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TripClipHomeAppBar(
+          favoritesCount: _favorites,
+          notificationsCount: _notifications,
+          onNotificationsPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ComponentsPage()),
+            );
+          },
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: Text(
+                'Tap the bell icon to open Components.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colors.textSubtle,
+                  fontSize: 14,
+                  height: 20 / 14,
+                  letterSpacing: 0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/*
+import 'package:flutter/material.dart';
+
+import '../../../app/theme/trip_clip_colors.dart';
+import '../../../ui/components/trip_clip_home_app_bar.dart';
+import '../../components/presentation/components_page.dart';
+
+class HomeTabPage extends StatelessWidget {
+  const HomeTabPage({super.key});
+
+  static const int _favorites = 3;
+  static const int _notifications = 9;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.tripClipColors;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TripClipHomeAppBar(
+          favoritesCount: _favorites,
+          notificationsCount: _notifications,
+          onNotificationsPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ComponentsPage()),
+            );
+          },
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: Text(
+                'Tap the bell icon to open Components.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.textSecondary,
+                      fontSize: 14,
+                      height: 20 / 14,
+                      letterSpacing: 0,
+                    ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+import 'package:flutter/material.dart';
+
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/trip_clip_app.dart';
 import '../../../ui/components/app_card.dart';
 import '../../../ui/components/app_toast.dart';
@@ -906,3 +1007,4 @@ class _TripClipSelectionDemoState extends State<_TripClipSelectionDemo> {
     );
   }
 }
+*/

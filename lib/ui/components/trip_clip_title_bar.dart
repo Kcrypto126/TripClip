@@ -13,6 +13,7 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBack,
     this.includeStatusBarInset = true,
     this.clipBorderRadius,
+    this.trailing,
   });
 
   final String title;
@@ -21,6 +22,9 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
 
   final bool includeStatusBarInset;
   final BorderRadius? clipBorderRadius;
+
+  /// Right slot (same width as back affordance). Omit for an empty spacer.
+  final Widget? trailing;
 
   static const double toolbarHeight = 56;
 
@@ -37,9 +41,8 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-        toolbarHeight +
-            (includeStatusBarInset ? _statusBarHeightLogicalPx() : 0),
-      );
+    toolbarHeight + (includeStatusBarInset ? _statusBarHeightLogicalPx() : 0),
+  );
 
   static TextStyle titleTextStyle(BuildContext context) {
     final light = Theme.of(context).brightness == Brightness.light;
@@ -69,7 +72,9 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
           child: SizedBox(
             height: toolbarHeight,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+              padding: const EdgeInsets.symmetric(
+                horizontal: _horizontalPadding,
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -100,7 +105,12 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
                       style: titleTextStyle(context),
                     ),
                   ),
-                  const SizedBox(width: _chevronTapSize),
+                  trailing != null
+                      ? SizedBox(
+                          width: _chevronTapSize,
+                          child: Center(child: trailing!),
+                        )
+                      : const SizedBox(width: _chevronTapSize),
                 ],
               ),
             ),
@@ -110,20 +120,14 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
     );
 
     if (clipBorderRadius != null) {
-      return ClipRRect(
-        borderRadius: clipBorderRadius!,
-        child: column,
-      );
+      return ClipRRect(borderRadius: clipBorderRadius!, child: column);
     }
     return column;
   }
 }
 
 class _TitleBarBackButton extends StatelessWidget {
-  const _TitleBarBackButton({
-    required this.iconColor,
-    required this.onPressed,
-  });
+  const _TitleBarBackButton({required this.iconColor, required this.onPressed});
 
   final Color iconColor;
   final VoidCallback onPressed;
