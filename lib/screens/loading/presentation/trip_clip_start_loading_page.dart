@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// First-launch / boot sequence: plays 11 SVG frames in order, then calls [onFinished].
 class TripClipStartLoadingPage extends StatefulWidget {
   const TripClipStartLoadingPage({super.key, required this.onFinished});
 
   final VoidCallback onFinished;
 
-  /// TripClip primary blue.
   static const Color backgroundColor = Color(0xFF0000D2);
 
   static const double iconWidth = 158;
