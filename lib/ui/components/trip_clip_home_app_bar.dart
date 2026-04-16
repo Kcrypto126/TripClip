@@ -11,12 +11,14 @@ class TripClipHomeAppBar extends StatelessWidget
     super.key,
     this.favoritesCount = 0,
     this.notificationsCount = 0,
+    this.onLogoPressed,
     this.onFavoritesPressed,
     this.onNotificationsPressed,
   });
 
   final int favoritesCount;
   final int notificationsCount;
+  final VoidCallback? onLogoPressed;
   final VoidCallback? onFavoritesPressed;
   final VoidCallback? onNotificationsPressed;
 
@@ -60,12 +62,7 @@ class TripClipHomeAppBar extends StatelessWidget
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SvgPicture.asset(
-                  logoAsset,
-                  width: 120,
-                  height: 26,
-                  fit: BoxFit.contain,
-                ),
+                _HeaderLogo(logoAsset: logoAsset, onPressed: onLogoPressed),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -89,6 +86,35 @@ class TripClipHomeAppBar extends StatelessWidget
           ),
         ),
       ],
+    );
+  }
+}
+
+class _HeaderLogo extends StatelessWidget {
+  const _HeaderLogo({required this.logoAsset, this.onPressed});
+
+  final String logoAsset;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final svg = SvgPicture.asset(
+      logoAsset,
+      width: 120,
+      height: 26,
+      fit: BoxFit.contain,
+    );
+    if (onPressed == null) return svg;
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          child: svg,
+        ),
+      ),
     );
   }
 }

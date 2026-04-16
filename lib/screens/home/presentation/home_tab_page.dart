@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../app/trip_clip_app.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../../ui/components/cards/trip_clip_heading_card.dart';
 import '../../../ui/components/cards/trip_clip_semi_feature_card.dart';
@@ -208,6 +209,8 @@ class _HomeTabPageState extends State<HomeTabPage> {
         TripClipHomeAppBar(
           favoritesCount: _favorites,
           notificationsCount: _notifications,
+          onLogoPressed: () =>
+              TripClipAppScope.of(context).replayStartLoading(),
           onNotificationsPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const ComponentsPage()),
