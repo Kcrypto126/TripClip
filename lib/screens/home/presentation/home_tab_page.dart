@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../../ui/components/cards/trip_clip_heading_card.dart';
 import '../../../ui/components/cards/trip_clip_semi_feature_card.dart';
@@ -35,30 +34,24 @@ class _HomeTabPageState extends State<HomeTabPage> {
   double? _parcelCarouselHeight;
 
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _parcelScrollController = ScrollController();
-  final ScrollController _tripScrollController = ScrollController();
+  final PageController _parcelPageController = PageController();
+  final PageController _tripPageController = PageController(
+    viewportFraction: 0.62,
+  );
 
-  double get _tripScrollStep => _tripCardWidth + _carouselItemGap;
+  int _parcelPageIndex = 0;
+  int _tripPageIndex = 0;
 
   /// Track width inside section horizontal padding (one full-width parcel slide).
   double _parcelTrackWidthFromContext(BuildContext context) =>
       MediaQuery.sizeOf(context).width - 2 * _sectionHorizontalPadding;
 
-  double _parcelScrollStepFromContext(BuildContext context) =>
-      _parcelTrackWidthFromContext(context) + _carouselItemGap;
-
   @override
   void initState() {
     super.initState();
-    _parcelScrollController.addListener(_onCarouselScrollChanged);
-    _tripScrollController.addListener(_onCarouselScrollChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() {});
     });
-  }
-
-  void _onCarouselScrollChanged() {
-    if (mounted) setState(() {});
   }
 
   void _maybeUpdateParcelCarouselHeight(Size size) {
@@ -73,95 +66,51 @@ class _HomeTabPageState extends State<HomeTabPage> {
   }
 
   void _parcelPrevious() {
-    if (!_parcelScrollController.hasClients) return;
-    final step = _parcelScrollStepFromContext(context);
-    final target = (_parcelScrollController.offset - step).clamp(
-      0.0,
-      _parcelScrollController.position.maxScrollExtent,
+    if (_parcelPageIndex <= 0) return;
+    _parcelPageController.previousPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
     );
-    _parcelScrollController
-        .animateTo(
-          target,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-        )
-        .then((_) {
-          if (mounted) setState(() {});
-        });
   }
 
   void _parcelNext() {
-    if (!_parcelScrollController.hasClients) return;
-    final step = _parcelScrollStepFromContext(context);
-    final target = (_parcelScrollController.offset + step).clamp(
-      0.0,
-      _parcelScrollController.position.maxScrollExtent,
+    if (_parcelPageIndex >= _parcels.length - 1) return;
+    _parcelPageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
     );
-    _parcelScrollController
-        .animateTo(
-          target,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-        )
-        .then((_) {
-          if (mounted) setState(() {});
-        });
   }
 
   bool get _parcelCanGoPrevious {
-    if (!_parcelScrollController.hasClients) return false;
-    return _parcelScrollController.offset > 1e-3;
+    return _parcelPageIndex > 0;
   }
 
   bool get _parcelCanGoNext {
-    if (!_parcelScrollController.hasClients) return _parcels.length > 1;
-    return _parcelScrollController.offset <
-        _parcelScrollController.position.maxScrollExtent - 1e-3;
+    return _parcelPageIndex < _parcels.length - 1;
   }
 
   void _tripPrevious() {
-    if (!_tripScrollController.hasClients) return;
-    final target = (_tripScrollController.offset - _tripScrollStep).clamp(
-      0.0,
-      _tripScrollController.position.maxScrollExtent,
+    if (_tripPageIndex <= 0) return;
+    _tripPageController.previousPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
     );
-    _tripScrollController
-        .animateTo(
-          target,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-        )
-        .then((_) {
-          if (mounted) setState(() {});
-        });
   }
 
   void _tripNext() {
-    if (!_tripScrollController.hasClients) return;
-    final target = (_tripScrollController.offset + _tripScrollStep).clamp(
-      0.0,
-      _tripScrollController.position.maxScrollExtent,
+    if (_tripPageIndex >= _trips.length - 1) return;
+    _tripPageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
     );
-    _tripScrollController
-        .animateTo(
-          target,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-        )
-        .then((_) {
-          if (mounted) setState(() {});
-        });
   }
 
   bool get _tripCanGoPrevious {
-    if (!_tripScrollController.hasClients) return false;
-    return _tripScrollController.offset > 1e-3;
+    return _tripPageIndex > 0;
   }
 
   bool get _tripCanGoNext {
-    if (!_tripScrollController.hasClients) return _trips.length > 1;
-    return _tripScrollController.offset <
-        _tripScrollController.position.maxScrollExtent - 1e-3;
+    return _tripPageIndex < _trips.length - 1;
   }
 
   // Static data for now (easy to replace with backend models later).
@@ -227,10 +176,8 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
   @override
   void dispose() {
-    _parcelScrollController.removeListener(_onCarouselScrollChanged);
-    _tripScrollController.removeListener(_onCarouselScrollChanged);
-    _parcelScrollController.dispose();
-    _tripScrollController.dispose();
+    _parcelPageController.dispose();
+    _tripPageController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -251,7 +198,6 @@ class _HomeTabPageState extends State<HomeTabPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.tripClipColors;
     final light = Theme.of(context).brightness == Brightness.light;
 
     final greetingColor = light ? const Color(0xFF141E46) : Colors.white;
@@ -326,6 +272,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                     canGoNext: _parcelCanGoNext,
                   ),
                 ),
+                const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: _sectionHorizontalPadding,
@@ -377,19 +324,24 @@ class _HomeTabPageState extends State<HomeTabPage> {
                               duration: const Duration(milliseconds: 180),
                               curve: Curves.easeOutCubic,
                               height: _parcelCarouselHeight,
-                              child: ListView.separated(
+                              child: PageView.builder(
                                 clipBehavior: Clip.none,
-                                controller: _parcelScrollController,
-                                scrollDirection: Axis.horizontal,
-                                physics: const BouncingScrollPhysics(),
+                                controller: _parcelPageController,
+                                padEnds: false,
+                                onPageChanged: (i) =>
+                                    setState(() => _parcelPageIndex = i),
                                 itemCount: _parcels.length,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(width: _carouselItemGap),
                                 itemBuilder: (context, i) {
                                   final p = _parcels[i];
-                                  return SizedBox(
-                                    width: slideW,
-                                    child: buildCard(p),
+                                  final isLast = i == _parcels.length - 1;
+                                  return Padding(
+                                    padding: EdgeInsetsDirectional.only(
+                                      end: isLast ? 0 : _carouselItemGap,
+                                    ),
+                                    child: SizedBox(
+                                      width: slideW,
+                                      child: buildCard(p),
+                                    ),
                                   );
                                 },
                               ),
@@ -399,7 +351,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: _sectionHorizontalPadding,
@@ -415,35 +367,32 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 const SizedBox(height: 8),
                 SizedBox(
                   height: _tripCarouselHeight,
-                  child: SingleChildScrollView(
+                  child: PageView.builder(
                     clipBehavior: Clip.none,
-                    controller: _tripScrollController,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: _sectionHorizontalPadding,
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var i = 0; i < _trips.length; i++) ...[
-                          if (i > 0) const SizedBox(width: _carouselItemGap),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: _carouselCardShadowMargin,
-                            ),
-                            child: TripClipHeadingCard(
-                              width: _tripCardWidth,
-                              height: 150,
-                              heading: _trips[i].heading,
-                              body: _trips[i].body,
-                              backgroundImage: _trips[i].image,
-                              initialFavorite: _trips[i].isFavorite,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+                    controller: _tripPageController,
+                    padEnds: false,
+                    onPageChanged: (i) => setState(() => _tripPageIndex = i),
+                    itemCount: _trips.length,
+                    itemBuilder: (context, i) {
+                      final t = _trips[i];
+                      final isLast = i == _trips.length - 1;
+                      return Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: i == 0 ? _sectionHorizontalPadding : 0,
+                          end: isLast
+                              ? _sectionHorizontalPadding
+                              : _carouselItemGap,
+                        ),
+                        child: TripClipHeadingCard(
+                          width: _tripCardWidth,
+                          height: 150,
+                          heading: t.heading,
+                          body: t.body,
+                          backgroundImage: t.image,
+                          initialFavorite: t.isFavorite,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
