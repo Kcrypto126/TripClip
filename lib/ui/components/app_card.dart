@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/trip_clip_colors.dart';
 import '../foundations/app_spacing.dart';
+import 'cards/trip_clip_card_shadows.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -22,12 +23,15 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.tripClipColors;
+    final light = Theme.of(context).brightness == Brightness.light;
+    final r = BorderRadius.circular(12);
+
     final card = Card(
       clipBehavior: Clip.antiAlias,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: r,
         side: bordered
             ? BorderSide(color: colors.borderSubtle)
             : BorderSide.none,
@@ -35,12 +39,20 @@ class AppCard extends StatelessWidget {
       child: Padding(padding: padding, child: child),
     );
 
-    if (onTap == null) return card;
+    final wrapped = DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: r,
+        boxShadow: TripClipCardShadows.whenLight(light),
+      ),
+      child: card,
+    );
+
+    if (onTap == null) return wrapped;
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      child: card,
+      child: wrapped,
     );
   }
 }

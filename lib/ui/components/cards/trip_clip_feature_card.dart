@@ -6,6 +6,7 @@ import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../trip_clip_avatar.dart';
 import 'trip_clip_card_divider.dart';
+import 'trip_clip_card_shadows.dart';
 
 class TripClipFeatureCard extends StatefulWidget {
   const TripClipFeatureCard({
@@ -125,15 +126,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: light
-            ? [
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
+        boxShadow: TripClipCardShadows.whenLight(light),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

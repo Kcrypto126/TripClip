@@ -6,6 +6,7 @@ import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../trip_clip_avatar.dart';
 import 'trip_clip_card_divider.dart';
+import 'trip_clip_card_shadows.dart';
 
 class TripClipSemiFeatureCard extends StatelessWidget {
   const TripClipSemiFeatureCard({
@@ -111,132 +112,129 @@ class TripClipSemiFeatureCard extends StatelessWidget {
     final sectionTextColor = light ? TripClipPalette.tertiary500 : Colors.white;
     final footerTextColor = ratingTextColor;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: light
-            ? [
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    heading,
-                    style: _rubik(
-                      size: 22,
-                      lineHeight: 26,
-                      weight: FontWeight.w600,
-                      color: headingColor,
+    // [PageView] etc. can pass a tall max height; shrink-wrap so padding stays even.
+    return Align(
+      alignment: Alignment.topCenter,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: TripClipCardShadows.whenLight(light),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      heading,
+                      style: _rubik(
+                        size: 22,
+                        lineHeight: 26,
+                        weight: FontWeight.w600,
+                        color: headingColor,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                TripClipBadgeClip(
-                  label: badgeLabel,
-                  flexibleLabel: badgeFlexibleLabel,
-                ),
-              ],
-            ),
-            TripClipCardDivider(color: dividerColor),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: 120,
-                    height: 90,
-                    child: Image(image: image, fit: BoxFit.cover),
+                  const SizedBox(width: 12),
+                  TripClipBadgeClip(
+                    label: badgeLabel,
+                    flexibleLabel: badgeFlexibleLabel,
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'PICKUP',
-                        style: _rubik(
-                          size: 12,
-                          lineHeight: 14,
-                          weight: FontWeight.w500,
-                          color: ratingTextColor,
+                ],
+              ),
+              TripClipCardDivider(color: dividerColor),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: SizedBox(
+                      width: 120,
+                      height: 90,
+                      child: Image(image: image, fit: BoxFit.cover),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'PICKUP',
+                          style: _rubik(
+                            size: 12,
+                            lineHeight: 14,
+                            weight: FontWeight.w500,
+                            color: ratingTextColor,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      _IconText(
-                        iconAsset: 'assets/icons/location.svg',
-                        iconColor: otherIconColor,
-                        text: pickupLocation,
-                        textColor: sectionTextColor,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'DELIVERY',
-                        style: _rubik(
-                          size: 12,
-                          lineHeight: 14,
-                          weight: FontWeight.w500,
-                          color: ratingTextColor,
+                        const SizedBox(height: 8),
+                        _IconText(
+                          iconAsset: 'assets/icons/location.svg',
+                          iconColor: otherIconColor,
+                          text: pickupLocation,
+                          textColor: sectionTextColor,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      _IconText(
-                        iconAsset: 'assets/icons/location.svg',
-                        iconColor: otherIconColor,
-                        text: deliveryLocation,
-                        textColor: sectionTextColor,
-                      ),
-                    ],
+                        const SizedBox(height: 12),
+                        Text(
+                          'DELIVERY',
+                          style: _rubik(
+                            size: 12,
+                            lineHeight: 14,
+                            weight: FontWeight.w500,
+                            color: ratingTextColor,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _IconText(
+                          iconAsset: 'assets/icons/location.svg',
+                          iconColor: otherIconColor,
+                          text: deliveryLocation,
+                          textColor: sectionTextColor,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            TripClipCardDivider(color: dividerColor),
-            Row(
-              children: [
-                _verifiedAvatar(verified: verified, badgeFill: verifyColor),
-                const SizedBox(width: 12),
-                _IconText(
-                  iconAsset: 'assets/icons/package.svg',
-                  iconColor: otherIconColor,
-                  text: itemsText,
-                  textColor: sectionTextColor,
-                ),
-                const SizedBox(width: 12),
-                _IconText(
-                  iconAsset: 'assets/icons/weight.svg',
-                  iconColor: otherIconColor,
-                  text: weightText,
-                  textColor: sectionTextColor,
-                ),
-                const Spacer(),
-                Text(
-                  footerDateText,
-                  style: _rubik(
-                    size: 12,
-                    lineHeight: 18,
-                    weight: FontWeight.w400,
-                    color: footerTextColor,
+                ],
+              ),
+              TripClipCardDivider(color: dividerColor),
+              Row(
+                children: [
+                  _verifiedAvatar(verified: verified, badgeFill: verifyColor),
+                  const SizedBox(width: 12),
+                  _IconText(
+                    iconAsset: 'assets/icons/package.svg',
+                    iconColor: otherIconColor,
+                    text: itemsText,
+                    textColor: sectionTextColor,
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 12),
+                  _IconText(
+                    iconAsset: 'assets/icons/weight.svg',
+                    iconColor: otherIconColor,
+                    text: weightText,
+                    textColor: sectionTextColor,
+                  ),
+                  const Spacer(),
+                  Text(
+                    footerDateText,
+                    style: _rubik(
+                      size: 12,
+                      lineHeight: 18,
+                      weight: FontWeight.w400,
+                      color: footerTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../badges/trip_clip_badge_status.dart';
 import 'trip_clip_card_divider.dart';
+import 'trip_clip_card_shadows.dart';
 
 /// Result card: status + progress, heading + price badge, locations, footer stats.
 /// Styling matches [TripClipFeatureCard] / [TripClipSemiFeatureCard] (surface,
@@ -87,15 +88,7 @@ class TripClipResultCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: light
-            ? [
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
+        boxShadow: TripClipCardShadows.whenLight(light),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
