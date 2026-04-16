@@ -15,8 +15,7 @@ class TripClipSemiFeatureCard extends StatelessWidget {
     required this.heading,
     required this.badgeLabel,
     this.badgeFlexibleLabel,
-    required this.userName,
-    this.ratingText,
+    this.avatarUrl,
     this.verified = true,
     required this.pickupLocation,
     required this.deliveryLocation,
@@ -32,8 +31,7 @@ class TripClipSemiFeatureCard extends StatelessWidget {
   final String badgeLabel;
   final String? badgeFlexibleLabel;
 
-  final String userName;
-  final String? ratingText;
+  final String? avatarUrl;
   final bool verified;
 
   final String pickupLocation;
@@ -60,6 +58,7 @@ class TripClipSemiFeatureCard extends StatelessWidget {
   static Widget _verifiedAvatar({
     required bool verified,
     required Color badgeFill,
+    ImageProvider<Object>? avatarImage,
   }) {
     return SizedBox(
       width: TripClipAvatarSize.s32.px,
@@ -67,7 +66,7 @@ class TripClipSemiFeatureCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          const TripClipAvatar(size: TripClipAvatarSize.s32),
+          TripClipAvatar(size: TripClipAvatarSize.s32, image: avatarImage),
           if (verified)
             PositionedDirectional(
               end: -4,
@@ -88,6 +87,11 @@ class TripClipSemiFeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final light = Theme.of(context).brightness == Brightness.light;
+
+    final ImageProvider<Object>? avatarImage =
+        (avatarUrl != null && avatarUrl!.trim().isNotEmpty)
+        ? NetworkImage(avatarUrl!.trim())
+        : null;
 
     final bg = light ? TripClipPalette.neutral100 : TripClipPalette.neutral900;
     final headingColor = light
@@ -206,7 +210,11 @@ class TripClipSemiFeatureCard extends StatelessWidget {
               TripClipCardDivider(color: dividerColor),
               Row(
                 children: [
-                  _verifiedAvatar(verified: verified, badgeFill: verifyColor),
+                  _verifiedAvatar(
+                    verified: verified,
+                    badgeFill: verifyColor,
+                    avatarImage: avatarImage,
+                  ),
                   const SizedBox(width: 12),
                   _IconText(
                     iconAsset: 'assets/icons/package.svg',

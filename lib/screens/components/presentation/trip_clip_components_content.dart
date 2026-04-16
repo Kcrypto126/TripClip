@@ -136,8 +136,6 @@ class _TripClipComponentsContentState extends State<TripClipComponentsContent> {
                     heading: 'Spare Engine Parts:\nMelbourne to Cairns',
                     badgeLabel: r'$750',
                     badgeFlexibleLabel: 'Flexible',
-                    userName: 'User Name',
-                    ratingText: '4.8 (55)',
                     pickupLocation: 'Brighton-Le-Sands NSW',
                     deliveryLocation: 'Ringwood North VIC',
                     itemsText: '3 Items',

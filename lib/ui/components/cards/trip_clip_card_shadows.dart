@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 abstract final class TripClipCardShadows {
   static const List<BoxShadow> light = [
     BoxShadow(
-      color: Color.fromARGB(255, 252, 8, 8),
-      blurRadius: 8,
+      color: Color(0x40FFFFFF),
+      blurRadius: 4,
       offset: Offset(0, 2),
     ),
   ];
