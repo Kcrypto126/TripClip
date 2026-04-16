@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screens/loading/presentation/trip_clip_start_loading_page.dart';
+import '../screens/onboarding/presentation/trip_clip_onboarding_splash_page.dart';
 import '../screens/welcome/presentation/trip_clip_welcome_splash_page.dart';
 import '../ui/shell/main_shell_page.dart';
 import 'theme/trip_clip_theme.dart';
@@ -12,7 +13,7 @@ class TripClipApp extends StatefulWidget {
   State<TripClipApp> createState() => _TripClipAppState();
 }
 
-enum _BootPhase { loading, welcome, shell }
+enum _BootPhase { loading, welcome, onboarding, shell }
 
 class _TripClipAppState extends State<TripClipApp> {
   ThemeMode _themeMode = ThemeMode.system;
@@ -29,7 +30,17 @@ class _TripClipAppState extends State<TripClipApp> {
 
   void _onWelcomeContinue() {
     if (!mounted) return;
+    setState(() => _bootPhase = _BootPhase.onboarding);
+  }
+
+  void _onOnboardingComplete() {
+    if (!mounted) return;
     setState(() => _bootPhase = _BootPhase.shell);
+  }
+
+  void _onOnboardingBackToWelcome() {
+    if (!mounted) return;
+    setState(() => _bootPhase = _BootPhase.welcome);
   }
 
   void _replayStartLoading() {
@@ -59,6 +70,10 @@ class _TripClipAppState extends State<TripClipApp> {
           _BootPhase.welcome => TripClipWelcomeSplashPage(
             onContinue: _onWelcomeContinue,
           ),
+          _BootPhase.onboarding => TripClipOnboardingSplashPage(
+            onComplete: _onOnboardingComplete,
+            onBackToWelcome: _onOnboardingBackToWelcome,
+          ),
           _BootPhase.shell => const MainShellPage(),
         },
       ),
@@ -78,7 +93,7 @@ class TripClipAppScope extends InheritedWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> applyThemeMode;
 
-  /// Replays the SVG loading sequence, then the welcome tap screen, then [MainShellPage].
+  /// Replays loading, welcome, onboarding, then [MainShellPage].
   final VoidCallback replayStartLoading;
 
   static TripClipAppScope of(BuildContext context) {

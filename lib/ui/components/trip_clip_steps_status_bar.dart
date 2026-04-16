@@ -11,6 +11,8 @@ class TripClipStepsStatusBar extends StatelessWidget {
     this.showRightChevron = false,
     this.onStepChanged,
     this.onExitAtFirstStep,
+    this.chevronColor,
+    this.trackColor,
   }) : assert(totalSteps >= 1);
 
   static const int defaultTotalSteps = 5;
@@ -25,10 +27,19 @@ class TripClipStepsStatusBar extends StatelessWidget {
 
   final VoidCallback? onExitAtFirstStep;
 
+  /// When set, used instead of theme-based chevron tint (e.g. on brand backgrounds).
+  final Color? chevronColor;
+
+  /// When set, used instead of theme-based track color behind the orange progress.
+  final Color? trackColor;
+
   static int clampStep(int step, {int totalSteps = defaultTotalSteps}) =>
       step.clamp(0, totalSteps - 1);
 
-  static double progressWidthFactor(int step, {int totalSteps = defaultTotalSteps}) {
+  static double progressWidthFactor(
+    int step, {
+    int totalSteps = defaultTotalSteps,
+  }) {
     final s = clampStep(step, totalSteps: totalSteps);
     if (totalSteps <= 1) return 0;
     return (s / (totalSteps - 1)).clamp(0.0, 1.0);
@@ -65,9 +76,12 @@ class TripClipStepsStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final light = Theme.of(context).brightness == Brightness.light;
     final iconColor =
-        light ? TripClipPalette.tertiary500 : Colors.white;
-    final trackColor = light ? _trackLight : _trackDark;
-    final widthFactor = progressWidthFactor(currentStep, totalSteps: totalSteps);
+        chevronColor ?? (light ? TripClipPalette.tertiary500 : Colors.white);
+    final resolvedTrackColor = trackColor ?? (light ? _trackLight : _trackDark);
+    final widthFactor = progressWidthFactor(
+      currentStep,
+      totalSteps: totalSteps,
+    );
     final clamped = clampStep(currentStep, totalSteps: totalSteps);
     final canGoForward = clamped < totalSteps - 1;
 
@@ -111,7 +125,7 @@ class TripClipStepsStatusBar extends StatelessWidget {
                     fit: StackFit.expand,
                     clipBehavior: Clip.hardEdge,
                     children: [
-                      ColoredBox(color: trackColor),
+                      ColoredBox(color: resolvedTrackColor),
                       PositionedDirectional(
                         start: 0,
                         top: 0,
@@ -158,10 +172,7 @@ class _ChevronCircleButton extends StatelessWidget {
               width: TripClipStepsStatusBar._chevronIconSize,
               height: TripClipStepsStatusBar._chevronIconSize,
               alignment: Alignment.center,
-              colorFilter: ColorFilter.mode(
-                iconColor,
-                BlendMode.srcIn,
-              ),
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
           ),
         ),
