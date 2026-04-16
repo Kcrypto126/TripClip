@@ -1,18 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/theme/trip_clip_colors.dart';
+import '../../../app/theme/trip_clip_palette.dart';
+import '../../../ui/components/cards/trip_clip_heading_card.dart';
+import '../../../ui/components/cards/trip_clip_semi_feature_card.dart';
+import '../../../ui/components/forms/trip_clip_atom_input.dart';
 import '../../../ui/components/trip_clip_home_app_bar.dart';
 import '../../components/presentation/components_page.dart';
 
-class HomeTabPage extends StatelessWidget {
+class HomeTabPage extends StatefulWidget {
   const HomeTabPage({super.key});
 
+  @override
+  State<HomeTabPage> createState() => _HomeTabPageState();
+}
+
+class _HomeTabPageState extends State<HomeTabPage> {
   static const int _favorites = 3;
   static const int _notifications = 9;
+
+  /// Vertical space for [TripClipSemiFeatureCard] in the parcels carousel.
+  static const double _homeParcelCarouselHeight = 280;
+
+  final TextEditingController _searchController = TextEditingController();
+
+  // Static data for now (easy to replace with backend models later).
+  final List<_ParcelCardData> _parcels = const [
+    _ParcelCardData(
+      heading: 'Spare Ute Parts',
+      priceLabel: r'$50',
+      pickupLocation: 'Fitzroy VIC 3065',
+      deliveryLocation: 'Ringwood North VIC 3134',
+      itemsText: '3 Items',
+      weightText: '35 kg',
+      footerDateText: 'Feb 17, 2026',
+    ),
+    _ParcelCardData(
+      heading: 'Spare Engine Parts',
+      priceLabel: r'$750',
+      pickupLocation: 'Brighton-Le-Sands NSW',
+      deliveryLocation: 'Ringwood North VIC',
+      itemsText: '3 Items',
+      weightText: 'XX kg',
+      footerDateText: 'Jan 14, 2026',
+    ),
+  ];
+
+  final List<_TripCardData> _trips = const [
+    _TripCardData(
+      heading: 'Melbourne CBD',
+      body: '150 Trips',
+      image: AssetImage('assets/images/bridge.jpg'),
+    ),
+    _TripCardData(
+      heading: 'Fitzroy',
+      body: '10 Trips',
+      image: AssetImage('assets/images/s_street.jpg'),
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  static TextStyle _rubik({
+    required double size,
+    required double lineHeight,
+    required FontWeight weight,
+    required Color color,
+    double letterSpacing = 0,
+  }) => GoogleFonts.rubik(
+    fontSize: size,
+    height: lineHeight / size,
+    fontWeight: weight,
+    letterSpacing: letterSpacing,
+    color: color,
+  );
 
   @override
   Widget build(BuildContext context) {
     final colors = context.tripClipColors;
+    final light = Theme.of(context).brightness == Brightness.light;
+
+    // Spec: #141E46 (light), #ffffff (dark)
+    final greetingColor = light ? const Color(0xFF141E46) : Colors.white;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -27,18 +102,418 @@ class HomeTabPage extends StatelessWidget {
           },
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(
-              child: Text(
-                'Tap the bell icon to open Components.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colors.textSubtle,
-                  fontSize: 14,
-                  height: 20 / 14,
-                  letterSpacing: 0,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Good morning, John',
+                  style: _rubik(
+                    size: 16,
+                    lineHeight: 24,
+                    weight: FontWeight.w600,
+                    letterSpacing: 0,
+                    color: greetingColor,
+                  ),
                 ),
+                const SizedBox(height: 8),
+                TripClipAtomInput(
+                  controller: _searchController,
+                  hintText: 'Search TripClip',
+                  showTrailing: false,
+                  showLeading: true,
+                  leading: SvgPicture.asset(
+                    'assets/icons/search.svg',
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      light
+                          ? TripClipPalette.neutral600
+                          : TripClipPalette.neutral300,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                const _SectionHeader(title: 'My Parcels'),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: _homeParcelCarouselHeight,
+                  child: PageView.builder(
+                    itemCount: _parcels.length,
+                    controller: PageController(viewportFraction: 1),
+                    itemBuilder: (context, i) {
+                      final p = _parcels[i];
+                      return TripClipSemiFeatureCard(
+                        heading: p.heading,
+                        badgeLabel: p.priceLabel,
+                        userName: 'User Name',
+                        ratingText: '4.8 (55)',
+                        pickupLocation: p.pickupLocation,
+                        deliveryLocation: p.deliveryLocation,
+                        itemsText: p.itemsText,
+                        weightText: p.weightText,
+                        footerDateText: p.footerDateText,
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 40),
+                const _SectionHeader(title: 'Recommend Trips'),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 150,
+                  child: PageView.builder(
+                    itemCount: _trips.length,
+                    padEnds: false,
+                    controller: PageController(viewportFraction: 0.62),
+                    itemBuilder: (context, i) {
+                      final t = _trips[i];
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          right: i == _trips.length - 1 ? 0 : 12,
+                        ),
+                        child: TripClipHeadingCard(
+                          width: 200,
+                          height: 150,
+                          heading: t.heading,
+                          body: t.body,
+                          backgroundImage: t.image,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Text(
+                  'Static data for now (backend integration coming soon).',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colors.textSubtle,
+                    height: 20 / 12,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final light = Theme.of(context).brightness == Brightness.light;
+    final titleColor = light ? TripClipPalette.tertiary500 : Colors.white;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: GoogleFonts.rubik(
+              fontSize: 22,
+              height: 26 / 22,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0,
+              color: titleColor,
+            ),
+          ),
+        ),
+        const SizedBox(width: 40, height: 40),
+      ],
+    );
+  }
+}
+
+class _ParcelCardData {
+  const _ParcelCardData({
+    required this.heading,
+    required this.priceLabel,
+    required this.pickupLocation,
+    required this.deliveryLocation,
+    required this.itemsText,
+    required this.weightText,
+    required this.footerDateText,
+  });
+
+  final String heading;
+  final String priceLabel;
+  final String pickupLocation;
+  final String deliveryLocation;
+  final String itemsText;
+  final String weightText;
+  final String footerDateText;
+}
+
+class _TripCardData {
+  const _TripCardData({
+    required this.heading,
+    required this.body,
+    required this.image,
+  });
+
+  final String heading;
+  final String body;
+  final ImageProvider<Object> image;
+}
+
+/*
+// NOTE: File was duplicated multiple times by a previous edit.
+// It is intentionally overwritten in full by Cursor tooling to keep a single
+// implementation. If you see this line, something went wrong with the overwrite.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../app/theme/trip_clip_colors.dart';
+import '../../../app/theme/trip_clip_palette.dart';
+import '../../../ui/components/cards/trip_clip_heading_card.dart';
+import '../../../ui/components/cards/trip_clip_semi_feature_card.dart';
+import '../../../ui/components/forms/trip_clip_atom_input.dart';
+import '../../../ui/components/trip_clip_home_app_bar.dart';
+import '../../components/presentation/components_page.dart';
+
+class HomeTabPage extends StatefulWidget {
+  const HomeTabPage({super.key});
+
+  @override
+  State<HomeTabPage> createState() => _HomeTabPageState();
+}
+
+class _HomeTabPageState extends State<HomeTabPage> {
+  static const int _favorites = 3;
+  static const int _notifications = 9;
+
+  final TextEditingController _searchController = TextEditingController();
+
+  // Static data for now (easy to replace with backend models later).
+  final List<_ParcelCardData> _parcels = const [
+    _ParcelCardData(
+      heading: 'Spare Ute Parts',
+      priceLabel: r'$50',
+      pickupLocation: 'Fitzroy VIC 3065',
+      deliveryLocation: 'Ringwood North VIC 3134',
+      itemsText: '3 Items',
+      weightText: '35 kg',
+      footerDateText: 'Feb 17, 2026',
+    ),
+    _ParcelCardData(
+      heading: 'Spare Engine Parts',
+      priceLabel: r'$750',
+      pickupLocation: 'Brighton-Le-Sands NSW',
+      deliveryLocation: 'Ringwood North VIC',
+      itemsText: '3 Items',
+      weightText: 'XX kg',
+      footerDateText: 'Jan 14, 2026',
+    ),
+  ];
+
+  final List<_TripCardData> _trips = const [
+    _TripCardData(
+      heading: 'Melbourne CBD',
+      body: '150 Trips',
+      image: AssetImage('assets/images/bridge.jpg'),
+    ),
+    _TripCardData(
+      heading: 'Fitzroy',
+      body: '10 Trips',
+      image: AssetImage('assets/images/s_street.jpg'),
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  static TextStyle _rubik({
+    required double size,
+    required double lineHeight,
+    required FontWeight weight,
+    required Color color,
+    double letterSpacing = 0,
+  }) =>
+      GoogleFonts.rubik(
+        fontSize: size,
+        height: lineHeight / size,
+        fontWeight: weight,
+        letterSpacing: letterSpacing,
+        color: color,
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.tripClipColors;
+    final light = Theme.of(context).brightness == Brightness.light;
+
+    final greetingColor = light ? const Color(0xFF141E46) : Colors.white;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TripClipHomeAppBar(
+          favoritesCount: _favorites,
+          notificationsCount: _notifications,
+          onNotificationsPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const ComponentsPage()),
+            );
+          },
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Good morning, John',
+                  style: _rubik(
+                    size: 16,
+                    lineHeight: 24,
+                    weight: FontWeight.w600,
+                    letterSpacing: 0,
+                    color: greetingColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TripClipAtomInput(
+                  controller: _searchController,
+                  hintText: 'Search TripClip',
+                  showTrailing: false,
+                  showLeading: true,
+                  leading: SvgPicture.asset(
+                    'assets/icons/search.svg',
+                    width: 24,
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      light
+                          ? TripClipPalette.neutral600
+                          : TripClipPalette.neutral300,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                _SectionHeader(
+                  title: 'My Parcels',
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 170,
+                  child: PageView.builder(
+                    itemCount: _parcels.length,
+                    controller: PageController(viewportFraction: 1),
+                    itemBuilder: (context, i) {
+                      final p = _parcels[i];
+                      return TripClipSemiFeatureCard(
+                        heading: p.heading,
+                        badgeLabel: p.priceLabel,
+                        userName: 'User Name',
+                        ratingText: '4.8 (55)',
+                        pickupLocation: p.pickupLocation,
+                        deliveryLocation: p.deliveryLocation,
+                        itemsText: p.itemsText,
+                        weightText: p.weightText,
+                        footerDateText: p.footerDateText,
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 40),
+                _SectionHeader(
+                  title: 'Recommend Trips',
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 150,
+                  child: PageView.builder(
+                    itemCount: _trips.length,
+                    padEnds: false,
+                    controller: PageController(viewportFraction: 0.62),
+                    itemBuilder: (context, i) {
+                      final t = _trips[i];
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          right: i == _trips.length - 1 ? 0 : 12,
+                        ),
+                        child: TripClipHeadingCard(
+                          width: 200,
+                          height: 150,
+                          heading: t.heading,
+                          body: t.body,
+                          backgroundImage: t.image,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Placeholder for upcoming backend integration.
+                Text(
+                  'Static data for now (backend integration coming soon).',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: colors.textSubtle,
+                        height: 20 / 12,
+                        letterSpacing: 0,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.onPressed});
+
+  final String title;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final light = Theme.of(context).brightness == Brightness.light;
+    final titleColor = light ? TripClipPalette.tertiary500 : Colors.white;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            title,
+            style: GoogleFonts.rubik(
+              fontSize: 22,
+              height: 26 / 22,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0,
+              color: titleColor,
+            ),
+          ),
+        ),
+        Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            onTap: onPressed,
+            customBorder: const CircleBorder(),
+            child: const SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(
+                child: Icon(Icons.chevron_right),
               ),
             ),
           ),
@@ -48,7 +523,38 @@ class HomeTabPage extends StatelessWidget {
   }
 }
 
-/*
+class _ParcelCardData {
+  const _ParcelCardData({
+    required this.heading,
+    required this.priceLabel,
+    required this.pickupLocation,
+    required this.deliveryLocation,
+    required this.itemsText,
+    required this.weightText,
+    required this.footerDateText,
+  });
+
+  final String heading;
+  final String priceLabel;
+  final String pickupLocation;
+  final String deliveryLocation;
+  final String itemsText;
+  final String weightText;
+  final String footerDateText;
+}
+
+class _TripCardData {
+  const _TripCardData({
+    required this.heading,
+    required this.body,
+    required this.image,
+  });
+
+  final String heading;
+  final String body;
+  final ImageProvider<Object> image;
+}
+
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/trip_clip_colors.dart';
