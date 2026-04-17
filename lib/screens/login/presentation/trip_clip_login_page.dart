@@ -4,18 +4,28 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
+import '../../auth/presentation/trip_clip_create_account_page.dart';
 import '../../../ui/components/buttons/trip_clip_button.dart';
 import '../../../ui/components/buttons/trip_clip_button_models.dart';
 import '../../../ui/components/buttons/trip_clip_button_styles.dart';
 import '../../../ui/components/forms/trip_clip_atom_input.dart';
 import '../../../ui/components/forms/trip_clip_form_models.dart';
 import '../../../ui/components/forms/trip_clip_form_message.dart';
+import '../../../ui/components/forms/trip_clip_password_visibility_toggle.dart';
 import '../../../ui/components/app_toast.dart';
 
 class TripClipLoginPage extends StatefulWidget {
-  const TripClipLoginPage({super.key, required this.onLoggedIn});
+  const TripClipLoginPage({
+    super.key,
+    required this.onLoggedIn,
+    this.onCreateAccount,
+  });
 
   final VoidCallback onLoggedIn;
+
+  /// When set (e.g. from [MainShellPage] auth overlay), opens create account on
+  /// the same navigator so the shell bottom bar stays visible.
+  final VoidCallback? onCreateAccount;
 
   static const Color backgroundColor = TripClipPalette.primary500; // #0000D2
 
@@ -302,7 +312,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                               leadingIconAsset: 'assets/icons/secure-lock.svg',
                               showTrailing: true,
                               status: _passwordStatus,
-                              trailing: _PasswordToggleIcon(
+                              trailing: TripClipPasswordVisibilityToggle(
                                 shown: _showPassword,
                                 active:
                                     _passwordFocus.hasFocus ||
@@ -379,7 +389,18 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                       TripClipButton(
                         variant: TripClipButtonVariant.tertiary,
                         label: 'Create Account',
-                        onPressed: () {},
+                        onPressed: () {
+                          if (widget.onCreateAccount != null) {
+                            widget.onCreateAccount!();
+                          } else {
+                            Navigator.of(context).push<void>(
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const TripClipCreateAccountPage(),
+                              ),
+                            );
+                          }
+                        },
                         styleOverride: _textLinkButtonStyle(
                           footerStyle.copyWith(
                             decoration: TextDecoration.underline,
@@ -445,54 +466,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
         return Colors.white;
       }),
     );
-  }
-}
-
-class _PasswordToggleIcon extends StatelessWidget {
-  const _PasswordToggleIcon({
-    required this.shown,
-    required this.onPressed,
-    required this.active,
-    required this.status,
-  });
-
-  final bool shown;
-  final VoidCallback onPressed;
-  final bool active;
-  final TripClipFormStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.all(4),
-          child: SvgPicture.asset(
-            shown ? 'assets/icons/view-off.svg' : 'assets/icons/view.svg',
-            width: 24,
-            height: 24,
-            fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(_iconColor(), BlendMode.srcIn),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _iconColor() {
-    return switch (status) {
-      TripClipFormStatus.error => const Color(0xFFA4332B),
-      TripClipFormStatus.warning => const Color(0xFF9E6E0F),
-      TripClipFormStatus.success => const Color(0xFF1C845C),
-      TripClipFormStatus.none =>
-        active
-            ? TripClipPalette
-                  .tertiary500 // #141E46 (focused/active)
-            : TripClipPalette.neutral600, // #757E8A (default)
-    };
   }
 }
 

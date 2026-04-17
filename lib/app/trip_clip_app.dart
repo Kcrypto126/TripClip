@@ -63,6 +63,13 @@ class _TripClipAppState extends State<TripClipApp> {
       replayStartLoading: _replayStartLoading,
       isLoggedIn: _isLoggedIn,
       setLoggedIn: _setLoggedIn,
+      goToMainShell: () {
+        if (!mounted) return;
+        setState(() {
+          _isLoggedIn = true;
+          _bootPhase = _BootPhase.shell;
+        });
+      },
       child: MaterialApp(
         title: 'TripClip',
         theme: TripClipTheme.light(),
@@ -85,8 +92,11 @@ class _TripClipAppState extends State<TripClipApp> {
           ),
           _BootPhase.login => TripClipLoginPage(
             onLoggedIn: () {
-              _setLoggedIn(true);
-              setState(() => _bootPhase = _BootPhase.shell);
+              if (!mounted) return;
+              setState(() {
+                _isLoggedIn = true;
+                _bootPhase = _BootPhase.shell;
+              });
             },
           ),
           _BootPhase.shell => const MainShellPage(),
@@ -104,6 +114,7 @@ class TripClipAppScope extends InheritedWidget {
     required this.replayStartLoading,
     required this.isLoggedIn,
     required this.setLoggedIn,
+    required this.goToMainShell,
     required super.child,
   });
 
@@ -115,6 +126,9 @@ class TripClipAppScope extends InheritedWidget {
 
   final bool isLoggedIn;
   final ValueChanged<bool> setLoggedIn;
+
+  /// Marks the user signed in and shows [MainShellPage] (home tab is index 0).
+  final VoidCallback goToMainShell;
 
   static TripClipAppScope of(BuildContext context) {
     final scope = context
@@ -129,6 +143,7 @@ class TripClipAppScope extends InheritedWidget {
         oldWidget.applyThemeMode != applyThemeMode ||
         oldWidget.replayStartLoading != replayStartLoading ||
         oldWidget.isLoggedIn != isLoggedIn ||
-        oldWidget.setLoggedIn != setLoggedIn;
+        oldWidget.setLoggedIn != setLoggedIn ||
+        oldWidget.goToMainShell != goToMainShell;
   }
 }

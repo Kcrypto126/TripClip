@@ -1,0 +1,1 @@
+enum TripClipAccountType { individual, business }

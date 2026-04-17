@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
@@ -28,6 +29,7 @@ class TripClipAtomInput extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.onSubmitted,
+    this.inputFormatters,
   });
 
   static const String defaultLeadingIconAsset = 'assets/icons/user1.svg';
@@ -63,6 +65,8 @@ class TripClipAtomInput extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
+
+  final List<TextInputFormatter>? inputFormatters;
 
   /// Horizontal inset; vertical size comes from [fieldHeight] / [fieldHeightLarge].
   static const EdgeInsets contentPadding =
@@ -251,6 +255,7 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
                 keyboardType: widget.keyboardType,
                 textInputAction: widget.textInputAction,
                 onSubmitted: widget.onSubmitted,
+                inputFormatters: widget.inputFormatters,
                 style: fieldStyle,
                 minLines: 1,
                 maxLines: 1,

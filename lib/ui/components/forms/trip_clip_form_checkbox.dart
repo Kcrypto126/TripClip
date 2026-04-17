@@ -9,11 +9,17 @@ class TripClipFormCheckbox extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.label,
+    this.labelWidget,
   });
 
   final bool value;
   final ValueChanged<bool>? onChanged;
+
+  /// Used for semantics and as the visible label when [labelWidget] is null.
   final String label;
+
+  /// When set, replaces the default [Text] built from [label] (e.g. inline link).
+  final Widget? labelWidget;
 
   static const double _iconSize = 24;
   static const double _checkIconSize = 16;
@@ -44,10 +50,16 @@ class TripClipFormCheckbox extends StatelessWidget {
         onTap: enabled ? () => onChanged!(!value) : null,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _TripClipCheckboxIcon(value: value, isDark: isDark),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(child: Text(label, style: labelStyle)),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: labelWidget ?? Text(label, style: labelStyle),
+              ),
+            ),
           ],
         ),
       ),
