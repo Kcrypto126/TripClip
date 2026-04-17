@@ -187,7 +187,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
 
     AppToast.show(
       context,
-      message: 'Login successful.',
+      message: 'Logged in successful.',
       kind: AppToastKind.success,
     );
     widget.onLoggedIn();
@@ -280,6 +280,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                               hintText: 'your@email.com',
                               leadingIconAsset: 'assets/icons/email.svg',
                               showTrailing: true,
+                              hideTrailingWhenStatusNone: true,
                               status: _emailStatus,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,

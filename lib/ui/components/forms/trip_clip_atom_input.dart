@@ -16,6 +16,7 @@ class TripClipAtomInput extends StatefulWidget {
     this.trailing,
     this.showLeading = true,
     this.showTrailing = true,
+    this.hideTrailingWhenStatusNone = false,
     this.leadingIconAsset,
     this.trailingIconAsset,
     this.onTap,
@@ -49,6 +50,7 @@ class TripClipAtomInput extends StatefulWidget {
   final Widget? trailing;
   final bool showLeading;
   final bool showTrailing;
+  final bool hideTrailingWhenStatusNone;
   final String? leadingIconAsset;
   final String? trailingIconAsset;
   final VoidCallback? onTap;
@@ -190,19 +192,28 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
 
     Widget? trailing;
     if (widget.showTrailing) {
-      final trailingColor = widget.status != TripClipFormStatus.none
-          ? dec.hintOrPlaceholder
-          : dec.foreground;
-      trailing =
-          widget.trailing ??
-          _TripClipAtomSvg(
-            asset:
-                widget.trailingIconAsset ??
-                TripClipAtomInput.defaultTrailingIconAssetForStatus(
-                  widget.status,
-                ),
-            color: trailingColor,
-          );
+      final shouldHideTrailing =
+          widget.hideTrailingWhenStatusNone &&
+          widget.status == TripClipFormStatus.none &&
+          widget.trailing == null &&
+          widget.trailingIconAsset == null;
+      if (shouldHideTrailing) {
+        trailing = null;
+      } else {
+        final trailingColor = widget.status != TripClipFormStatus.none
+            ? dec.hintOrPlaceholder
+            : dec.foreground;
+        trailing =
+            widget.trailing ??
+            _TripClipAtomSvg(
+              asset:
+                  widget.trailingIconAsset ??
+                  TripClipAtomInput.defaultTrailingIconAssetForStatus(
+                    widget.status,
+                  ),
+              color: trailingColor,
+            );
+      }
     } else {
       // Still allow a custom trailing widget even when the default trailing icon is hidden.
       trailing = widget.trailing;
