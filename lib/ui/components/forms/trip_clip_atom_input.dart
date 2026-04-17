@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
@@ -9,6 +10,7 @@ class TripClipAtomInput extends StatefulWidget {
   const TripClipAtomInput({
     super.key,
     this.controller,
+    this.focusNode,
     this.hintText,
     this.leading,
     this.trailing,
@@ -28,7 +30,8 @@ class TripClipAtomInput extends StatefulWidget {
 
   static const String defaultLeadingIconAsset = 'assets/icons/user1.svg';
 
-  static const String defaultTrailingIconAsset = 'assets/icons/chevron-down.svg';
+  static const String defaultTrailingIconAsset =
+      'assets/icons/chevron-down.svg';
 
   static String defaultTrailingIconAssetForStatus(TripClipFormStatus status) {
     return switch (status) {
@@ -40,6 +43,7 @@ class TripClipAtomInput extends StatefulWidget {
   }
 
   final TextEditingController? controller;
+  final FocusNode? focusNode;
   final String? hintText;
   final Widget? leading;
   final Widget? trailing;
@@ -69,9 +73,15 @@ class TripClipAtomInput extends StatefulWidget {
 }
 
 class _TripClipAtomInputState extends State<TripClipAtomInput> {
-  final FocusNode _focusNode = FocusNode();
+  FocusNode? _internalFocus;
+  FocusNode? _boundFocus;
   TextEditingController? _internal;
   TextEditingController? _bound;
+
+  FocusNode get _focusNode {
+    _boundFocus ??= (widget.focusNode ?? (_internalFocus ??= FocusNode()));
+    return _boundFocus!;
+  }
 
   void _onFocusChanged() => setState(() {});
 
@@ -109,6 +119,13 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
     if (oldWidget.controller != widget.controller) {
       _bindController();
     }
+    if (oldWidget.focusNode != widget.focusNode) {
+      _boundFocus?.removeListener(_onFocusChanged);
+      _internalFocus?.dispose();
+      _internalFocus = null;
+      _boundFocus = null;
+      _focusNode.addListener(_onFocusChanged);
+    }
   }
 
   @override
@@ -121,8 +138,8 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
   void dispose() {
     _bound?.removeListener(_onControllerChanged);
     _internal?.dispose();
-    _focusNode.removeListener(_onFocusChanged);
-    _focusNode.dispose();
+    _boundFocus?.removeListener(_onFocusChanged);
+    _internalFocus?.dispose();
     super.dispose();
   }
 
@@ -147,30 +164,43 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
     final showDisabledOpacity = !widget.enabled;
 
     final fieldStyle = theme.textTheme.bodyLarge?.copyWith(
-          color: dec.foreground,
-          fontSize: 16,
-          height: 24 / 16,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0,
-        );
+      color: dec.foreground,
+      fontSize: 16,
+      height: 24 / 16,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+    );
 
     Widget? leading;
     if (widget.showLeading) {
-      leading = widget.leading ??
+      final leadingColor = (focused || _hasValue)
+          ? dec.foreground
+          : TripClipPalette.neutral500;
+      leading =
+          widget.leading ??
           _TripClipAtomSvg(
-            asset: widget.leadingIconAsset ?? TripClipAtomInput.defaultLeadingIconAsset,
-            color: dec.foreground,
+            asset:
+                widget.leadingIconAsset ??
+                TripClipAtomInput.defaultLeadingIconAsset,
+            color: leadingColor,
           );
     }
 
     Widget? trailing;
     if (widget.showTrailing) {
-      trailing = widget.trailing ??
+      trailing =
+          widget.trailing ??
           _TripClipAtomSvg(
-            asset: widget.trailingIconAsset ??
-                TripClipAtomInput.defaultTrailingIconAssetForStatus(widget.status),
+            asset:
+                widget.trailingIconAsset ??
+                TripClipAtomInput.defaultTrailingIconAssetForStatus(
+                  widget.status,
+                ),
             color: dec.foreground,
           );
+    } else {
+      // Still allow a custom trailing widget even when the default trailing icon is hidden.
+      trailing = widget.trailing;
     }
 
     final paddedRow = Padding(
@@ -178,7 +208,7 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ...? leading == null
+          ...?leading == null
               ? null
               : <Widget>[leading, const SizedBox(width: AppSpacing.xs)],
           Expanded(
@@ -235,10 +265,7 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
 }
 
 class _TripClipAtomSvg extends StatelessWidget {
-  const _TripClipAtomSvg({
-    required this.asset,
-    required this.color,
-  });
+  const _TripClipAtomSvg({required this.asset, required this.color});
 
   final String asset;
   final Color color;

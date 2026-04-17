@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screens/loading/presentation/trip_clip_start_loading_page.dart';
+import '../screens/login/presentation/trip_clip_login_page.dart';
 import '../screens/onboarding/presentation/trip_clip_onboarding_splash_page.dart';
 import '../screens/welcome/presentation/trip_clip_welcome_splash_page.dart';
 import '../ui/shell/main_shell_page.dart';
@@ -13,11 +14,12 @@ class TripClipApp extends StatefulWidget {
   State<TripClipApp> createState() => _TripClipAppState();
 }
 
-enum _BootPhase { loading, welcome, onboarding, shell }
+enum _BootPhase { loading, welcome, onboarding, login, shell }
 
 class _TripClipAppState extends State<TripClipApp> {
   ThemeMode _themeMode = ThemeMode.system;
   _BootPhase _bootPhase = _BootPhase.loading;
+  bool _isLoggedIn = false;
 
   void _applyThemeMode(ThemeMode mode) {
     setState(() => _themeMode = mode);
@@ -35,7 +37,7 @@ class _TripClipAppState extends State<TripClipApp> {
 
   void _onOnboardingComplete() {
     if (!mounted) return;
-    setState(() => _bootPhase = _BootPhase.shell);
+    setState(() => _bootPhase = _BootPhase.login);
   }
 
   void _onOnboardingBackToWelcome() {
@@ -48,12 +50,19 @@ class _TripClipAppState extends State<TripClipApp> {
     setState(() => _bootPhase = _BootPhase.loading);
   }
 
+  void _setLoggedIn(bool value) {
+    if (!mounted) return;
+    setState(() => _isLoggedIn = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return TripClipAppScope(
       themeMode: _themeMode,
       applyThemeMode: _applyThemeMode,
       replayStartLoading: _replayStartLoading,
+      isLoggedIn: _isLoggedIn,
+      setLoggedIn: _setLoggedIn,
       child: MaterialApp(
         title: 'TripClip',
         theme: TripClipTheme.light(),
@@ -74,6 +83,12 @@ class _TripClipAppState extends State<TripClipApp> {
             onComplete: _onOnboardingComplete,
             onBackToWelcome: _onOnboardingBackToWelcome,
           ),
+          _BootPhase.login => TripClipLoginPage(
+            onLoggedIn: () {
+              _setLoggedIn(true);
+              setState(() => _bootPhase = _BootPhase.shell);
+            },
+          ),
           _BootPhase.shell => const MainShellPage(),
         },
       ),
@@ -87,6 +102,8 @@ class TripClipAppScope extends InheritedWidget {
     required this.themeMode,
     required this.applyThemeMode,
     required this.replayStartLoading,
+    required this.isLoggedIn,
+    required this.setLoggedIn,
     required super.child,
   });
 
@@ -95,6 +112,9 @@ class TripClipAppScope extends InheritedWidget {
 
   /// Replays loading, welcome, onboarding, then [MainShellPage].
   final VoidCallback replayStartLoading;
+
+  final bool isLoggedIn;
+  final ValueChanged<bool> setLoggedIn;
 
   static TripClipAppScope of(BuildContext context) {
     final scope = context
@@ -107,6 +127,8 @@ class TripClipAppScope extends InheritedWidget {
   bool updateShouldNotify(TripClipAppScope oldWidget) {
     return oldWidget.themeMode != themeMode ||
         oldWidget.applyThemeMode != applyThemeMode ||
-        oldWidget.replayStartLoading != replayStartLoading;
+        oldWidget.replayStartLoading != replayStartLoading ||
+        oldWidget.isLoggedIn != isLoggedIn ||
+        oldWidget.setLoggedIn != setLoggedIn;
   }
 }

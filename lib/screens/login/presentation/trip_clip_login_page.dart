@@ -1,0 +1,341 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../app/theme/trip_clip_palette.dart';
+import '../../../ui/components/buttons/trip_clip_button.dart';
+import '../../../ui/components/buttons/trip_clip_button_models.dart';
+import '../../../ui/components/buttons/trip_clip_button_styles.dart';
+import '../../../ui/components/forms/trip_clip_atom_input.dart';
+
+class TripClipLoginPage extends StatefulWidget {
+  const TripClipLoginPage({super.key, required this.onLoggedIn});
+
+  final VoidCallback onLoggedIn;
+
+  static const Color backgroundColor = TripClipPalette.primary500; // #0000D2
+
+  @override
+  State<TripClipLoginPage> createState() => _TripClipLoginPageState();
+}
+
+class _TripClipLoginPageState extends State<TripClipLoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+
+  bool _showPassword = false;
+
+  static const _pagePadding = EdgeInsets.all(32);
+  static const _sectionGap = 24.0;
+
+  static const _labelToFieldGap = 8.0;
+  static const _fieldGap = 16.0;
+  static const _fieldToLoginGap = 32.0;
+  static const _loginToForgotGap = 26.0;
+  static const _forgotToOrGap = 50.0;
+  static const _orToSocialGap = 40.0;
+  static const _socialButtonsGap = 16.0;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = GoogleFonts.rubik(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 20 / 14,
+      letterSpacing: 0,
+      color: Colors.white,
+    );
+
+    final forgotStyle = GoogleFonts.rubik(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      height: 24 / 16,
+      letterSpacing: 0,
+      color: Colors.white,
+    );
+
+    final orStyle = GoogleFonts.rubik(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 24 / 16,
+      letterSpacing: 0,
+      color: Colors.white,
+    );
+
+    final footerStyle = GoogleFonts.rubik(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 24 / 16,
+      letterSpacing: 0,
+      color: Colors.white,
+    );
+
+    final socialStyle = _socialButtonStyle(context);
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: TripClipLoginPage.backgroundColor,
+        systemNavigationBarColor: TripClipLoginPage.backgroundColor,
+      ),
+      child: Scaffold(
+        backgroundColor: TripClipLoginPage.backgroundColor,
+        body: SafeArea(
+          child: Padding(
+            padding: _pagePadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: SvgPicture.asset(
+                    'assets/icons/home-logo-dark.svg',
+                    width: 200,
+                    height: 44,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: _sectionGap),
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text('Email', style: labelStyle),
+                          const SizedBox(height: _labelToFieldGap),
+                          _LightInputsTheme(
+                            child: TripClipAtomInput(
+                              controller: _emailController,
+                              focusNode: _emailFocus,
+                              hintText: 'your@email.com',
+                              leadingIconAsset: 'assets/icons/email.svg',
+                              showTrailing: false,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ),
+                          const SizedBox(height: _fieldGap),
+                          Text('Password', style: labelStyle),
+                          const SizedBox(height: _labelToFieldGap),
+                          _LightInputsTheme(
+                            child: TripClipAtomInput(
+                              controller: _passwordController,
+                              focusNode: _passwordFocus,
+                              hintText: 'Enter Password',
+                              leadingIconAsset: 'assets/icons/secure-lock.svg',
+                              showTrailing: true,
+                              trailing: _PasswordToggleIcon(
+                                shown: _showPassword,
+                                active:
+                                    _passwordFocus.hasFocus ||
+                                    _passwordController.text.isNotEmpty,
+                                onPressed: () => setState(
+                                  () => _showPassword = !_showPassword,
+                                ),
+                              ),
+                              obscureText: !_showPassword,
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: (_) => widget.onLoggedIn(),
+                            ),
+                          ),
+                          const SizedBox(height: _fieldToLoginGap),
+                          TripClipButton(
+                            variant: TripClipButtonVariant.primaryAlternative,
+                            expanded: true,
+                            label: 'Log In',
+                            onPressed: widget.onLoggedIn,
+                          ),
+                          const SizedBox(height: _loginToForgotGap),
+                          Center(
+                            child: TripClipButton(
+                              variant: TripClipButtonVariant.tertiary,
+                              label: 'Forgot password?',
+                              onPressed: () {},
+                              styleOverride: _textLinkButtonStyle(forgotStyle),
+                            ),
+                          ),
+                          const SizedBox(height: _forgotToOrGap),
+                          Center(child: Text('OR', style: orStyle)),
+                          const SizedBox(height: _orToSocialGap),
+                          TripClipButton(
+                            variant: TripClipButtonVariant.primaryAlternative,
+                            expanded: true,
+                            styleOverride: socialStyle,
+                            iconPlacement: TripClipButtonIconPlacement.leading,
+                            svgAsset: 'assets/icons/google.svg',
+                            tintSvg: false,
+                            label: 'Log in with Google',
+                            onPressed: () {},
+                          ),
+                          const SizedBox(height: _socialButtonsGap),
+                          TripClipButton(
+                            variant: TripClipButtonVariant.primaryAlternative,
+                            expanded: true,
+                            styleOverride: socialStyle,
+                            iconPlacement: TripClipButtonIconPlacement.leading,
+                            svgAsset: 'assets/icons/apple.svg',
+                            tintSvg: false,
+                            label: 'Log in with Apple',
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: _sectionGap),
+                Center(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 0,
+                    children: [
+                      Text('New to TripClip?', style: footerStyle),
+                      const SizedBox(width: 4),
+                      TripClipButton(
+                        variant: TripClipButtonVariant.tertiary,
+                        label: 'Create Account',
+                        onPressed: () {},
+                        styleOverride: _textLinkButtonStyle(
+                          footerStyle.copyWith(
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ButtonStyle _textLinkButtonStyle(TextStyle textStyle) {
+    return ButtonStyle(
+      minimumSize: WidgetStateProperty.all(const Size(0, 0)),
+      padding: WidgetStateProperty.all(EdgeInsets.zero),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      textStyle: WidgetStateProperty.all(textStyle),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.white.withValues(alpha: 0.78);
+        }
+        return Colors.white;
+      }),
+      iconColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.white.withValues(alpha: 0.78);
+        }
+        return Colors.white;
+      }),
+      // No background/overlay effect; only text/icon tint changes on press.
+      overlayColor: WidgetStateProperty.all<Color?>(Colors.transparent),
+      splashFactory: NoSplash.splashFactory,
+    );
+  }
+
+  ButtonStyle _socialButtonStyle(BuildContext context) {
+    final base = TripClipButtonStyles.labelTextStyle(Theme.of(context));
+    const fg = TripClipPalette.tertiary500; // #141E46
+    const pressedBg = TripClipPalette.neutral100;
+    return ButtonStyle(
+      minimumSize: WidgetStateProperty.all(const Size(48, 44)),
+      padding: WidgetStateProperty.all(TripClipButtonStyles.contentPadding),
+      textStyle: WidgetStateProperty.all(base),
+      shape: WidgetStateProperty.all(const StadiumBorder()),
+      elevation: WidgetStateProperty.all(0),
+      shadowColor: WidgetStateProperty.all(Colors.transparent),
+      overlayColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.black.withValues(alpha: 0.06);
+        }
+        return null;
+      }),
+      foregroundColor: WidgetStateProperty.all(fg),
+      iconColor: WidgetStateProperty.all(fg),
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) return pressedBg;
+        return Colors.white;
+      }),
+    );
+  }
+}
+
+class _PasswordToggleIcon extends StatelessWidget {
+  const _PasswordToggleIcon({
+    required this.shown,
+    required this.onPressed,
+    required this.active,
+  });
+
+  final bool shown;
+  final VoidCallback onPressed;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: SvgPicture.asset(
+            shown ? 'assets/icons/view-off.svg' : 'assets/icons/view.svg',
+            width: 24,
+            height: 24,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(
+              active
+                  ? TripClipPalette
+                        .tertiary500 // #141E46 (focused/active)
+                  : TripClipPalette.neutral600, // #757E8A (default)
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LightInputsTheme extends StatelessWidget {
+  const _LightInputsTheme({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Theme(
+      data: theme.copyWith(
+        brightness: Brightness.light,
+        textTheme: theme.textTheme.apply(
+          bodyColor: TripClipPalette.tertiary500,
+          displayColor: TripClipPalette.tertiary500,
+        ),
+        // Default icons (email/lock + default eye) are grey; focused/active are navy.
+        iconTheme: theme.iconTheme.copyWith(color: TripClipPalette.neutral600),
+      ),
+      child: child,
+    );
+  }
+}

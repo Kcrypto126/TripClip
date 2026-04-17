@@ -12,8 +12,10 @@ class TripClipButton extends StatelessWidget {
     this.label,
     this.icon,
     this.svgAsset,
+    this.tintSvg = true,
     this.iconPlacement = TripClipButtonIconPlacement.none,
     this.expanded = false,
+    this.styleOverride,
   }) : assert(
          icon == null || svgAsset == null,
          'TripClipButton: use at most one of icon and svgAsset.',
@@ -24,8 +26,10 @@ class TripClipButton extends StatelessWidget {
   final String? label;
   final IconData? icon;
   final String? svgAsset;
+  final bool tintSvg;
   final TripClipButtonIconPlacement iconPlacement;
   final bool expanded;
+  final ButtonStyle? styleOverride;
 
   bool get _iconOnly => iconPlacement == TripClipButtonIconPlacement.iconOnly;
 
@@ -34,7 +38,10 @@ class TripClipButton extends StatelessWidget {
     final hasGraphic = icon != null || svgAsset != null;
 
     if (_iconOnly) {
-      assert(hasGraphic, 'TripClipButton: icon or svgAsset is required when iconOnly.');
+      assert(
+        hasGraphic,
+        'TripClipButton: icon or svgAsset is required when iconOnly.',
+      );
     } else {
       assert(
         (label != null && label!.trim().isNotEmpty) || hasGraphic,
@@ -49,30 +56,24 @@ class TripClipButton extends StatelessWidget {
       }
     }
 
-    final style = TripClipButtonStyles.style(
-      context,
-      variant,
-      iconOnly: _iconOnly,
-    );
+    final style =
+        styleOverride ??
+        TripClipButtonStyles.style(context, variant, iconOnly: _iconOnly);
 
     final child = _buildChild();
 
     Widget button = switch (variant) {
       TripClipButtonVariant.secondary => OutlinedButton(
-          onPressed: onPressed,
-          style: style,
-          child: child,
-        ),
+        onPressed: onPressed,
+        style: style,
+        child: child,
+      ),
       TripClipButtonVariant.tertiary => TextButton(
-          onPressed: onPressed,
-          style: style,
-          child: child,
-        ),
-      _ => FilledButton(
-          onPressed: onPressed,
-          style: style,
-          child: child,
-        ),
+        onPressed: onPressed,
+        style: style,
+        child: child,
+      ),
+      _ => FilledButton(onPressed: onPressed, style: style, child: child),
     };
 
     if (expanded) {
@@ -84,20 +85,21 @@ class TripClipButton extends StatelessWidget {
   Widget _buildChild() {
     if (_iconOnly) {
       return svgAsset != null
-          ? _TripClipButtonSvgIcon(asset: svgAsset!)
+          ? _TripClipButtonSvgIcon(asset: svgAsset!, tint: tintSvg)
           : Icon(icon, size: TripClipButtonStyles.iconSize);
     }
 
     const gap = SizedBox(width: TripClipButtonStyles.iconGap);
     final iconWidget = svgAsset != null
-        ? _TripClipButtonSvgIcon(asset: svgAsset!)
+        ? _TripClipButtonSvgIcon(asset: svgAsset!, tint: tintSvg)
         : (icon == null
-            ? null
-            : Icon(icon, size: TripClipButtonStyles.iconSize));
+              ? null
+              : Icon(icon, size: TripClipButtonStyles.iconSize));
 
     final children = <Widget>[];
 
-    if (iconWidget != null && iconPlacement == TripClipButtonIconPlacement.leading) {
+    if (iconWidget != null &&
+        iconPlacement == TripClipButtonIconPlacement.leading) {
       children.add(iconWidget);
       children.add(gap);
     }
@@ -106,7 +108,8 @@ class TripClipButton extends StatelessWidget {
       children.add(Text(label!.trim()));
     }
 
-    if (iconWidget != null && iconPlacement == TripClipButtonIconPlacement.trailing) {
+    if (iconWidget != null &&
+        iconPlacement == TripClipButtonIconPlacement.trailing) {
       if (children.isNotEmpty) children.add(gap);
       children.add(iconWidget);
     }
@@ -120,9 +123,10 @@ class TripClipButton extends StatelessWidget {
 }
 
 class _TripClipButtonSvgIcon extends StatelessWidget {
-  const _TripClipButtonSvgIcon({required this.asset});
+  const _TripClipButtonSvgIcon({required this.asset, required this.tint});
 
   final String asset;
+  final bool tint;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +138,7 @@ class _TripClipButtonSvgIcon extends StatelessWidget {
       width: TripClipButtonStyles.iconSize,
       height: TripClipButtonStyles.iconSize,
       fit: BoxFit.contain,
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      colorFilter: tint ? ColorFilter.mode(color, BlendMode.srcIn) : null,
     );
   }
 }
