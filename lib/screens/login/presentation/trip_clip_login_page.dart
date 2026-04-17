@@ -45,8 +45,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
   TripClipFormStatus _passwordStatus = TripClipFormStatus.none;
   String? _emailError;
   String? _passwordError;
-  String? _emailSuccess;
-  String? _passwordSuccess;
 
   static const _pagePadding = EdgeInsets.all(32);
   static const _sectionGap = 24.0;
@@ -73,7 +71,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
     setState(() {
       _emailStatus = TripClipFormStatus.none;
       _emailError = null;
-      _emailSuccess = null;
     });
   }
 
@@ -84,7 +81,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
     setState(() {
       _passwordStatus = TripClipFormStatus.none;
       _passwordError = null;
-      _passwordSuccess = null;
     });
   }
 
@@ -92,50 +88,22 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
 
   bool _validatePassword(String value) => value.trim().length >= 8;
 
-  List<Widget> _statusMessage({
+  List<Widget> _errorMessageBelowField({
     required TripClipFormStatus status,
     required String? errorText,
-    required String? successText,
   }) {
-    String? text;
-    TripClipFormMessageKind? kind;
-
-    switch (status) {
-      case TripClipFormStatus.error:
-        text = errorText;
-        kind = TripClipFormMessageKind.error;
-        break;
-      case TripClipFormStatus.success:
-        text = successText;
-        kind = TripClipFormMessageKind.success;
-        break;
-      case TripClipFormStatus.warning:
-        // No warning validation yet, but keep consistent behavior.
-        text = null;
-        kind = TripClipFormMessageKind.warning;
-        break;
-      case TripClipFormStatus.none:
-        text = null;
-        kind = null;
-        break;
+    if (status != TripClipFormStatus.error ||
+        errorText == null ||
+        errorText.trim().isEmpty) {
+      return const [];
     }
-
-    if (text == null || text.trim().isEmpty || kind == null) return const [];
-
-    final colorOverride = switch (status) {
-      TripClipFormStatus.error => const Color(0xFFA4332B),
-      TripClipFormStatus.warning => const Color(0xFF9E6E0F),
-      TripClipFormStatus.success => const Color(0xFF1C845C),
-      TripClipFormStatus.none => null,
-    };
-
     return [
       const SizedBox(height: 8),
       TripClipFormMessage(
-        text: text.trim(),
-        kind: kind,
+        text: errorText.trim(),
+        kind: TripClipFormMessageKind.error,
         iconSize: 16,
-        colorOverride: colorOverride,
+        colorOverride: const Color(0xFFA4332B),
       ),
     ];
   }
@@ -175,10 +143,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
       _passwordError = passwordOk
           ? null
           : 'Password must be at least 8 characters.';
-
-      // Requested: show success message like error message.
-      _emailSuccess = emailOk ? 'Looks good.' : null;
-      _passwordSuccess = passwordOk ? 'Looks good.' : null;
     });
 
     if (!emailOk || !passwordOk) return;
@@ -187,6 +151,10 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
     if (!mounted) return;
 
     if (!result.ok) {
+      setState(() {
+        _emailStatus = TripClipFormStatus.none;
+        _passwordStatus = TripClipFormStatus.none;
+      });
       AppToast.show(
         context,
         message: result.message ?? 'Login failed.',
@@ -296,10 +264,9 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                               textInputAction: TextInputAction.next,
                             ),
                           ),
-                          ..._statusMessage(
+                          ..._errorMessageBelowField(
                             status: _emailStatus,
                             errorText: _emailError,
-                            successText: _emailSuccess,
                           ),
                           const SizedBox(height: _fieldGap),
                           Text('Password', style: labelStyle),
@@ -312,25 +279,27 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                               leadingIconAsset: 'assets/icons/secure-lock.svg',
                               showTrailing: true,
                               status: _passwordStatus,
-                              trailing: TripClipPasswordVisibilityToggle(
-                                shown: _showPassword,
-                                active:
-                                    _passwordFocus.hasFocus ||
-                                    _passwordController.text.isNotEmpty,
-                                status: _passwordStatus,
-                                onPressed: () => setState(
-                                  () => _showPassword = !_showPassword,
-                                ),
-                              ),
+                              trailing: _passwordStatus ==
+                                      TripClipFormStatus.success
+                                  ? null
+                                  : TripClipPasswordVisibilityToggle(
+                                      shown: _showPassword,
+                                      active:
+                                          _passwordFocus.hasFocus ||
+                                          _passwordController.text.isNotEmpty,
+                                      status: _passwordStatus,
+                                      onPressed: () => setState(
+                                        () => _showPassword = !_showPassword,
+                                      ),
+                                    ),
                               obscureText: !_showPassword,
                               textInputAction: TextInputAction.done,
                               onSubmitted: (_) => _onLoginPressed(),
                             ),
                           ),
-                          ..._statusMessage(
+                          ..._errorMessageBelowField(
                             status: _passwordStatus,
                             errorText: _passwordError,
-                            successText: _passwordSuccess,
                           ),
                           const SizedBox(height: _fieldToLoginGap),
                           TripClipButton(
