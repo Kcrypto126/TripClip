@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -32,6 +33,11 @@ class _TripClipOnboardingSplashPageState
     extends State<TripClipOnboardingSplashPage> {
   int _step = 0;
 
+  /// When true, the shared-axis transition runs in "pop" direction (step back).
+  bool _reverseStepTransition = false;
+
+  static const Duration _stepSwitchDuration = Duration(milliseconds: 340);
+
   static const List<_OnboardingStepData> _steps = [
     _OnboardingStepData(
       imageAsset: 'assets/images/step1.webp',
@@ -61,9 +67,21 @@ class _TripClipOnboardingSplashPageState
     ),
   ];
 
+  void _setStep(int value) {
+    final next = TripClipStepsStatusBar.clampStep(
+      value,
+      totalSteps: _steps.length,
+    );
+    if (next == _step) return;
+    setState(() {
+      _reverseStepTransition = next < _step;
+      _step = next;
+    });
+  }
+
   void _onPrimaryPressed() {
     if (_step < _steps.length - 1) {
-      setState(() => _step++);
+      _setStep(_step + 1);
     } else {
       widget.onComplete();
     }
@@ -91,7 +109,7 @@ class _TripClipOnboardingSplashPageState
                 showRightChevron: false,
                 chevronColor: Colors.white,
                 trackColor: TripClipOnboardingSplashPage.stepBarTrackOnBlue,
-                onStepChanged: (i) => setState(() => _step = i),
+                onStepChanged: _setStep,
                 onExitAtFirstStep: widget.onBackToWelcome,
               ),
               Expanded(
@@ -101,15 +119,47 @@ class _TripClipOnboardingSplashPageState
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: TripClipOnboardingFeatureSection(
-                              imageAsset: data.imageAsset,
-                              imageCircular: data.imageCircular,
-                              heading: data.heading,
-                              description: data.description,
+                        child: ClipRect(
+                          child: PageTransitionSwitcher(
+                            duration: _stepSwitchDuration,
+                            reverse: _reverseStepTransition,
+                            layoutBuilder: (List<Widget> entries) {
+                              return Stack(
+                                alignment: Alignment.topCenter,
+                                fit: StackFit.passthrough,
+                                children: entries,
+                              );
+                            },
+                            transitionBuilder:
+                                (
+                                  Widget child,
+                                  Animation<double> primaryAnimation,
+                                  Animation<double> secondaryAnimation,
+                                ) {
+                              return SharedAxisTransition(
+                                animation: primaryAnimation,
+                                secondaryAnimation: secondaryAnimation,
+                                transitionType:
+                                    SharedAxisTransitionType.horizontal,
+                                fillColor:
+                                    TripClipOnboardingSplashPage.backgroundColor,
+                                child: child,
+                              );
+                            },
+                            child: KeyedSubtree(
+                              key: ValueKey<int>(_step),
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: TripClipOnboardingFeatureSection(
+                                    imageAsset: data.imageAsset,
+                                    imageCircular: data.imageCircular,
+                                    heading: data.heading,
+                                    description: data.description,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),

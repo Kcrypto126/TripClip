@@ -12,17 +12,27 @@ class TripClipFormRadioButton extends StatelessWidget {
     required this.label,
     this.iconAsset = defaultIconAsset,
     this.width = 176,
+    this.radius = 4,
+    this.padding = const EdgeInsets.symmetric(vertical: 8),
+    this.iconSize = 24,
+    this.gap = AppSpacing.xs,
+    this.textStyle,
+    this.contentAlignment = MainAxisAlignment.center,
   });
 
   static const String defaultIconAsset = 'assets/icons/apartment.svg';
-
-  static const double _radius = 4;
 
   final bool selected;
   final VoidCallback? onPressed;
   final String label;
   final String iconAsset;
   final double width;
+  final double radius;
+  final EdgeInsets padding;
+  final double iconSize;
+  final double gap;
+  final TextStyle? textStyle;
+  final MainAxisAlignment contentAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -62,35 +72,32 @@ class TripClipFormRadioButton extends StatelessWidget {
 
     Widget child = Container(
       width: width,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: padding,
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(_radius),
+        borderRadius: BorderRadius.circular(radius),
         border: border,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: contentAlignment,
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SvgPicture.asset(
             iconAsset,
-            width: 24,
-            height: 24,
+            width: iconSize,
+            height: iconSize,
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
           ),
-          const SizedBox(width: AppSpacing.xs),
+          SizedBox(width: gap),
           Text(
             label,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 14,
-                  height: 20 / 14,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0,
-                  color: textColor,
-                ),
+            textAlign: contentAlignment == MainAxisAlignment.center
+                ? TextAlign.center
+                : TextAlign.left,
+            style: (textStyle ?? Theme.of(context).textTheme.bodySmall)
+                ?.copyWith(color: textColor),
           ),
         ],
       ),
@@ -105,7 +112,7 @@ class TripClipFormRadioButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(_radius),
+          borderRadius: BorderRadius.circular(radius),
           child: child,
         ),
       ),
