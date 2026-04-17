@@ -71,6 +71,9 @@ class _TripClipAppState extends State<TripClipApp> {
         });
       },
       child: MaterialApp(
+        // New phase must reset the root navigator so pushed routes (e.g. create
+        // account) are not left above [MainShellPage].
+        key: ValueKey(_bootPhase),
         title: 'TripClip',
         theme: TripClipTheme.light(),
         darkTheme: TripClipTheme.dark(),
