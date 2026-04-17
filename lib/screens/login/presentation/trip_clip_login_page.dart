@@ -8,6 +8,9 @@ import '../../../ui/components/buttons/trip_clip_button.dart';
 import '../../../ui/components/buttons/trip_clip_button_models.dart';
 import '../../../ui/components/buttons/trip_clip_button_styles.dart';
 import '../../../ui/components/forms/trip_clip_atom_input.dart';
+import '../../../ui/components/forms/trip_clip_form_models.dart';
+import '../../../ui/components/forms/trip_clip_form_message.dart';
+import '../../../ui/components/app_toast.dart';
 
 class TripClipLoginPage extends StatefulWidget {
   const TripClipLoginPage({super.key, required this.onLoggedIn});
@@ -28,6 +31,13 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
 
   bool _showPassword = false;
 
+  TripClipFormStatus _emailStatus = TripClipFormStatus.none;
+  TripClipFormStatus _passwordStatus = TripClipFormStatus.none;
+  String? _emailError;
+  String? _passwordError;
+  String? _emailSuccess;
+  String? _passwordSuccess;
+
   static const _pagePadding = EdgeInsets.all(32);
   static const _sectionGap = 24.0;
 
@@ -39,8 +49,154 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
   static const _orToSocialGap = 40.0;
   static const _socialButtonsGap = 16.0;
 
+  static final RegExp _emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_onEmailChanged);
+    _passwordController.addListener(_onPasswordChanged);
+  }
+
+  void _onEmailChanged() {
+    if (_emailStatus == TripClipFormStatus.none && _emailError == null) return;
+    setState(() {
+      _emailStatus = TripClipFormStatus.none;
+      _emailError = null;
+      _emailSuccess = null;
+    });
+  }
+
+  void _onPasswordChanged() {
+    if (_passwordStatus == TripClipFormStatus.none && _passwordError == null) {
+      return;
+    }
+    setState(() {
+      _passwordStatus = TripClipFormStatus.none;
+      _passwordError = null;
+      _passwordSuccess = null;
+    });
+  }
+
+  bool _validateEmail(String value) => _emailRegex.hasMatch(value.trim());
+
+  bool _validatePassword(String value) => value.trim().length >= 8;
+
+  List<Widget> _statusMessage({
+    required TripClipFormStatus status,
+    required String? errorText,
+    required String? successText,
+  }) {
+    String? text;
+    TripClipFormMessageKind? kind;
+
+    switch (status) {
+      case TripClipFormStatus.error:
+        text = errorText;
+        kind = TripClipFormMessageKind.error;
+        break;
+      case TripClipFormStatus.success:
+        text = successText;
+        kind = TripClipFormMessageKind.success;
+        break;
+      case TripClipFormStatus.warning:
+        // No warning validation yet, but keep consistent behavior.
+        text = null;
+        kind = TripClipFormMessageKind.warning;
+        break;
+      case TripClipFormStatus.none:
+        text = null;
+        kind = null;
+        break;
+    }
+
+    if (text == null || text.trim().isEmpty || kind == null) return const [];
+
+    final colorOverride = switch (status) {
+      TripClipFormStatus.error => const Color(0xFFA4332B),
+      TripClipFormStatus.warning => const Color(0xFF9E6E0F),
+      TripClipFormStatus.success => const Color(0xFF1C845C),
+      TripClipFormStatus.none => null,
+    };
+
+    return [
+      const SizedBox(height: 8),
+      TripClipFormMessage(
+        text: text.trim(),
+        kind: kind,
+        iconSize: 16,
+        colorOverride: colorOverride,
+      ),
+    ];
+  }
+
+  Future<_LoginResult> _mockBackendLogin({
+    required String email,
+    required String password,
+  }) async {
+    // Frontend-only placeholder. Replace with API call later.
+    await Future<void>.delayed(const Duration(milliseconds: 450));
+
+    final e = email.trim().toLowerCase();
+
+    // Simple deterministic failure path for UI testing.
+    if (e.contains('fail')) {
+      return const _LoginResult.failure('Invalid email or password.');
+    }
+    return const _LoginResult.success();
+  }
+
+  Future<void> _onLoginPressed() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    final emailOk = _validateEmail(email);
+    final passwordOk = _validatePassword(password);
+
+    setState(() {
+      _emailStatus = emailOk
+          ? TripClipFormStatus.success
+          : TripClipFormStatus.error;
+      _passwordStatus = passwordOk
+          ? TripClipFormStatus.success
+          : TripClipFormStatus.error;
+
+      _emailError = emailOk ? null : 'Please enter a valid email address.';
+      _passwordError = passwordOk
+          ? null
+          : 'Password must be at least 8 characters.';
+
+      // Requested: show success message like error message.
+      _emailSuccess = emailOk ? 'Looks good.' : null;
+      _passwordSuccess = passwordOk ? 'Looks good.' : null;
+    });
+
+    if (!emailOk || !passwordOk) return;
+
+    final result = await _mockBackendLogin(email: email, password: password);
+    if (!mounted) return;
+
+    if (!result.ok) {
+      AppToast.show(
+        context,
+        message: result.message ?? 'Login failed.',
+        kind: AppToastKind.error,
+      );
+      return;
+    }
+
+    AppToast.show(
+      context,
+      message: 'Login successful.',
+      kind: AppToastKind.success,
+    );
+    widget.onLoggedIn();
+  }
+
   @override
   void dispose() {
+    _emailController.removeListener(_onEmailChanged);
+    _passwordController.removeListener(_onPasswordChanged);
     _emailController.dispose();
     _passwordController.dispose();
     _emailFocus.dispose();
@@ -123,10 +279,16 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                               focusNode: _emailFocus,
                               hintText: 'your@email.com',
                               leadingIconAsset: 'assets/icons/email.svg',
-                              showTrailing: false,
+                              showTrailing: true,
+                              status: _emailStatus,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
                             ),
+                          ),
+                          ..._statusMessage(
+                            status: _emailStatus,
+                            errorText: _emailError,
+                            successText: _emailSuccess,
                           ),
                           const SizedBox(height: _fieldGap),
                           Text('Password', style: labelStyle),
@@ -138,26 +300,33 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                               hintText: 'Enter Password',
                               leadingIconAsset: 'assets/icons/secure-lock.svg',
                               showTrailing: true,
+                              status: _passwordStatus,
                               trailing: _PasswordToggleIcon(
                                 shown: _showPassword,
                                 active:
                                     _passwordFocus.hasFocus ||
                                     _passwordController.text.isNotEmpty,
+                                status: _passwordStatus,
                                 onPressed: () => setState(
                                   () => _showPassword = !_showPassword,
                                 ),
                               ),
                               obscureText: !_showPassword,
                               textInputAction: TextInputAction.done,
-                              onSubmitted: (_) => widget.onLoggedIn(),
+                              onSubmitted: (_) => _onLoginPressed(),
                             ),
+                          ),
+                          ..._statusMessage(
+                            status: _passwordStatus,
+                            errorText: _passwordError,
+                            successText: _passwordSuccess,
                           ),
                           const SizedBox(height: _fieldToLoginGap),
                           TripClipButton(
                             variant: TripClipButtonVariant.primaryAlternative,
                             expanded: true,
                             label: 'Log In',
-                            onPressed: widget.onLoggedIn,
+                            onPressed: _onLoginPressed,
                           ),
                           const SizedBox(height: _loginToForgotGap),
                           Center(
@@ -283,11 +452,13 @@ class _PasswordToggleIcon extends StatelessWidget {
     required this.shown,
     required this.onPressed,
     required this.active,
+    required this.status,
   });
 
   final bool shown;
   final VoidCallback onPressed;
   final bool active;
+  final TripClipFormStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -303,17 +474,24 @@ class _PasswordToggleIcon extends StatelessWidget {
             width: 24,
             height: 24,
             fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(
-              active
-                  ? TripClipPalette
-                        .tertiary500 // #141E46 (focused/active)
-                  : TripClipPalette.neutral600, // #757E8A (default)
-              BlendMode.srcIn,
-            ),
+            colorFilter: ColorFilter.mode(_iconColor(), BlendMode.srcIn),
           ),
         ),
       ),
     );
+  }
+
+  Color _iconColor() {
+    return switch (status) {
+      TripClipFormStatus.error => const Color(0xFFA4332B),
+      TripClipFormStatus.warning => const Color(0xFF9E6E0F),
+      TripClipFormStatus.success => const Color(0xFF1C845C),
+      TripClipFormStatus.none =>
+        active
+            ? TripClipPalette
+                  .tertiary500 // #141E46 (focused/active)
+            : TripClipPalette.neutral600, // #757E8A (default)
+    };
   }
 }
 
@@ -338,4 +516,15 @@ class _LightInputsTheme extends StatelessWidget {
       child: child,
     );
   }
+}
+
+class _LoginResult {
+  const _LoginResult._(this.ok, this.message);
+
+  const _LoginResult.success() : this._(true, null);
+
+  const _LoginResult.failure(this.message) : ok = false;
+
+  final bool ok;
+  final String? message;
 }

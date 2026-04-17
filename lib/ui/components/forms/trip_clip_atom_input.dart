@@ -173,9 +173,11 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
 
     Widget? leading;
     if (widget.showLeading) {
-      final leadingColor = (focused || _hasValue)
-          ? dec.foreground
-          : TripClipPalette.neutral500;
+      final leadingColor = widget.status != TripClipFormStatus.none
+          ? dec.hintOrPlaceholder
+          : ((focused || _hasValue)
+                ? dec.foreground
+                : TripClipPalette.neutral500);
       leading =
           widget.leading ??
           _TripClipAtomSvg(
@@ -188,6 +190,9 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
 
     Widget? trailing;
     if (widget.showTrailing) {
+      final trailingColor = widget.status != TripClipFormStatus.none
+          ? dec.hintOrPlaceholder
+          : dec.foreground;
       trailing =
           widget.trailing ??
           _TripClipAtomSvg(
@@ -196,7 +201,7 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
                 TripClipAtomInput.defaultTrailingIconAssetForStatus(
                   widget.status,
                 ),
-            color: dec.foreground,
+            color: trailingColor,
           );
     } else {
       // Still allow a custom trailing widget even when the default trailing icon is hidden.
