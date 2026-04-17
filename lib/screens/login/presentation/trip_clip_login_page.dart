@@ -284,8 +284,8 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                                   ? null
                                   : TripClipPasswordVisibilityToggle(
                                       shown: _showPassword,
-                                      active:
-                                          _passwordFocus.hasFocus ||
+                                      focused: _passwordFocus.hasFocus,
+                                      hasValue:
                                           _passwordController.text.isNotEmpty,
                                       status: _passwordStatus,
                                       onPressed: () => setState(

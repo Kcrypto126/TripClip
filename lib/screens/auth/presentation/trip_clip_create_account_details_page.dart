@@ -445,8 +445,8 @@ class _TripClipCreateAccountDetailsPageState
                           ? null
                           : TripClipPasswordVisibilityToggle(
                               shown: _showPassword,
-                              active:
-                                  _passwordFocus.hasFocus ||
+                              focused: _passwordFocus.hasFocus,
+                              hasValue:
                                   _passwordController.text.isNotEmpty,
                               status: _passwordStatus,
                               onPressed: () => setState(
@@ -479,8 +479,8 @@ class _TripClipCreateAccountDetailsPageState
                           ? null
                           : TripClipPasswordVisibilityToggle(
                               shown: _showConfirmPassword,
-                              active:
-                                  _confirmFocus.hasFocus ||
+                              focused: _confirmFocus.hasFocus,
+                              hasValue:
                                   _confirmController.text.isNotEmpty,
                               status: _confirmStatus,
                               onPressed: () => setState(

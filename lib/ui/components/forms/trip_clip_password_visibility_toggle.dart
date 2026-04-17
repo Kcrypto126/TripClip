@@ -3,21 +3,42 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/theme/trip_clip_palette.dart';
 import 'trip_clip_form_models.dart';
+import 'trip_clip_form_tokens.dart';
 
-/// Eye icon used with [TripClipAtomInput] for password fields (matches login).
+/// Eye icon used with [TripClipAtomInput] for password fields.
+///
+/// Icon tint matches the leading icon rules in [TripClipAtomInput] for every
+/// [TripClipFormStatus].
 class TripClipPasswordVisibilityToggle extends StatelessWidget {
   const TripClipPasswordVisibilityToggle({
     super.key,
     required this.shown,
     required this.onPressed,
-    required this.active,
+    required this.focused,
+    required this.hasValue,
     required this.status,
   });
 
   final bool shown;
   final VoidCallback onPressed;
-  final bool active;
+  final bool focused;
+  final bool hasValue;
   final TripClipFormStatus status;
+
+  Color _leadingMatchIconColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dec = TripClipFormFieldDecoration.atom(
+      isDark: isDark,
+      enabled: true,
+      focused: focused,
+      hasValue: hasValue,
+      status: status,
+    );
+    if (status != TripClipFormStatus.none) {
+      return dec.hintOrPlaceholder;
+    }
+    return (focused || hasValue) ? dec.foreground : TripClipPalette.neutral500;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,20 +54,13 @@ class TripClipPasswordVisibilityToggle extends StatelessWidget {
             width: 24,
             height: 24,
             fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(_iconColor(), BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+              _leadingMatchIconColor(context),
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),
     );
-  }
-
-  Color _iconColor() {
-    return switch (status) {
-      TripClipFormStatus.error => const Color(0xFFA4332B),
-      TripClipFormStatus.warning => const Color(0xFF9E6E0F),
-      TripClipFormStatus.success => const Color(0xFF1C845C),
-      TripClipFormStatus.none =>
-        active ? TripClipPalette.tertiary500 : TripClipPalette.neutral600,
-    };
   }
 }
