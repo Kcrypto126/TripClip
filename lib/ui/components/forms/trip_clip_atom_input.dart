@@ -23,6 +23,7 @@ class TripClipAtomInput extends StatefulWidget {
     this.readOnly = false,
     this.enabled = true,
     this.status = TripClipFormStatus.none,
+    this.density = TripClipFormDensity.standard,
     this.obscureText = false,
     this.keyboardType,
     this.textInputAction,
@@ -57,15 +58,21 @@ class TripClipAtomInput extends StatefulWidget {
   final bool readOnly;
   final bool enabled;
   final TripClipFormStatus status;
+  final TripClipFormDensity density;
   final bool obscureText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
 
-  static const EdgeInsets padding = EdgeInsets.symmetric(
-    vertical: 8,
-    horizontal: 16,
-  );
+  /// Horizontal inset; vertical size comes from [fieldHeight] / [fieldHeightLarge].
+  static const EdgeInsets contentPadding =
+      EdgeInsets.symmetric(horizontal: 16);
+
+  /// Total field height for [TripClipFormDensity.standard] and [TripClipFormDensity.compact].
+  static const double fieldHeight = 40;
+
+  /// Total field height for [TripClipFormDensity.large].
+  static const double fieldHeightLarge = 80;
 
   /// Matches [TripClipFormInput] field radius.
   static const double radius = 4;
@@ -165,10 +172,15 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
 
     final showDisabledOpacity = !widget.enabled;
 
+    final isLarge = widget.density == TripClipFormDensity.large;
+    final controlHeight =
+        isLarge ? TripClipAtomInput.fieldHeightLarge : TripClipAtomInput.fieldHeight;
+    final fieldFontSize = isLarge ? 36.0 : 16.0;
+    final fieldLineHeight = isLarge ? 44 / 36 : 24 / 16;
     final fieldStyle = theme.textTheme.bodyLarge?.copyWith(
       color: dec.foreground,
-      fontSize: 16,
-      height: 24 / 16,
+      fontSize: fieldFontSize,
+      height: fieldLineHeight,
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
     );
@@ -219,36 +231,41 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
       trailing = widget.trailing;
     }
 
-    final paddedRow = Padding(
-      padding: TripClipAtomInput.padding,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ...?leading == null
-              ? null
-              : <Widget>[leading, const SizedBox(width: AppSpacing.xs)],
-          Expanded(
-            child: TextField(
-              controller: controller,
-              focusNode: _focusNode,
-              enabled: widget.enabled,
-              readOnly: widget.readOnly,
-              obscureText: widget.obscureText,
-              keyboardType: widget.keyboardType,
-              textInputAction: widget.textInputAction,
-              onSubmitted: widget.onSubmitted,
-              style: fieldStyle,
-              decoration: InputDecoration(
-                isDense: true,
-                border: InputBorder.none,
-                hintText: widget.hintText,
-                hintStyle: fieldStyle?.copyWith(color: dec.hintOrPlaceholder),
-                contentPadding: EdgeInsets.zero,
+    final paddedRow = SizedBox(
+      height: controlHeight,
+      child: Padding(
+        padding: TripClipAtomInput.contentPadding,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ...?leading == null
+                ? null
+                : <Widget>[leading, const SizedBox(width: AppSpacing.xs)],
+            Expanded(
+              child: TextField(
+                controller: controller,
+                focusNode: _focusNode,
+                enabled: widget.enabled,
+                readOnly: widget.readOnly,
+                obscureText: widget.obscureText,
+                keyboardType: widget.keyboardType,
+                textInputAction: widget.textInputAction,
+                onSubmitted: widget.onSubmitted,
+                style: fieldStyle,
+                minLines: 1,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: InputBorder.none,
+                  hintText: widget.hintText,
+                  hintStyle: fieldStyle?.copyWith(color: dec.hintOrPlaceholder),
+                  contentPadding: EdgeInsets.zero,
+                ),
               ),
             ),
-          ),
-          ?trailing,
-        ],
+            ?trailing,
+          ],
+        ),
       ),
     );
 

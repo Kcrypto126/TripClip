@@ -187,7 +187,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
 
     AppToast.show(
       context,
-      message: 'Logged in successful.',
+      message: 'Login successful.',
       kind: AppToastKind.success,
     );
     widget.onLoggedIn();
