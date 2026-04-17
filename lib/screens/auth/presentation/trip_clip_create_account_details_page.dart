@@ -14,6 +14,7 @@ import '../../../ui/components/forms/trip_clip_form_checkbox.dart';
 import '../../../ui/components/forms/trip_clip_form_message.dart';
 import '../../../ui/components/forms/trip_clip_form_models.dart';
 import '../../../ui/components/forms/trip_clip_password_visibility_toggle.dart';
+import '../../legal/presentation/trip_clip_terms_of_service_sheet.dart';
 import 'trip_clip_account_type.dart';
 
 /// Second step: account details (name, email, mobile, passwords, terms).
@@ -521,7 +522,8 @@ class _TripClipCreateAccountDetailsPageState
                             child: TripClipButton(
                               variant: TripClipButtonVariant.tertiary,
                               label: 'Terms of Service',
-                              onPressed: () {},
+                              onPressed: () =>
+                                  showTripClipTermsOfServiceSheet(context),
                               styleOverride: _termsLinkButtonStyle(
                                 context,
                                 termsLinkStyle,

@@ -1,4 +1,5 @@
 export 'trip_clip_atom_input.dart';
+export 'trip_clip_otp_input.dart';
 export 'trip_clip_form_input.dart';
 export 'trip_clip_form_checkbox.dart';
 export 'trip_clip_form_radio.dart';
