@@ -48,6 +48,11 @@ class TripClipOtpInput extends StatefulWidget {
   static const double digitFontSize = 36;
   static const double digitLineHeight = 42 / 36;
 
+  /// Outer height of the OTP row (cell padding + 42px text line). Used so the row
+  /// is not laid out with unbounded height inside a [Stack] (e.g. in a scroll view).
+  static double get digitRowHeight =>
+      cellPadding * 2 + digitFontSize * digitLineHeight;
+
   @override
   State<TripClipOtpInput> createState() => _TripClipOtpInputState();
 }
@@ -252,16 +257,19 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            row,
-            Offstage(
-              offstage: true,
-              child: SizedBox(
-                height: 1,
-                width: 1,
-                child: TextField(
+        SizedBox(
+          height: TripClipOtpInput.digitRowHeight,
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              row,
+              Offstage(
+                offstage: true,
+                child: SizedBox(
+                  height: 1,
+                  width: 1,
+                  child: TextField(
                   controller: _controller,
                   focusNode: _focusNode,
                   enabled: widget.enabled,
@@ -286,7 +294,8 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
                 ),
               ),
             ),
-          ],
+            ],
+          ),
         ),
         ?messageBelow,
       ],

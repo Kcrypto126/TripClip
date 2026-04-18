@@ -290,6 +290,13 @@ class _TripClipComponentsContentState extends State<TripClipComponentsContent> {
                   const _TripClipTogglePillDemo(),
                   const SizedBox(height: AppSpacing.lg),
                   const _TripClipSelectionDemo(),
+                  const SizedBox(height: AppSpacing.lg),
+                  Text(
+                    'OTP input',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  const _TripClipOtpInputDemos(),
                   const SizedBox(height: AppSpacing.xl),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -513,6 +520,104 @@ class _TripClipSelectionDemoState extends State<_TripClipSelectionDemo> {
           groupValue: _radioGroup,
           onChanged: null,
           label: 'Radio option label',
+        ),
+      ],
+    );
+  }
+}
+
+/// Showcases [TripClipOtpInput] in default, partial, filled, error, warning, and success.
+class _TripClipOtpInputDemos extends StatefulWidget {
+  const _TripClipOtpInputDemos();
+
+  @override
+  State<_TripClipOtpInputDemos> createState() => _TripClipOtpInputDemosState();
+}
+
+class _TripClipOtpInputDemosState extends State<_TripClipOtpInputDemos> {
+  late final TextEditingController _interactive;
+  late final TextEditingController _partial;
+  late final TextEditingController _error;
+  late final TextEditingController _filled;
+  late final TextEditingController _success;
+  late final TextEditingController _warning;
+
+  @override
+  void initState() {
+    super.initState();
+    _interactive = TextEditingController();
+    _partial = TextEditingController(text: '8');
+    _error = TextEditingController(text: '889234');
+    _filled = TextEditingController(text: '889237');
+    _success = TextEditingController(text: '889237');
+    _warning = TextEditingController(text: '000000');
+  }
+
+  @override
+  void dispose() {
+    _interactive.dispose();
+    _partial.dispose();
+    _error.dispose();
+    _filled.dispose();
+    _success.dispose();
+    _warning.dispose();
+    super.dispose();
+  }
+
+  Widget _caption(BuildContext context, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _caption(context, 'Interactive (type digits)'),
+        TripClipOtpInput(
+          controller: _interactive,
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _caption(context, 'Partial value (static)'),
+        IgnorePointer(
+          child: TripClipOtpInput(controller: _partial),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _caption(context, 'Filled, status none (static)'),
+        IgnorePointer(
+          child: TripClipOtpInput(controller: _filled),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _caption(context, 'Error'),
+        IgnorePointer(
+          child: TripClipOtpInput(
+            controller: _error,
+            status: TripClipFormStatus.error,
+            message:
+                'Oops! Try again or resend the code below.',
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _caption(context, 'Warning'),
+        IgnorePointer(
+          child: TripClipOtpInput(
+            controller: _warning,
+            status: TripClipFormStatus.warning,
+            message: 'This code is about to expire.',
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _caption(context, 'Success'),
+        IgnorePointer(
+          child: TripClipOtpInput(
+            controller: _success,
+            status: TripClipFormStatus.success,
+            message: 'Correct code',
+          ),
         ),
       ],
     );

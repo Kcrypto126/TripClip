@@ -68,17 +68,13 @@ class TripClipAtomInput extends StatefulWidget {
 
   final List<TextInputFormatter>? inputFormatters;
 
-  /// Horizontal inset; vertical size comes from [fieldHeight] / [fieldHeightLarge].
   static const EdgeInsets contentPadding =
       EdgeInsets.symmetric(horizontal: 16);
 
-  /// Total field height for [TripClipFormDensity.standard] and [TripClipFormDensity.compact].
   static const double fieldHeight = 40;
 
-  /// Total field height for [TripClipFormDensity.large].
   static const double fieldHeightLarge = 80;
 
-  /// Matches [TripClipFormInput] field radius.
   static const double radius = 4;
 
   @override
