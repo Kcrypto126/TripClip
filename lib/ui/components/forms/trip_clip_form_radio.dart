@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
@@ -21,9 +22,6 @@ class TripClipFormRadio<T> extends StatelessWidget {
   static const double _outerPadding = 2;
   static const double _selectedInnerInset = 2;
 
-  static const Color labelColorLight = Color(0xFF141E46);
-  static const Color labelColorDark = Color(0xFFFFFFFF);
-
   bool get _selected => groupValue == value;
 
   @override
@@ -31,13 +29,9 @@ class TripClipFormRadio<T> extends StatelessWidget {
     final enabled = onChanged != null;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontSize: 16,
-          height: 24 / 16,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0,
-          color: isDark ? labelColorDark : labelColorLight,
-        );
+    final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: context.tripClipColors.textBase,
+    );
 
     Widget row = Semantics(
       label: label,
@@ -49,14 +43,9 @@ class TripClipFormRadio<T> extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _TripClipRadioIcon(
-              selected: _selected,
-              isDark: isDark,
-            ),
+            _TripClipRadioIcon(selected: _selected, isDark: isDark),
             const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(label, style: labelStyle),
-            ),
+            Expanded(child: Text(label, style: labelStyle)),
           ],
         ),
       ),
@@ -71,10 +60,7 @@ class TripClipFormRadio<T> extends StatelessWidget {
 }
 
 class _TripClipRadioIcon extends StatelessWidget {
-  const _TripClipRadioIcon({
-    required this.selected,
-    required this.isDark,
-  });
+  const _TripClipRadioIcon({required this.selected, required this.isDark});
 
   final bool selected;
   final bool isDark;
@@ -83,12 +69,15 @@ class _TripClipRadioIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget core;
     if (selected) {
-      final borderColor =
-          isDark ? TripClipPalette.tertiary300 : TripClipPalette.tertiary500;
-      final ringFill =
-          isDark ? TripClipPalette.neutral900 : TripClipPalette.neutral100;
-      final innerColor =
-          isDark ? TripClipPalette.tertiary300 : TripClipPalette.tertiary500;
+      final borderColor = isDark
+          ? TripClipPalette.tertiary300
+          : TripClipPalette.tertiary500;
+      final ringFill = isDark
+          ? TripClipPalette.neutral900
+          : TripClipPalette.neutral100;
+      final innerColor = isDark
+          ? TripClipPalette.tertiary300
+          : TripClipPalette.tertiary500;
 
       core = Container(
         width: TripClipFormRadio._iconSize,
@@ -100,17 +89,14 @@ class _TripClipRadioIcon extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(TripClipFormRadio._selectedInnerInset),
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: innerColor,
-          ),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: innerColor),
         ),
       );
     } else {
-      final borderColor =
-          isDark ? TripClipPalette.neutral700 : TripClipPalette.neutral500;
-      final bg =
-          isDark ? TripClipPalette.darkPageBackground : Colors.white;
+      final borderColor = isDark
+          ? TripClipPalette.neutral700
+          : TripClipPalette.neutral500;
+      final bg = isDark ? TripClipPalette.darkPageBackground : Colors.white;
 
       core = Container(
         width: TripClipFormRadio._iconSize,

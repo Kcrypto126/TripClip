@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>GMSApiKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo from your library for your profile picture.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Use the camera to photograph your ID for verification.</string>
 </dict>
 </plist>

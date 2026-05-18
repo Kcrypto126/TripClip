@@ -39,9 +39,7 @@ abstract final class TripClipButtonStyles {
     final isDark = brightness == Brightness.dark;
     final labelStyle = labelTextStyle(theme);
 
-    final shape = iconOnly
-        ? const CircleBorder()
-        : const StadiumBorder();
+    final shape = iconOnly ? const CircleBorder() : const StadiumBorder();
 
     final padding = contentPadding;
 
@@ -51,9 +49,12 @@ abstract final class TripClipButtonStyles {
 
     switch (variant) {
       case TripClipButtonVariant.primary:
-        final def = isDark ? TripClipPalette.primary400 : TripClipPalette.primary500;
-        final pressed =
-            isDark ? TripClipPalette.primary500 : TripClipPalette.primary600;
+        final def = isDark
+            ? TripClipPalette.primary400
+            : TripClipPalette.primary500;
+        final pressed = isDark
+            ? TripClipPalette.primary500
+            : TripClipPalette.primary600;
 
         return ButtonStyle(
           minimumSize: WidgetStateProperty.all(minSize),
@@ -196,7 +197,9 @@ abstract final class TripClipButtonStyles {
           }),
           side: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
-              return BorderSide(color: defFg.withValues(alpha: _disabledOpacity));
+              return BorderSide(
+                color: defFg.withValues(alpha: _disabledOpacity),
+              );
             }
             return const BorderSide(color: defFg);
           }),
@@ -260,10 +263,12 @@ abstract final class TripClipButtonStyles {
         );
 
       case TripClipButtonVariant.destructive:
-        final def =
-            isDark ? TripClipPalette.error400 : TripClipPalette.error500;
-        final pressed =
-            isDark ? TripClipPalette.error500 : TripClipPalette.error600;
+        final def = isDark
+            ? TripClipPalette.error400
+            : TripClipPalette.error500;
+        final pressed = isDark
+            ? TripClipPalette.error500
+            : TripClipPalette.error600;
 
         return ButtonStyle(
           minimumSize: WidgetStateProperty.all(minSize),

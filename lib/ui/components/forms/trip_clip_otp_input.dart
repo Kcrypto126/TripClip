@@ -6,11 +6,6 @@ import 'trip_clip_form_message.dart';
 import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
 
-/// Six (or [length]) single-digit fields using the same chrome as [TripClipAtomInput]
-/// ([TripClipFormFieldDecoration.atom]) for none / error / warning / success.
-///
-/// Layout: fixed [gapBetweenCells] between cells; cells share remaining width equally
-/// (full-width row). Typing is handled by a single offstage [TextField].
 class TripClipOtpInput extends StatefulWidget {
   const TripClipOtpInput({
     super.key,
@@ -25,7 +20,6 @@ class TripClipOtpInput extends StatefulWidget {
     this.autofillHints = const [AutofillHints.oneTimeCode],
   }) : assert(length > 0);
 
-  /// Number of digit cells (default 6).
   final int length;
 
   final TextEditingController? controller;
@@ -33,25 +27,22 @@ class TripClipOtpInput extends StatefulWidget {
   final bool enabled;
   final TripClipFormStatus status;
 
-  /// Shown below the row when [status] is error, warning, or success (same pattern as
-  /// form fields + [TripClipFormMessage]).
   final String? message;
 
   final ValueChanged<String>? onChanged;
   final bool autofocus;
   final Iterable<String> autofillHints;
 
-  static const double cellPadding = 15.5;
+  static const double cellHeight = 56;
+
+  static const double cellHorizontalPadding = 8;
   static const double gapBetweenCells = 8;
   static const double radius = TripClipAtomInput.radius;
 
-  static const double digitFontSize = 36;
-  static const double digitLineHeight = 42 / 36;
+  static const double digitFontSize = 32;
+  static const double digitLineHeight = 1.0;
 
-  /// Outer height of the OTP row (cell padding + 42px text line). Used so the row
-  /// is not laid out with unbounded height inside a [Stack] (e.g. in a scroll view).
-  static double get digitRowHeight =>
-      cellPadding * 2 + digitFontSize * digitLineHeight;
+  static const double digitRowHeight = cellHeight;
 
   @override
   State<TripClipOtpInput> createState() => _TripClipOtpInputState();
@@ -112,7 +103,21 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
   }
 
   void _onTextChanged() {
-    widget.onChanged?.call(_controller.text);
+    final t = _controller.text;
+    final sel = _controller.selection;
+    if (!sel.isValid ||
+        sel.extentOffset > t.length ||
+        sel.baseOffset > t.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_controller.text != t) return;
+        _controller.value = TextEditingValue(
+          text: t,
+          selection: TextSelection.collapsed(offset: t.length),
+        );
+      });
+    }
+    widget.onChanged?.call(t);
     setState(() {});
   }
 
@@ -120,11 +125,18 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
 
   String get _text => _controller.text;
 
-  /// Index of the digit cell that shows the “active” border while typing (last filled,
-  /// or the first empty slot when empty).
-  int _highlightIndexWhileEditing() {
-    if (_text.isEmpty) return 0;
-    return _text.length - 1;
+  int _activeInputSlotIndex() {
+    if (_text.length >= widget.length) {
+      return widget.length - 1;
+    }
+    if (!_focusNode.hasFocus) {
+      return _text.length.clamp(0, widget.length - 1);
+    }
+    final sel = _controller.selection;
+    if (!sel.isValid || !sel.isCollapsed) {
+      return _text.length.clamp(0, widget.length - 1);
+    }
+    return sel.extentOffset.clamp(0, widget.length - 1);
   }
 
   TripClipFormFieldDecoration _decorationForCell({
@@ -164,9 +176,11 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
     }
 
     final hasChar = index < _text.length && _text[index].trim().isNotEmpty;
-    final hi = _highlightIndexWhileEditing();
+    final hi = _activeInputSlotIndex();
     final focusedCell =
-        _focusNode.hasFocus && widget.status == TripClipFormStatus.none && index == hi;
+        _focusNode.hasFocus &&
+        widget.status == TripClipFormStatus.none &&
+        index == hi;
 
     return TripClipFormFieldDecoration.atom(
       isDark: isDark,
@@ -177,7 +191,7 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
     );
   }
 
-  void _onCellTapped(int index) {
+  void _placeCaretAtCell(int index) {
     if (!widget.enabled) return;
     _focusNode.requestFocus();
     final t = _text;
@@ -186,6 +200,21 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
       text: t,
       selection: TextSelection.collapsed(offset: offset),
     );
+  }
+
+  int _cellIndexFromLocalDx(double dx, double totalWidth) {
+    final n = widget.length;
+    final gap = TripClipOtpInput.gapBetweenCells;
+    if (n <= 0 || totalWidth <= 0) return 0;
+    final cellW = (totalWidth - (n - 1) * gap) / n;
+    if (cellW <= 0) return 0;
+    var acc = 0.0;
+    for (var i = 0; i < n; i++) {
+      if (dx < acc + cellW) return i;
+      acc += cellW;
+      if (i < n - 1) acc += gap;
+    }
+    return n - 1;
   }
 
   Widget? _buildMessage(BuildContext context) {
@@ -216,7 +245,7 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
           text: raw,
           kind: kind,
           iconSize: 16,
-          colorOverride: dec.foreground,
+          colorOverride: dec.helper,
         ),
       ],
     );
@@ -227,29 +256,13 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final digitStyle = (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
-      fontSize: TripClipOtpInput.digitFontSize,
-      height: TripClipOtpInput.digitLineHeight,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0,
-    );
-
-    final row = Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < widget.length; i++) ...[
-          if (i > 0) const SizedBox(width: TripClipOtpInput.gapBetweenCells),
-          Expanded(
-            child: _TripClipOtpCell(
-              digit: i < _text.length ? _text[i] : '',
-              decoration: _decorationForCell(context: context, index: i, isDark: isDark),
-              digitStyle: digitStyle,
-              onTap: () => _onCellTapped(i),
-            ),
-          ),
-        ],
-      ],
-    );
+    final digitStyle = (theme.textTheme.bodyLarge ?? const TextStyle())
+        .copyWith(
+          fontSize: TripClipOtpInput.digitFontSize,
+          height: TripClipOtpInput.digitLineHeight,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0,
+        );
 
     final messageBelow = _buildMessage(context);
 
@@ -259,42 +272,86 @@ class _TripClipOtpInputState extends State<TripClipOtpInput> {
       children: [
         SizedBox(
           height: TripClipOtpInput.digitRowHeight,
-          child: Stack(
-            alignment: Alignment.center,
-            clipBehavior: Clip.none,
-            children: [
-              row,
-              Offstage(
-                offstage: true,
-                child: SizedBox(
-                  height: 1,
-                  width: 1,
-                  child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  enabled: widget.enabled,
-                  autofocus: widget.autofocus,
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.done,
-                  maxLines: 1,
-                  style: const TextStyle(color: Colors.transparent, fontSize: 1),
-                  cursorColor: Colors.transparent,
-                  showCursor: false,
-                  enableInteractiveSelection: false,
-                  autofillHints: widget.autofillHints,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(widget.length),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final totalW = constraints.maxWidth;
+              final row = Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < widget.length; i++) ...[
+                    if (i > 0)
+                      const SizedBox(width: TripClipOtpInput.gapBetweenCells),
+                    Expanded(
+                      child: _TripClipOtpCell(
+                        digit: i < _text.length ? _text[i] : '',
+                        decoration: _decorationForCell(
+                          context: context,
+                          index: i,
+                          isDark: isDark,
+                        ),
+                        digitStyle: digitStyle,
+                      ),
+                    ),
                   ],
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
+                ],
+              );
+
+              return Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
+                children: [
+                  row,
+                  Positioned.fill(
+                    child: Listener(
+                      behavior: HitTestBehavior.translucent,
+                      onPointerDown: (event) {
+                        if (!widget.enabled) return;
+                        final i = _cellIndexFromLocalDx(
+                          event.localPosition.dx,
+                          totalW,
+                        );
+                        _placeCaretAtCell(i);
+                      },
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        enabled: widget.enabled,
+                        autofocus: widget.autofocus,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        minLines: null,
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: const TextStyle(
+                          color: Colors.transparent,
+                          fontSize: 16,
+                          height: 1,
+                        ),
+                        strutStyle: StrutStyle.disabled,
+                        cursorColor: Colors.transparent,
+                        showCursor: false,
+                        enableInteractiveSelection: true,
+                        autofillHints: widget.autofillHints,
+                        mouseCursor: widget.enabled
+                            ? SystemMouseCursors.text
+                            : SystemMouseCursors.basic,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(widget.length),
+                        ],
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          isDense: true,
+                          isCollapsed: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-            ],
+                ],
+              );
+            },
           ),
         ),
         ?messageBelow,
@@ -314,39 +371,36 @@ class _TripClipOtpCell extends StatelessWidget {
     required this.digit,
     required this.decoration,
     required this.digitStyle,
-    required this.onTap,
   });
 
   final String digit;
   final TripClipFormFieldDecoration decoration;
   final TextStyle digitStyle;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final char = digit.isEmpty ? '' : digit;
     final textStyle = digitStyle.copyWith(color: decoration.foreground);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
+    return Container(
+      height: TripClipOtpInput.cellHeight,
+      padding: const EdgeInsets.symmetric(
+        horizontal: TripClipOtpInput.cellHorizontalPadding,
+      ),
+      decoration: BoxDecoration(
+        color: decoration.fill,
         borderRadius: BorderRadius.circular(TripClipOtpInput.radius),
-        child: Container(
-          padding: const EdgeInsets.all(TripClipOtpInput.cellPadding),
-          decoration: BoxDecoration(
-            color: decoration.fill,
-            borderRadius: BorderRadius.circular(TripClipOtpInput.radius),
-            border: decoration.borderWidth > 0
-                ? Border.all(
-                    color: decoration.borderColor,
-                    width: decoration.borderWidth,
-                  )
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: Text(char, textAlign: TextAlign.center, style: textStyle),
-        ),
+        border: decoration.borderWidth > 0
+            ? Border.all(
+                color: decoration.borderColor,
+                width: decoration.borderWidth,
+              )
+            : null,
+      ),
+      alignment: Alignment.center,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(char, textAlign: TextAlign.center, style: textStyle),
       ),
     );
   }

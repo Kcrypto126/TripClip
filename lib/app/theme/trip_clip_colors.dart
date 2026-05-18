@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'trip_clip_palette.dart';
 
-/// Semantic colors consumed by widgets. Registered via [ThemeExtension].
 @immutable
 class TripClipColors extends ThemeExtension<TripClipColors> {
   const TripClipColors({
@@ -48,7 +47,7 @@ class TripClipColors extends ThemeExtension<TripClipColors> {
     pagePrimary: TripClipPalette.primary500,
     surfaceBackground: Colors.white,
     surfaceMuted: TripClipPalette.neutral50,
-    textBase: TripClipPalette.neutral1000,
+    textBase: TripClipPalette.tertiary500,
     textSubtle: TripClipPalette.neutral600,
     textFixedOnPrimary: Colors.white,
     iconBase: TripClipPalette.neutral1000,
@@ -85,16 +84,16 @@ class TripClipColors extends ThemeExtension<TripClipColors> {
 
   static final TripClipColors dark = TripClipColors(
     pageBackground: TripClipPalette.darkPageBackground,
-    pagePrimary: TripClipPalette.primary500,
+    pagePrimary: TripClipPalette.primary400,
     surfaceBackground: TripClipPalette.darkPageBackground,
     surfaceMuted: TripClipPalette.darkPageBackground,
-    textBase: TripClipPalette.neutral50,
-    textSubtle: TripClipPalette.neutral400,
+    textBase: Colors.white,
+    textSubtle: TripClipPalette.neutral300,
     textFixedOnPrimary: Colors.white,
     iconBase: TripClipPalette.neutral50,
-    heading: TripClipPalette.accent400,
+    heading: TripClipPalette.primary400,
     borderSubtle: TripClipPalette.neutral850,
-    borderBrandPrimary: TripClipPalette.primary500,
+    borderBrandPrimary: TripClipPalette.primary400,
     badgeBackground: TripClipPalette.secondary500,
     badgeForeground: Colors.white,
     toastError: TripClipToastScheme.dark(

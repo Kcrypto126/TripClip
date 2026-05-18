@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../trip_clip_avatar.dart';
@@ -11,10 +10,11 @@ import 'trip_clip_card_shadows.dart';
 class TripClipFeatureCard extends StatefulWidget {
   const TripClipFeatureCard({
     super.key,
-    this.images = const [AssetImage('assets/images/pump.png')],
+    this.images = const [NetworkImage('https://raw.githubusercontent.com/Kcrypto126/TripClip/refs/heads/main/assets/images/pump.webp')],
     required this.heading,
     required this.badgeLabel,
     this.badgeFlexibleLabel,
+    this.avatarUrl,
     required this.userName,
     required this.ratingText,
     this.verified = true,
@@ -27,6 +27,7 @@ class TripClipFeatureCard extends StatefulWidget {
     required this.itemsText,
     required this.weightText,
     required this.footerDateText,
+    this.onTap,
   });
 
   final List<ImageProvider<Object>> images;
@@ -36,6 +37,7 @@ class TripClipFeatureCard extends StatefulWidget {
   final String badgeLabel;
   final String? badgeFlexibleLabel;
 
+  final String? avatarUrl;
   final String userName;
   final String ratingText;
   final bool verified;
@@ -51,6 +53,8 @@ class TripClipFeatureCard extends StatefulWidget {
   final String itemsText;
   final String weightText;
   final String footerDateText;
+
+  final VoidCallback? onTap;
 
   @override
   State<TripClipFeatureCard> createState() => _TripClipFeatureCardState();
@@ -72,57 +76,51 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
     super.dispose();
   }
 
-  static TextStyle _rubik({
-    required double size,
-    required double lineHeight,
-    required FontWeight weight,
-    required Color color,
-    double letterSpacing = 0,
-  }) {
-    return GoogleFonts.rubik(
-      fontSize: size,
-      height: lineHeight / size,
-      fontWeight: weight,
-      letterSpacing: letterSpacing,
-      color: color,
-    );
+  static ImageProvider<Object>? _resolveAvatarImage(String? raw) {
+    final value = raw?.trim();
+    if (value == null || value.isEmpty) return null;
+
+    if (value.startsWith('assets/')) {
+      return AssetImage(value);
+    }
+
+    final uri = Uri.tryParse(value);
+    final scheme = uri?.scheme.toLowerCase();
+    if (scheme == 'http' || scheme == 'https') {
+      return NetworkImage(value);
+    }
+
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
     final light = Theme.of(context).brightness == Brightness.light;
     final images = widget.images.isEmpty
-        ? const <ImageProvider<Object>>[AssetImage('assets/images/pump.png')]
+        ? const <ImageProvider<Object>>[NetworkImage('https://raw.githubusercontent.com/Kcrypto126/TripClip/refs/heads/main/assets/images/pump.webp')]
         : widget.images;
 
-    final bg = light ? TripClipPalette.neutral100 : TripClipPalette.neutral900;
-    final headingColor = light
-        ? TripClipPalette.primary500
-        : TripClipPalette.primary400;
-    final dividerColor = light
-        ? TripClipPalette.neutral200
-        : TripClipPalette.neutral850;
+    final avatarImage = _resolveAvatarImage(widget.avatarUrl);
 
-    final iconBase = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
+    final bg = light ? TripClipPalette.neutral100 : TripClipPalette.neutral900;
+    final headingColor = context.tripClipColors.heading;
+    final dividerColor = context.tripClipColors.borderSubtle;
+
+    final iconBase = context.tripClipColors.textSubtle;
     final ratingStarColor = iconBase;
     final otherIconColor = iconBase;
     final verifyColor = light
         ? TripClipPalette.secondary500
         : TripClipPalette.secondary400;
 
-    final userNameColor = light
-        ? TripClipPalette.primary500
-        : TripClipPalette.primary400;
-    final ratingTextColor = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
+    final userNameColor = context.tripClipColors.heading;
+    final ratingTextColor = context.tripClipColors.textSubtle;
 
-    final sectionTextColor = light ? TripClipPalette.tertiary500 : Colors.white;
+    final sectionTextColor = context.tripClipColors.textBase;
     final footerTextColor = ratingTextColor;
 
-    return DecoratedBox(
+    Widget card = DecoratedBox(
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(12),
@@ -157,12 +155,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                     Expanded(
                       child: Text(
                         widget.heading,
-                        style: _rubik(
-                          size: 22,
-                          lineHeight: 26,
-                          weight: FontWeight.w600,
-                          color: headingColor,
-                        ),
+                        style: t.headlineMedium!.copyWith(color: headingColor),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -175,19 +168,17 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                 TripClipCardDivider(color: dividerColor),
                 Row(
                   children: [
-                    const TripClipAvatar(size: TripClipAvatarSize.s32),
+                    TripClipAvatar(
+                      size: TripClipAvatarSize.s32,
+                      image: avatarImage,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         widget.userName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: _rubik(
-                          size: 14,
-                          lineHeight: 20,
-                          weight: FontWeight.w400,
-                          color: userNameColor,
-                        ),
+                        style: t.bodySmall!.copyWith(color: userNameColor),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -198,12 +189,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                     const SizedBox(width: 4),
                     Text(
                       widget.ratingText,
-                      style: _rubik(
-                        size: 14,
-                        lineHeight: 20,
-                        weight: FontWeight.w400,
-                        color: ratingTextColor,
-                      ),
+                      style: t.bodySmall!.copyWith(color: ratingTextColor),
                     ),
                     if (widget.verified) ...[
                       const SizedBox(width: 8),
@@ -264,12 +250,7 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
                     const Spacer(),
                     Text(
                       widget.footerDateText,
-                      style: _rubik(
-                        size: 12,
-                        lineHeight: 18,
-                        weight: FontWeight.w400,
-                        color: footerTextColor,
-                      ),
+                      style: t.labelMedium!.copyWith(color: footerTextColor),
                     ),
                   ],
                 ),
@@ -279,6 +260,19 @@ class _TripClipFeatureCardState extends State<TripClipFeatureCard> {
         ],
       ),
     );
+
+    if (widget.onTap != null) {
+      card = Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(12),
+          splashFactory: NoSplash.splashFactory,
+          child: card,
+        ),
+      );
+    }
+    return card;
   }
 
   static Widget _svgIcon(String asset, {required Color color}) {
@@ -313,7 +307,22 @@ class _FeatureImageCarousel extends StatelessWidget {
           itemCount: images.length,
           onPageChanged: onPageChanged,
           itemBuilder: (context, index) {
-            return Image(image: images[index], fit: BoxFit.cover);
+            return Image(
+              image: images[index],
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.medium,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return const DecoratedBox(
+                  decoration: BoxDecoration(color: TripClipPalette.neutral850),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const DecoratedBox(
+                  decoration: BoxDecoration(color: TripClipPalette.neutral850),
+                );
+              },
+            );
           },
         ),
       ),
@@ -399,21 +408,12 @@ class _PickupDeliveryBlock extends StatelessWidget {
   final double leftPadding;
   final double rightPadding;
 
-  static TextStyle _rubik({
-    required double size,
-    required double lineHeight,
-    required FontWeight weight,
-    required Color color,
-  }) => GoogleFonts.rubik(
-    fontSize: size,
-    height: lineHeight / size,
-    fontWeight: weight,
-    letterSpacing: 0,
-    color: color,
-  );
-
   @override
   Widget build(BuildContext context) {
+    final capStyle = Theme.of(context).textTheme.titleSmall!.copyWith(
+          fontWeight: FontWeight.w500,
+          color: titleColor,
+        );
     final child = Padding(
       padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
       child: Column(
@@ -421,12 +421,7 @@ class _PickupDeliveryBlock extends StatelessWidget {
         children: [
           Text(
             title,
-            style: _rubik(
-              size: 12,
-              lineHeight: 14,
-              weight: FontWeight.w500,
-              color: titleColor,
-            ),
+            style: capStyle,
           ),
           const SizedBox(height: 8),
           _IconText(
@@ -504,13 +499,10 @@ class _IconText extends StatelessWidget {
                 text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  height: 20 / 14,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0,
-                  color: textColor,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: textColor),
               ),
             ),
           ],

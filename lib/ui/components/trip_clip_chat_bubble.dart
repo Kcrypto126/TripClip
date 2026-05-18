@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import '../../app/theme/trip_clip_colors.dart';
 import '../../app/theme/trip_clip_palette.dart';
 import 'trip_clip_avatar.dart';
 
@@ -12,24 +11,25 @@ class TripClipChatBubble extends StatelessWidget {
     required this.text,
     required this.side,
     this.avatarImage,
+    this.avatarUrl,
+    this.avatarSize = TripClipAvatarSize.s32,
   });
 
   final String text;
   final TripClipChatBubbleSide side;
   final ImageProvider<Object>? avatarImage;
 
+  final String? avatarUrl;
+
+  final TripClipAvatarSize avatarSize;
+
   static const double _gap = 8;
-  static const double _bubbleWidth = 240;
+  static const double _bubbleMaxWidth = 240;
   static const double _bubblePadding = 12;
   static const double _bubbleRadius = 8;
 
-  static TextStyle _textStyle(Color color) => GoogleFonts.rubik(
-        fontSize: 16,
-        height: 24 / 16,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0,
-        color: color,
-      );
+  static TextStyle _textStyle(BuildContext context, Color color) =>
+      Theme.of(context).textTheme.bodyMedium!.copyWith(color: color);
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +37,23 @@ class TripClipChatBubble extends StatelessWidget {
 
     final (bg, fg) = switch (side) {
       TripClipChatBubbleSide.left => (
-          light ? TripClipPalette.neutral100 : TripClipPalette.neutral900,
-          light ? TripClipPalette.tertiary500 : Colors.white,
-        ),
+        light ? TripClipPalette.neutral100 : TripClipPalette.neutral900,
+        context.tripClipColors.textBase,
+      ),
       TripClipChatBubbleSide.right => (
-          light ? TripClipPalette.primary500 : TripClipPalette.primary400,
-          Colors.white,
-        ),
+        context.tripClipColors.heading,
+        Colors.white,
+      ),
     };
 
     final avatar = TripClipAvatar(
-      size: TripClipAvatarSize.s32,
+      size: avatarSize,
       image: avatarImage,
+      imageUrl: avatarUrl,
     );
 
     final bubble = ConstrainedBox(
-      constraints: const BoxConstraints.tightFor(width: _bubbleWidth),
+      constraints: const BoxConstraints(maxWidth: _bubbleMaxWidth),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: bg,
@@ -60,10 +61,7 @@ class TripClipChatBubble extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(_bubblePadding),
-          child: Text(
-            text,
-            style: _textStyle(fg),
-          ),
+          child: Text(text, style: _textStyle(context, fg)),
         ),
       ),
     );
@@ -90,4 +88,3 @@ class TripClipChatBubble extends StatelessWidget {
     );
   }
 }
-

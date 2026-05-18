@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
@@ -25,11 +26,7 @@ class TripClipFormToggle extends StatelessWidget {
   static const double padHorizontal = 4;
 
   static const double _thumbLeftOff = padHorizontal;
-  static const double _thumbLeftOn =
-      trackWidth - padHorizontal - thumbWidth;
-
-  static const Color labelColorLight = Color(0xFF141E46);
-  static const Color labelColorDark = Color(0xFFFFFFFF);
+  static const double _thumbLeftOn = trackWidth - padHorizontal - thumbWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +35,21 @@ class TripClipFormToggle extends StatelessWidget {
 
     final Color trackColor;
     final Color thumbColor;
+    final subtle = context.tripClipColors.borderSubtle;
     if (isDark) {
-      trackColor =
-          value ? TripClipPalette.tertiary300 : TripClipPalette.neutral850;
-      thumbColor =
-          value ? TripClipPalette.neutral850 : TripClipPalette.tertiary300;
+      trackColor = value
+          ? TripClipPalette.tertiary300
+          : subtle;
+      thumbColor = value
+          ? subtle
+          : TripClipPalette.tertiary300;
     } else {
-      trackColor =
-          value ? TripClipPalette.tertiary500 : TripClipPalette.neutral200;
-      thumbColor =
-          value ? TripClipPalette.neutral200 : TripClipPalette.tertiary500;
+      trackColor = value
+          ? TripClipPalette.tertiary500
+          : subtle;
+      thumbColor = value
+          ? subtle
+          : TripClipPalette.tertiary500;
     }
 
     Widget toggle = Semantics(
@@ -95,19 +97,13 @@ class TripClipFormToggle extends StatelessWidget {
     }
 
     if (label != null && label!.trim().isNotEmpty) {
-      final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 16,
-            height: 24 / 16,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 0,
-            color: isDark ? labelColorDark : labelColorLight,
-          );
+      final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+        color: context.tripClipColors.textBase,
+      );
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Text(label!.trim(), style: labelStyle),
-          ),
+          Expanded(child: Text(label!.trim(), style: labelStyle)),
           const SizedBox(width: AppSpacing.sm),
           toggle,
         ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../app/theme/trip_clip_palette.dart';
 import '../foundations/app_spacing.dart';
@@ -133,7 +132,7 @@ class _ToastBody extends StatelessWidget {
     return switch (kind) {
       AppToastKind.error => 'assets/icons/cancel-circle2.svg',
       AppToastKind.warning => 'assets/icons/alert-circle2.svg',
-      AppToastKind.success => 'assets/icons/tick-circle.svg',
+      AppToastKind.success => 'assets/icons/check-circle2.svg',
       AppToastKind.info => 'assets/icons/info-circle2.svg',
     };
   }
@@ -141,25 +140,25 @@ class _ToastBody extends StatelessWidget {
   ({Color bg, Color border, Color iconAndDivider}) _colors(bool light) {
     return switch (kind) {
       AppToastKind.error => (
-          bg: light ? _lightErrorBg : _darkErrorBg,
-          border: light ? _lightErrorBorder : _darkErrorBorder,
-          iconAndDivider: light ? _lightErrorIcon : _darkErrorIcon,
-        ),
+        bg: light ? _lightErrorBg : _darkErrorBg,
+        border: light ? _lightErrorBorder : _darkErrorBorder,
+        iconAndDivider: light ? _lightErrorIcon : _darkErrorIcon,
+      ),
       AppToastKind.warning => (
-          bg: light ? _lightWarningBg : _darkWarningBg,
-          border: light ? _lightWarningBorder : _darkWarningBorder,
-          iconAndDivider: light ? _lightWarningIcon : _darkWarningIcon,
-        ),
+        bg: light ? _lightWarningBg : _darkWarningBg,
+        border: light ? _lightWarningBorder : _darkWarningBorder,
+        iconAndDivider: light ? _lightWarningIcon : _darkWarningIcon,
+      ),
       AppToastKind.success => (
-          bg: light ? _lightSuccessBg : _darkSuccessBg,
-          border: light ? _lightSuccessBorder : _darkSuccessBorder,
-          iconAndDivider: light ? _lightSuccessIcon : _darkSuccessIcon,
-        ),
+        bg: light ? _lightSuccessBg : _darkSuccessBg,
+        border: light ? _lightSuccessBorder : _darkSuccessBorder,
+        iconAndDivider: light ? _lightSuccessIcon : _darkSuccessIcon,
+      ),
       AppToastKind.info => (
-          bg: light ? _lightInfoBg : _darkInfoBg,
-          border: light ? _lightInfoBorder : _darkInfoBorder,
-          iconAndDivider: light ? _lightInfoIcon : _darkInfoIcon,
-        ),
+        bg: light ? _lightInfoBg : _darkInfoBg,
+        border: light ? _lightInfoBorder : _darkInfoBorder,
+        iconAndDivider: light ? _lightInfoIcon : _darkInfoIcon,
+      ),
     };
   }
 
@@ -169,11 +168,7 @@ class _ToastBody extends StatelessWidget {
     final light = theme.brightness == Brightness.light;
     final c = _colors(light);
 
-    final textStyle = GoogleFonts.rubik(
-      fontSize: 16,
-      height: 24 / 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0,
+    final textStyle = theme.textTheme.bodyMedium!.copyWith(
       color: c.iconAndDivider,
     );
 
@@ -193,15 +188,13 @@ class _ToastBody extends StatelessWidget {
                 _iconAsset,
                 width: _iconSize,
                 height: _iconSize,
-                colorFilter: ColorFilter.mode(c.iconAndDivider, BlendMode.srcIn),
-              ),
-              const SizedBox(width: _gap),
-              Expanded(
-                child: Text(
-                  message,
-                  style: textStyle,
+                colorFilter: ColorFilter.mode(
+                  c.iconAndDivider,
+                  BlendMode.srcIn,
                 ),
               ),
+              const SizedBox(width: _gap),
+              Expanded(child: Text(message, style: textStyle)),
               Container(
                 width: 1,
                 height: _iconSize,

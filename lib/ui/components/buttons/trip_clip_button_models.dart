@@ -6,9 +6,4 @@ enum TripClipButtonVariant {
   destructive,
 }
 
-enum TripClipButtonIconPlacement {
-  none,
-  leading,
-  trailing,
-  iconOnly,
-}
+enum TripClipButtonIconPlacement { none, leading, trailing, iconOnly }

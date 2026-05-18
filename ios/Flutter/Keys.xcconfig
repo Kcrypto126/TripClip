@@ -1,0 +1,5 @@
+// Put your Google Maps API key here (do not commit real keys to public repos).
+// Example:
+// GOOGLE_MAPS_API_KEY=AIza...
+GOOGLE_MAPS_API_KEY=YOUR_API_KEY_HERE
+

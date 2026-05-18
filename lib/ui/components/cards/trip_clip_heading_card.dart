@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../buttons/trip_clip_auxiliary_buttons.dart';
 import 'trip_clip_card_shadows.dart';
 
@@ -13,17 +11,17 @@ class TripClipHeadingCard extends StatefulWidget {
     this.height = 150,
     this.padding = const EdgeInsets.all(12),
     this.borderRadius = 12,
-    this.backgroundImage = const AssetImage('assets/images/bridge.jpg'),
+    this.backgroundImage = const NetworkImage('https://raw.githubusercontent.com/Kcrypto126/TripClip/refs/heads/main/assets/images/melbourne.webp'),
     this.initialFavorite = false,
     this.onFavoriteChanged,
     this.favoriteButtonSize = 24,
     this.favoriteButtonInset = 4,
+    this.onTap,
   });
 
   final String heading;
   final String body;
 
-  /// If null, expands to the max available width.
   final double? width;
   final double height;
 
@@ -37,6 +35,8 @@ class TripClipHeadingCard extends StatefulWidget {
 
   final double favoriteButtonSize;
   final double favoriteButtonInset;
+
+  final VoidCallback? onTap;
 
   @override
   State<TripClipHeadingCard> createState() => _TripClipHeadingCardState();
@@ -59,22 +59,11 @@ class _TripClipHeadingCardState extends State<TripClipHeadingCard> {
     }
   }
 
-  static TextStyle _rubik({
-    required double size,
-    required double lineHeight,
-    required FontWeight weight,
-    required Color color,
-    double letterSpacing = 0,
-  }) => GoogleFonts.rubik(
-    fontSize: size,
-    height: lineHeight / size,
-    fontWeight: weight,
-    letterSpacing: letterSpacing,
-    color: color,
-  );
-
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final headingTextStyle = t.titleLarge!.copyWith(color: Colors.white);
+    final bodyTextStyle = t.bodySmall!.copyWith(color: Colors.white);
     final r = BorderRadius.circular(widget.borderRadius);
     final light = Theme.of(context).brightness == Brightness.light;
 
@@ -95,8 +84,30 @@ class _TripClipHeadingCardState extends State<TripClipHeadingCard> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image(image: widget.backgroundImage, fit: BoxFit.cover),
-                  // Helps keep text legible on bright images.
+                  Image(
+                    image: widget.backgroundImage,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1C2430),
+                            ),
+                          ),
+                          Positioned.fill(child: child),
+                        ],
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return const DecoratedBox(
+                        decoration: BoxDecoration(color: Color(0xFF1C2430)),
+                      );
+                    },
+                  ),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -110,6 +121,16 @@ class _TripClipHeadingCardState extends State<TripClipHeadingCard> {
                       ),
                     ),
                   ),
+                  if (widget.onTap != null)
+                    Positioned.fill(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          onTap: widget.onTap,
+                          splashFactory: NoSplash.splashFactory,
+                        ),
+                      ),
+                    ),
                   Padding(
                     padding: widget.padding,
                     child: Column(
@@ -132,25 +153,13 @@ class _TripClipHeadingCardState extends State<TripClipHeadingCard> {
                           widget.heading,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: _rubik(
-                            size: 16,
-                            lineHeight: 20,
-                            weight: FontWeight.w600,
-                            letterSpacing: 0,
-                            color: Colors.white,
-                          ),
+                          style: headingTextStyle,
                         ),
                         Text(
                           widget.body,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: _rubik(
-                            size: 14,
-                            lineHeight: 20,
-                            weight: FontWeight.w400,
-                            letterSpacing: 0,
-                            color: Colors.white,
-                          ),
+                          style: bodyTextStyle,
                         ),
                       ],
                     ),

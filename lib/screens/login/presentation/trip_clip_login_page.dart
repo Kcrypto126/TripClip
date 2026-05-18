@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../auth/presentation/trip_clip_create_account_page.dart';
 import '../../../ui/components/buttons/trip_clip_button.dart';
@@ -23,11 +23,9 @@ class TripClipLoginPage extends StatefulWidget {
 
   final VoidCallback onLoggedIn;
 
-  /// When set (e.g. from [MainShellPage] auth overlay), opens create account on
-  /// the same navigator so the shell bottom bar stays visible.
   final VoidCallback? onCreateAccount;
 
-  static const Color backgroundColor = TripClipPalette.primary500; // #0000D2
+  static const Color backgroundColor = TripClipPalette.primary500;
 
   @override
   State<TripClipLoginPage> createState() => _TripClipLoginPageState();
@@ -103,7 +101,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
         text: errorText.trim(),
         kind: TripClipFormMessageKind.error,
         iconSize: 16,
-        colorOverride: const Color(0xFFA4332B),
       ),
     ];
   }
@@ -112,12 +109,10 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
     required String email,
     required String password,
   }) async {
-    // Frontend-only placeholder. Replace with API call later.
     await Future<void>.delayed(const Duration(milliseconds: 450));
 
     final e = email.trim().toLowerCase();
 
-    // Simple deterministic failure path for UI testing.
     if (e.contains('fail')) {
       return const _LoginResult.failure('Invalid email or password.');
     }
@@ -184,37 +179,17 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = GoogleFonts.rubik(
-      fontSize: 14,
+    final t = Theme.of(context).textTheme;
+    final labelStyle = t.bodySmall!.copyWith(
       fontWeight: FontWeight.w500,
-      height: 20 / 14,
-      letterSpacing: 0,
       color: Colors.white,
     );
-
-    final forgotStyle = GoogleFonts.rubik(
-      fontSize: 16,
+    final forgotStyle = t.bodyMedium!.copyWith(
       fontWeight: FontWeight.w600,
-      height: 24 / 16,
-      letterSpacing: 0,
       color: Colors.white,
     );
-
-    final orStyle = GoogleFonts.rubik(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      height: 24 / 16,
-      letterSpacing: 0,
-      color: Colors.white,
-    );
-
-    final footerStyle = GoogleFonts.rubik(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      height: 24 / 16,
-      letterSpacing: 0,
-      color: Colors.white,
-    );
+    final orStyle = t.bodyMedium!.copyWith(color: Colors.white);
+    final footerStyle = t.bodyMedium!.copyWith(color: Colors.white);
 
     final socialStyle = _socialButtonStyle(context);
 
@@ -362,7 +337,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                           if (widget.onCreateAccount != null) {
                             widget.onCreateAccount!();
                           } else {
-                            Navigator.of(context).push<void>(
+                            Navigator.of(context, rootNavigator: true).push<void>(
                               MaterialPageRoute<void>(
                                 builder: (_) =>
                                     const TripClipCreateAccountPage(),
@@ -373,6 +348,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
                         styleOverride: _textLinkButtonStyle(
                           footerStyle.copyWith(
                             decoration: TextDecoration.underline,
+                            decorationColor: Colors.white,
                           ),
                         ),
                       ),
@@ -405,7 +381,6 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
         }
         return Colors.white;
       }),
-      // No background/overlay effect; only text/icon tint changes on press.
       overlayColor: WidgetStateProperty.all<Color?>(Colors.transparent),
       splashFactory: NoSplash.splashFactory,
     );
@@ -413,7 +388,7 @@ class _TripClipLoginPageState extends State<TripClipLoginPage> {
 
   ButtonStyle _socialButtonStyle(BuildContext context) {
     final base = TripClipButtonStyles.labelTextStyle(Theme.of(context));
-    const fg = TripClipPalette.tertiary500; // #141E46
+    final fg = TripClipColors.light.textBase;
     const pressedBg = TripClipPalette.neutral100;
     return ButtonStyle(
       minimumSize: WidgetStateProperty.all(const Size(48, 44)),
@@ -450,11 +425,12 @@ class _LightInputsTheme extends StatelessWidget {
       data: theme.copyWith(
         brightness: Brightness.light,
         textTheme: theme.textTheme.apply(
-          bodyColor: TripClipPalette.tertiary500,
-          displayColor: TripClipPalette.tertiary500,
+          bodyColor: TripClipColors.light.textBase,
+          displayColor: TripClipColors.light.textBase,
         ),
-        // Default icons (email/lock + default eye) are grey; focused/active are navy.
-        iconTheme: theme.iconTheme.copyWith(color: TripClipPalette.neutral600),
+        iconTheme: theme.iconTheme.copyWith(
+          color: TripClipColors.light.textSubtle,
+        ),
       ),
       child: child,
     );

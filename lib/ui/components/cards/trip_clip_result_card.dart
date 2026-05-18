@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../badges/trip_clip_badge_status.dart';
 import 'trip_clip_card_divider.dart';
 import 'trip_clip_card_shadows.dart';
 
-/// Result card: status + progress, heading + price badge, locations, footer stats.
-/// Styling matches [TripClipFeatureCard] / [TripClipSemiFeatureCard] (surface,
-/// shadow, dividers, badge clip, icon colors).
 class TripClipResultCard extends StatelessWidget {
   const TripClipResultCard({
     super.key,
     this.statusLabel = 'Success',
+    this.statusTone = TripClipBadgeStatusTone.success,
     this.progress = 0.35,
     required this.heading,
     required this.badgeLabel,
@@ -24,11 +21,12 @@ class TripClipResultCard extends StatelessWidget {
     required this.itemsText,
     required this.weightText,
     required this.footerDateText,
+    this.showMetaFooter = true,
   }) : assert(progress >= 0 && progress <= 1);
 
   final String statusLabel;
+  final TripClipBadgeStatusTone statusTone;
 
-  /// 0…1 orange fill on the progress track.
   final double progress;
 
   final String heading;
@@ -41,48 +39,26 @@ class TripClipResultCard extends StatelessWidget {
   final String itemsText;
   final String weightText;
   final String footerDateText;
+  final bool showMetaFooter;
 
   static const double _progressHeight = 8;
 
-  static TextStyle _rubik({
-    required double size,
-    required double lineHeight,
-    required FontWeight weight,
-    required Color color,
-    double letterSpacing = 0,
-  }) => GoogleFonts.rubik(
-    fontSize: size,
-    height: lineHeight / size,
-    fontWeight: weight,
-    letterSpacing: letterSpacing,
-    color: color,
-  );
-
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
     final light = Theme.of(context).brightness == Brightness.light;
 
     final bg = light ? TripClipPalette.neutral100 : TripClipPalette.neutral900;
-    final headingColor = light
-        ? TripClipPalette.primary500
-        : TripClipPalette.primary400;
-    final dividerColor = light
-        ? TripClipPalette.neutral200
-        : TripClipPalette.neutral850;
+    final headingColor = context.tripClipColors.heading;
+    final dividerColor = context.tripClipColors.borderSubtle;
 
-    final iconBase = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
+    final iconBase = context.tripClipColors.textSubtle;
     final otherIconColor = iconBase;
-    final ratingTextColor = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
-    final sectionTextColor = light ? TripClipPalette.tertiary500 : Colors.white;
+    final ratingTextColor = context.tripClipColors.textSubtle;
+    final sectionTextColor = context.tripClipColors.textBase;
     final footerTextColor = ratingTextColor;
 
-    final trackColor = light
-        ? TripClipPalette.neutral200
-        : TripClipPalette.neutral850;
+    final trackColor = context.tripClipColors.borderSubtle;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -99,7 +75,7 @@ class TripClipResultCard extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TripClipBadgeStatus(
                 label: statusLabel,
-                tone: TripClipBadgeStatusTone.success,
+                tone: statusTone,
                 showLeadingIcon: false,
                 showTrailingIcon: false,
               ),
@@ -134,12 +110,7 @@ class TripClipResultCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     heading,
-                    style: _rubik(
-                      size: 18,
-                      lineHeight: 22,
-                      weight: FontWeight.w600,
-                      color: headingColor,
-                    ),
+                    style: t.headlineSmall!.copyWith(color: headingColor),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -170,34 +141,31 @@ class TripClipResultCard extends StatelessWidget {
                 ),
               ],
             ),
-            TripClipCardDivider(color: dividerColor),
-            Row(
-              children: [
-                _FooterIconText(
-                  iconAsset: 'assets/icons/package.svg',
-                  iconColor: otherIconColor,
-                  text: itemsText,
-                  textColor: sectionTextColor,
-                ),
-                const SizedBox(width: 12),
-                _FooterIconText(
-                  iconAsset: 'assets/icons/weight.svg',
-                  iconColor: otherIconColor,
-                  text: weightText,
-                  textColor: sectionTextColor,
-                ),
-                const Spacer(),
-                Text(
-                  footerDateText,
-                  style: _rubik(
-                    size: 12,
-                    lineHeight: 18,
-                    weight: FontWeight.w400,
-                    color: footerTextColor,
+            if (showMetaFooter) ...[
+              TripClipCardDivider(color: dividerColor),
+              Row(
+                children: [
+                  _FooterIconText(
+                    iconAsset: 'assets/icons/package.svg',
+                    iconColor: otherIconColor,
+                    text: itemsText,
+                    textColor: sectionTextColor,
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 12),
+                  _FooterIconText(
+                    iconAsset: 'assets/icons/weight.svg',
+                    iconColor: otherIconColor,
+                    text: weightText,
+                    textColor: sectionTextColor,
+                  ),
+                  const Spacer(),
+                  Text(
+                    footerDateText,
+                    style: t.labelMedium!.copyWith(color: footerTextColor),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -236,13 +204,10 @@ class _LocationLine extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.rubik(
-              fontSize: 14,
-              height: 20 / 14,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0,
-              color: textColor,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .copyWith(color: textColor),
           ),
         ),
       ],
@@ -277,13 +242,10 @@ class _FooterIconText extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: GoogleFonts.rubik(
-            fontSize: 14,
-            height: 20 / 14,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 0,
-            color: textColor,
-          ),
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .copyWith(color: textColor),
         ),
       ],
     );

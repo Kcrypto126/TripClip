@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 class TripClipWelcomeSplashPage extends StatelessWidget {
   const TripClipWelcomeSplashPage({super.key, required this.onContinue});
 
@@ -23,13 +21,8 @@ class TripClipWelcomeSplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = GoogleFonts.rubik(
-      fontSize: 60,
-      fontWeight: FontWeight.w600,
-      height: 64 / 60,
-      letterSpacing: 0,
-      color: Colors.white,
-    );
+    final textStyle =
+        Theme.of(context).textTheme.displayLarge!.copyWith(color: Colors.white);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(

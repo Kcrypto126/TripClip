@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../app/theme/trip_clip_colors.dart';
-import '../../app/theme/trip_clip_palette.dart';
 import 'badges/trip_clip_badge_counter.dart';
 
 class TripClipHomeAppBar extends StatelessWidget
@@ -38,9 +37,7 @@ class TripClipHomeAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final light = Theme.of(context).brightness == Brightness.light;
-    final iconColor = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
+    final iconColor = context.tripClipColors.textSubtle;
     final logoAsset = light
         ? 'assets/icons/home-logo-light.svg'
         : 'assets/icons/home-logo-dark.svg';

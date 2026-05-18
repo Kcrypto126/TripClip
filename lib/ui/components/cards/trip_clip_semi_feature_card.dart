@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../badges/trip_clip_badge_clip.dart';
 import '../trip_clip_avatar.dart';
@@ -11,7 +10,7 @@ import 'trip_clip_card_shadows.dart';
 class TripClipSemiFeatureCard extends StatelessWidget {
   const TripClipSemiFeatureCard({
     super.key,
-    this.image = const AssetImage('assets/images/pump.png'),
+    this.image = const NetworkImage('https://raw.githubusercontent.com/Kcrypto126/TripClip/refs/heads/main/assets/images/pump.webp'),
     required this.heading,
     required this.badgeLabel,
     this.badgeFlexibleLabel,
@@ -40,20 +39,6 @@ class TripClipSemiFeatureCard extends StatelessWidget {
   final String itemsText;
   final String weightText;
   final String footerDateText;
-
-  static TextStyle _rubik({
-    required double size,
-    required double lineHeight,
-    required FontWeight weight,
-    required Color color,
-    double letterSpacing = 0,
-  }) => GoogleFonts.rubik(
-    fontSize: size,
-    height: lineHeight / size,
-    fontWeight: weight,
-    letterSpacing: letterSpacing,
-    color: color,
-  );
 
   static Widget _verifiedAvatar({
     required bool verified,
@@ -84,39 +69,45 @@ class TripClipSemiFeatureCard extends StatelessWidget {
     );
   }
 
+  static ImageProvider<Object>? _resolveAvatarImage(String? raw) {
+    final value = raw?.trim();
+    if (value == null || value.isEmpty) return null;
+
+    if (value.startsWith('assets/')) {
+      return AssetImage(value);
+    }
+
+    final uri = Uri.tryParse(value);
+    final scheme = uri?.scheme.toLowerCase();
+    if (scheme == 'http' || scheme == 'https') {
+      return NetworkImage(value);
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
     final light = Theme.of(context).brightness == Brightness.light;
 
-    final ImageProvider<Object>? avatarImage =
-        (avatarUrl != null && avatarUrl!.trim().isNotEmpty)
-        ? NetworkImage(avatarUrl!.trim())
-        : null;
+    final avatarImage = _resolveAvatarImage(avatarUrl);
 
     final bg = light ? TripClipPalette.neutral100 : TripClipPalette.neutral900;
-    final headingColor = light
-        ? TripClipPalette.primary500
-        : TripClipPalette.primary400;
-    final dividerColor = light
-        ? TripClipPalette.neutral200
-        : TripClipPalette.neutral850;
+    final headingColor = context.tripClipColors.heading;
+    final dividerColor = context.tripClipColors.borderSubtle;
 
-    final iconBase = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
+    final iconBase = context.tripClipColors.textSubtle;
     final otherIconColor = iconBase;
     final verifyColor = light
         ? TripClipPalette.secondary500
         : TripClipPalette.secondary400;
 
-    final ratingTextColor = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
+    final ratingTextColor = context.tripClipColors.textSubtle;
 
-    final sectionTextColor = light ? TripClipPalette.tertiary500 : Colors.white;
+    final sectionTextColor = context.tripClipColors.textBase;
     final footerTextColor = ratingTextColor;
 
-    // [PageView] etc. can pass a tall max height; shrink-wrap so padding stays even.
     return Align(
       alignment: Alignment.topCenter,
       child: DecoratedBox(
@@ -137,12 +128,7 @@ class TripClipSemiFeatureCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       heading,
-                      style: _rubik(
-                        size: 22,
-                        lineHeight: 26,
-                        weight: FontWeight.w600,
-                        color: headingColor,
-                      ),
+                      style: t.headlineMedium!.copyWith(color: headingColor),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -161,7 +147,26 @@ class TripClipSemiFeatureCard extends StatelessWidget {
                     child: SizedBox(
                       width: 120,
                       height: 90,
-                      child: Image(image: image, fit: BoxFit.cover),
+                      child: Image(
+                        image: image,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.medium,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: TripClipPalette.neutral850,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: TripClipPalette.neutral850,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -171,14 +176,12 @@ class TripClipSemiFeatureCard extends StatelessWidget {
                       children: [
                         Text(
                           'PICKUP',
-                          style: _rubik(
-                            size: 12,
-                            lineHeight: 14,
-                            weight: FontWeight.w500,
+                          style: t.titleSmall!.copyWith(
+                            fontWeight: FontWeight.w500,
                             color: ratingTextColor,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         _IconText(
                           iconAsset: 'assets/icons/location.svg',
                           iconColor: otherIconColor,
@@ -188,14 +191,12 @@ class TripClipSemiFeatureCard extends StatelessWidget {
                         const SizedBox(height: 12),
                         Text(
                           'DELIVERY',
-                          style: _rubik(
-                            size: 12,
-                            lineHeight: 14,
-                            weight: FontWeight.w500,
+                          style: t.titleSmall!.copyWith(
+                            fontWeight: FontWeight.w500,
                             color: ratingTextColor,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         _IconText(
                           iconAsset: 'assets/icons/location.svg',
                           iconColor: otherIconColor,
@@ -232,12 +233,7 @@ class TripClipSemiFeatureCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     footerDateText,
-                    style: _rubik(
-                      size: 12,
-                      lineHeight: 18,
-                      weight: FontWeight.w400,
-                      color: footerTextColor,
-                    ),
+                    style: t.labelMedium!.copyWith(color: footerTextColor),
                   ),
                 ],
               ),
@@ -285,13 +281,10 @@ class _IconText extends StatelessWidget {
                 text,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.rubik(
-                  fontSize: 14,
-                  height: 20 / 14,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0,
-                  color: textColor,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: textColor),
               ),
             ),
           ],

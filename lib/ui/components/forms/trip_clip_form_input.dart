@@ -114,27 +114,27 @@ class _TripClipFormInputState extends State<TripClipFormInput> {
     );
 
     final labelStyle = theme.textTheme.bodySmall?.copyWith(
-          color: dec.label,
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-          height: 20 / 14,
-          letterSpacing: 0,
-          fontFeatures: const [
-            FontFeature.tabularFigures(),
-            FontFeature.liningFigures(),
-          ],
-        );
+      color: dec.label,
+      fontWeight: FontWeight.w500,
+      fontSize: 14,
+      height: 20 / 14,
+      letterSpacing: 0,
+      fontFeatures: const [
+        FontFeature.tabularFigures(),
+        FontFeature.liningFigures(),
+      ],
+    );
 
     final isLarge = widget.density == TripClipFormDensity.large;
     final fieldFontSize = isLarge ? 36.0 : 16.0;
     final fieldLineHeight = isLarge ? 44 / 36 : 24 / 16;
     final fieldStyle = theme.textTheme.bodyLarge?.copyWith(
-          color: dec.foreground,
-          fontSize: fieldFontSize,
-          height: fieldLineHeight,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0,
-        );
+      color: dec.foreground,
+      fontSize: fieldFontSize,
+      height: fieldLineHeight,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+    );
 
     final verticalPadding = isLarge ? 28.0 : 8.0;
     const horizontalPadding = 16.0;
@@ -211,10 +211,7 @@ class _TripClipFormInputState extends State<TripClipFormInput> {
           const SizedBox(height: AppSpacing.sm),
         ],
         input,
-        if (helper != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          helper,
-        ],
+        if (helper != null) ...[const SizedBox(height: AppSpacing.sm), helper],
       ],
     );
 

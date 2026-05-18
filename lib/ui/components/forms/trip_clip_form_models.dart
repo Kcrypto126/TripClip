@@ -1,12 +1,3 @@
-enum TripClipFormStatus {
-  none,
-  error,
-  warning,
-  success,
-}
+enum TripClipFormStatus { none, error, warning, success }
 
-enum TripClipFormDensity {
-  compact,
-  standard,
-  large,
-}
+enum TripClipFormDensity { compact, standard, large }

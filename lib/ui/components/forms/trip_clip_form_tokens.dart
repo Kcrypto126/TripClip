@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import 'trip_clip_form_models.dart';
 
@@ -88,7 +89,8 @@ class TripClipFormFieldDecoration {
     required bool isDark,
     required _FormSemanticChrome chrome,
   }) {
-    final label = isDark ? Colors.white : TripClipPalette.tertiary500;
+    final label =
+        isDark ? TripClipColors.dark.textBase : TripClipColors.light.textBase;
 
     return TripClipFormFieldDecoration(
       fill: chrome.idleFill,
@@ -179,20 +181,20 @@ class TripClipFormFieldDecoration {
         fill: TripClipPalette.neutral900,
         borderColor: TripClipPalette.neutral700,
         borderWidth: borderThin,
-        foreground: Colors.white,
+        foreground: TripClipColors.dark.textBase,
         hintOrPlaceholder: TripClipPalette.neutral600,
-        label: Colors.white,
-        helper: TripClipPalette.neutral300,
+        label: TripClipColors.dark.textBase,
+        helper: TripClipColors.dark.textSubtle,
       );
     }
     return TripClipFormFieldDecoration(
       fill: TripClipPalette.neutral100,
       borderColor: TripClipPalette.neutral500,
       borderWidth: borderThin,
-      foreground: TripClipPalette.tertiary500,
+      foreground: TripClipColors.light.textBase,
       hintOrPlaceholder: TripClipPalette.neutral500,
-      label: TripClipPalette.tertiary500,
-      helper: TripClipPalette.neutral600,
+      label: TripClipColors.light.textBase,
+      helper: TripClipColors.light.textSubtle,
     );
   }
 
@@ -205,20 +207,20 @@ class TripClipFormFieldDecoration {
         fill: TripClipPalette.darkPageBackground,
         borderColor: TripClipPalette.primary400,
         borderWidth: borderThin,
-        foreground: Colors.white,
+        foreground: TripClipColors.dark.textBase,
         hintOrPlaceholder: TripClipPalette.neutral600,
-        label: Colors.white,
-        helper: TripClipPalette.neutral300,
+        label: TripClipColors.dark.textBase,
+        helper: TripClipColors.dark.textSubtle,
       );
     }
     return TripClipFormFieldDecoration(
       fill: Colors.white,
       borderColor: TripClipPalette.primary500,
       borderWidth: borderThin,
-      foreground: TripClipPalette.tertiary500,
+      foreground: TripClipColors.light.textBase,
       hintOrPlaceholder: TripClipPalette.neutral500,
-      label: TripClipPalette.tertiary500,
-      helper: TripClipPalette.neutral600,
+      label: TripClipColors.light.textBase,
+      helper: TripClipColors.light.textSubtle,
     );
   }
 
@@ -231,20 +233,20 @@ class TripClipFormFieldDecoration {
         fill: TripClipPalette.darkPageBackground,
         borderColor: TripClipPalette.primary400,
         borderWidth: borderFocus,
-        foreground: Colors.white,
+        foreground: TripClipColors.dark.textBase,
         hintOrPlaceholder: TripClipPalette.neutral600,
-        label: Colors.white,
-        helper: TripClipPalette.neutral300,
+        label: TripClipColors.dark.textBase,
+        helper: TripClipColors.dark.textSubtle,
       );
     }
     return TripClipFormFieldDecoration(
       fill: Colors.white,
       borderColor: TripClipPalette.primary500,
       borderWidth: borderFocus,
-      foreground: TripClipPalette.tertiary500,
+      foreground: TripClipColors.light.textBase,
       hintOrPlaceholder: TripClipPalette.neutral500,
-      label: TripClipPalette.tertiary500,
-      helper: TripClipPalette.neutral600,
+      label: TripClipColors.light.textBase,
+      helper: TripClipColors.light.textSubtle,
     );
   }
 
@@ -301,10 +303,7 @@ class TripClipFormFieldDecoration {
         density: TripClipFormDensity.standard,
       );
     }
-    return _fieldDefault(
-      isDark: isDark,
-      density: TripClipFormDensity.standard,
-    );
+    return _fieldDefault(isDark: isDark, density: TripClipFormDensity.standard);
   }
 
   TripClipFormFieldDecoration copyWith({

@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:math' as math;
 
-import '../../app/theme/trip_clip_palette.dart';
+import 'package:flutter/material.dart';
+
+import '../../app/theme/trip_clip_colors.dart';
+import 'trip_clip_step_bar_chevron_button.dart';
 
 class TripClipStepsStatusBar extends StatelessWidget {
   const TripClipStepsStatusBar({
@@ -13,6 +15,7 @@ class TripClipStepsStatusBar extends StatelessWidget {
     this.onExitAtFirstStep,
     this.chevronColor,
     this.trackColor,
+    this.chevronMaterialColor,
   }) : assert(totalSteps >= 1);
 
   static const int defaultTotalSteps = 5;
@@ -27,11 +30,11 @@ class TripClipStepsStatusBar extends StatelessWidget {
 
   final VoidCallback? onExitAtFirstStep;
 
-  /// When set, used instead of theme-based chevron tint (e.g. on brand backgrounds).
   final Color? chevronColor;
 
-  /// When set, used instead of theme-based track color behind the orange progress.
   final Color? trackColor;
+
+  final Color? chevronMaterialColor;
 
   static int clampStep(int step, {int totalSteps = defaultTotalSteps}) =>
       step.clamp(0, totalSteps - 1);
@@ -47,14 +50,8 @@ class TripClipStepsStatusBar extends StatelessWidget {
 
   static const Color _fillColor = Color(0xFFFA782D);
 
-  static const Color _trackLight = TripClipPalette.neutral200;
-  static const Color _trackDark = TripClipPalette.neutral850;
-
   static const double _barWidth = 220;
   static const double _barHeight = 8;
-
-  static const double _chevronTapSize = 40;
-  static const double _chevronIconSize = 24;
 
   void _handleChevronLeftTap() {
     final s = clampStep(currentStep, totalSteps: totalSteps);
@@ -74,10 +71,9 @@ class TripClipStepsStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final light = Theme.of(context).brightness == Brightness.light;
-    final iconColor =
-        chevronColor ?? (light ? TripClipPalette.tertiary500 : Colors.white);
-    final resolvedTrackColor = trackColor ?? (light ? _trackLight : _trackDark);
+    final iconColor = chevronColor ?? context.tripClipColors.textBase;
+    final resolvedTrackColor =
+        trackColor ?? context.tripClipColors.borderSubtle;
     final widthFactor = progressWidthFactor(
       currentStep,
       totalSteps: totalSteps,
@@ -87,94 +83,62 @@ class TripClipStepsStatusBar extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: 40,
+      height: TripClipStepBarChevronButton.tapSize,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: _ChevronCircleButton(
-                asset: 'assets/icons/chevron-left.svg',
-                iconColor: iconColor,
-                onTap: (onStepChanged != null || onExitAtFirstStep != null)
-                    ? _handleChevronLeftTap
-                    : null,
-              ),
+            TripClipStepBarChevronButton(
+              asset: 'assets/icons/chevron-left.svg',
+              iconColor: iconColor,
+              materialColor: chevronMaterialColor,
+              onTap: (onStepChanged != null || onExitAtFirstStep != null)
+                  ? _handleChevronLeftTap
+                  : null,
             ),
-            if (showRightChevron)
-              Align(
-                alignment: Alignment.centerRight,
-                child: _ChevronCircleButton(
-                  asset: 'assets/icons/chevron-right.svg',
-                  iconColor: iconColor,
-                  onTap: onStepChanged != null && canGoForward
-                      ? _handleChevronRightTap
-                      : null,
-                ),
-              ),
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(_barHeight / 2),
-                child: SizedBox(
-                  width: _barWidth,
-                  height: _barHeight,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    clipBehavior: Clip.hardEdge,
-                    children: [
-                      ColoredBox(color: resolvedTrackColor),
-                      PositionedDirectional(
-                        start: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: _barWidth * widthFactor,
-                        child: const ColoredBox(color: _fillColor),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final w = math.min(_barWidth, constraints.maxWidth);
+                  return Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(_barHeight / 2),
+                      child: SizedBox(
+                        width: w,
+                        height: _barHeight,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          clipBehavior: Clip.hardEdge,
+                          children: [
+                            ColoredBox(color: resolvedTrackColor),
+                            PositionedDirectional(
+                              start: 0,
+                              top: 0,
+                              bottom: 0,
+                              width: w * widthFactor,
+                              child: const ColoredBox(color: _fillColor),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
+            showRightChevron
+                ? TripClipStepBarChevronButton(
+                    asset: 'assets/icons/chevron-right.svg',
+                    iconColor: iconColor,
+                    materialColor: chevronMaterialColor,
+                    alignEnd: true,
+                    onTap: onStepChanged != null && canGoForward
+                        ? _handleChevronRightTap
+                        : null,
+                  )
+                : const SizedBox(width: TripClipStepBarChevronButton.tapSize),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ChevronCircleButton extends StatelessWidget {
-  const _ChevronCircleButton({
-    required this.asset,
-    required this.iconColor,
-    this.onTap,
-  });
-
-  final String asset;
-  final Color iconColor;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: SizedBox(
-          width: TripClipStepsStatusBar._chevronTapSize,
-          height: TripClipStepsStatusBar._chevronTapSize,
-          child: Center(
-            child: SvgPicture.asset(
-              asset,
-              width: TripClipStepsStatusBar._chevronIconSize,
-              height: TripClipStepsStatusBar._chevronIconSize,
-              alignment: Alignment.center,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-            ),
-          ),
         ),
       ),
     );

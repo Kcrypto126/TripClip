@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
@@ -15,30 +16,19 @@ class TripClipFormCheckbox extends StatelessWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
 
-  /// Used for semantics and as the visible label when [labelWidget] is null.
   final String label;
-
-  /// When set, replaces the default [Text] built from [label] (e.g. inline link).
   final Widget? labelWidget;
 
   static const double _iconSize = 24;
   static const double _checkIconSize = 16;
   static const double _radius = 4;
 
-  static const Color labelColorLight = Color(0xFF141E46);
-  static const Color labelColorDark = Color(0xFFFFFFFF);
-
   @override
   Widget build(BuildContext context) {
     final enabled = onChanged != null;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final labelStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-      fontSize: 16,
-      height: 24 / 16,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0,
-      color: isDark ? labelColorDark : labelColorLight,
+    final labelStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+      color: context.tripClipColors.textBase,
     );
 
     Widget row = Semantics(
@@ -49,18 +39,22 @@ class TripClipFormCheckbox extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: enabled ? () => onChanged!(!value) : null,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            _TripClipCheckboxIcon(value: value, isDark: isDark),
+            _TripClipCheckboxIcon(value: value),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: labelWidget ?? Text(label, style: labelStyle),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: labelWidget ?? Text(label, style: labelStyle),
+                ),
               ),
             ),
           ],
+     
         ),
       ),
     );
@@ -74,13 +68,13 @@ class TripClipFormCheckbox extends StatelessWidget {
 }
 
 class _TripClipCheckboxIcon extends StatelessWidget {
-  const _TripClipCheckboxIcon({required this.value, required this.isDark});
+  const _TripClipCheckboxIcon({required this.value});
 
   final bool value;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color fill;
     final Color borderColor;
 

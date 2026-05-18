@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-enum TripClipFormMessageKind {
-  neutral,
-  error,
-  warning,
-  success,
-  info,
-}
+enum TripClipFormMessageKind { neutral, error, warning, success, info }
 
 class TripClipFormMessage extends StatelessWidget {
   const TripClipFormMessage({
@@ -85,16 +80,18 @@ class TripClipFormMessage extends StatelessWidget {
     switch (kind) {
       case TripClipFormMessageKind.neutral:
         return isDark
-            ? TripClipPalette.neutral300
-            : TripClipPalette.neutral600;
+            ? TripClipColors.dark.textSubtle
+            : TripClipColors.light.textSubtle;
       case TripClipFormMessageKind.error:
-        return isDark ? TripClipPalette.error400 : TripClipPalette.error500;
+        return isDark ? TripClipPalette.error300 : TripClipPalette.error600;
       case TripClipFormMessageKind.warning:
-        return isDark ? TripClipPalette.secondary400 : TripClipPalette.secondary600;
+        return isDark ? TripClipPalette.warning300 : TripClipPalette.warning800;
       case TripClipFormMessageKind.success:
-        return isDark ? TripClipPalette.success400 : TripClipPalette.success600;
+        return isDark ? TripClipPalette.success300 : TripClipPalette.success700;
       case TripClipFormMessageKind.info:
-        return isDark ? TripClipPalette.primary400 : TripClipPalette.primary500;
+        return isDark
+            ? TripClipColors.dark.heading
+            : TripClipColors.light.heading;
     }
   }
 }

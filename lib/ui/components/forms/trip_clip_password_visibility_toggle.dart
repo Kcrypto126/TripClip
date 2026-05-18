@@ -5,10 +5,6 @@ import '../../../app/theme/trip_clip_palette.dart';
 import 'trip_clip_form_models.dart';
 import 'trip_clip_form_tokens.dart';
 
-/// Eye icon used with [TripClipAtomInput] for password fields.
-///
-/// Icon tint matches the leading icon rules in [TripClipAtomInput] for every
-/// [TripClipFormStatus].
 class TripClipPasswordVisibilityToggle extends StatelessWidget {
   const TripClipPasswordVisibilityToggle({
     super.key,
@@ -48,7 +44,7 @@ class TripClipPasswordVisibilityToggle extends StatelessWidget {
         customBorder: const CircleBorder(),
         onTap: onPressed,
         child: Padding(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(0),
           child: SvgPicture.asset(
             shown ? 'assets/icons/view-off.svg' : 'assets/icons/view.svg',
             width: 24,

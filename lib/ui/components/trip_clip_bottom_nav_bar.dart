@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../app/theme/trip_clip_colors.dart';
-import '../../app/theme/trip_clip_palette.dart';
 import 'badges/trip_clip_badge_counter.dart';
 
 class _TripClipNavDestinationData {
@@ -61,8 +60,6 @@ class TripClipBottomNavBar extends StatelessWidget {
 
   final int currentIndex;
 
-  /// When provided, controls which destination appears active.
-  /// Set to null to render with no active destination.
   final int? selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
@@ -70,16 +67,9 @@ class TripClipBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final light = Theme.of(context).brightness == Brightness.light;
-    final defaultFg = light
-        ? TripClipPalette.neutral600
-        : TripClipPalette.neutral300;
-    final activeFg = light
-        ? TripClipPalette.primary500
-        : TripClipPalette.primary400;
-    final borderColor = light
-        ? TripClipPalette.neutral200
-        : TripClipPalette.neutral850;
+    final defaultFg = context.tripClipColors.textSubtle;
+    final activeFg = context.tripClipColors.heading;
+    final borderColor = context.tripClipColors.borderSubtle;
     final bg = context.tripClipColors.pageBackground;
     final effectiveSelectedIndex = selectedIndex;
 

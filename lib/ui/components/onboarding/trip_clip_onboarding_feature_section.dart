@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-/// Image + heading + body for onboarding / splash steps.
 class TripClipOnboardingFeatureSection extends StatelessWidget {
   const TripClipOnboardingFeatureSection({
     super.key,
@@ -15,7 +12,6 @@ class TripClipOnboardingFeatureSection extends StatelessWidget {
   final String heading;
   final String description;
 
-  /// When true, image is clipped to a circle; otherwise 16px rounded corners.
   final bool imageCircular;
 
   static const double imageSize = 280;
@@ -29,20 +25,9 @@ class TripClipOnboardingFeatureSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final headingStyle = GoogleFonts.rubik(
-      fontSize: 42,
-      fontWeight: FontWeight.w600,
-      height: 48 / 42,
-      letterSpacing: 0,
-      color: Colors.white,
-    );
-    final bodyStyle = GoogleFonts.rubik(
-      fontSize: 20,
-      fontWeight: FontWeight.w400,
-      height: 26 / 20,
-      letterSpacing: 0,
-      color: Colors.white,
-    );
+    final t = Theme.of(context).textTheme;
+    final headingStyle = t.displayMedium!.copyWith(color: Colors.white);
+    final bodyStyle = t.bodyLarge!.copyWith(color: Colors.white);
 
     return Padding(
       padding: const EdgeInsets.only(top: sectionTopPadding),

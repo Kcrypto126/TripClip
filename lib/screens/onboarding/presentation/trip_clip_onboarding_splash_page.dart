@@ -19,7 +19,6 @@ class TripClipOnboardingSplashPage extends StatefulWidget {
 
   static const Color backgroundColor = Color(0xFF0000D2);
 
-  /// Track tint for the step bar on brand blue (light grey segment).
   static const Color stepBarTrackOnBlue = Color(0x4DFFFFFF);
 
   static const EdgeInsets bodyPadding = EdgeInsets.fromLTRB(24, 16, 24, 32);
@@ -33,7 +32,6 @@ class _TripClipOnboardingSplashPageState
     extends State<TripClipOnboardingSplashPage> {
   int _step = 0;
 
-  /// When true, the shared-axis transition runs in "pop" direction (step back).
   bool _reverseStepTransition = false;
 
   static const Duration _stepSwitchDuration = Duration(milliseconds: 340);
@@ -108,6 +106,7 @@ class _TripClipOnboardingSplashPageState
                 totalSteps: _steps.length,
                 showRightChevron: false,
                 chevronColor: Colors.white,
+                chevronMaterialColor: TripClipOnboardingSplashPage.backgroundColor,
                 trackColor: TripClipOnboardingSplashPage.stepBarTrackOnBlue,
                 onStepChanged: _setStep,
                 onExitAtFirstStep: widget.onBackToWelcome,
@@ -136,16 +135,16 @@ class _TripClipOnboardingSplashPageState
                                   Animation<double> primaryAnimation,
                                   Animation<double> secondaryAnimation,
                                 ) {
-                              return SharedAxisTransition(
-                                animation: primaryAnimation,
-                                secondaryAnimation: secondaryAnimation,
-                                transitionType:
-                                    SharedAxisTransitionType.horizontal,
-                                fillColor:
-                                    TripClipOnboardingSplashPage.backgroundColor,
-                                child: child,
-                              );
-                            },
+                                  return SharedAxisTransition(
+                                    animation: primaryAnimation,
+                                    secondaryAnimation: secondaryAnimation,
+                                    transitionType:
+                                        SharedAxisTransitionType.horizontal,
+                                    fillColor: TripClipOnboardingSplashPage
+                                        .backgroundColor,
+                                    child: child,
+                                  );
+                                },
                             child: KeyedSubtree(
                               key: ValueKey<int>(_step),
                               child: SingleChildScrollView(

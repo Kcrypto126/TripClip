@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
@@ -10,7 +11,7 @@ class TripClipFormRadioButton extends StatelessWidget {
     required this.selected,
     required this.onPressed,
     required this.label,
-    this.iconAsset = defaultIconAsset,
+    this.iconAsset,
     this.width = 176,
     this.radius = 4,
     this.padding = const EdgeInsets.symmetric(vertical: 8),
@@ -20,12 +21,10 @@ class TripClipFormRadioButton extends StatelessWidget {
     this.contentAlignment = MainAxisAlignment.center,
   });
 
-  static const String defaultIconAsset = 'assets/icons/apartment.svg';
-
   final bool selected;
   final VoidCallback? onPressed;
   final String label;
-  final String iconAsset;
+  final String? iconAsset;
   final double width;
   final double radius;
   final EdgeInsets padding;
@@ -38,37 +37,43 @@ class TripClipFormRadioButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textBase = context.tripClipColors.textBase;
 
     final Color background;
-    final Color iconColor;
     final Color textColor;
-    final BoxBorder? border;
+    final BoxBorder border;
 
     if (isDark) {
       if (selected) {
         background = TripClipPalette.tertiary300;
-        iconColor = Colors.white;
         textColor = Colors.white;
         border = Border.all(color: TripClipPalette.tertiary300, width: 1);
       } else {
         background = TripClipPalette.neutral900;
-        iconColor = TripClipPalette.neutral300;
-        textColor = Colors.white;
-        border = Border.all(color: TripClipPalette.neutral850, width: 1);
+        textColor = textBase;
+        border = Border.all(
+          color: context.tripClipColors.borderSubtle,
+          width: 1,
+        );
       }
     } else {
       if (selected) {
         background = TripClipPalette.tertiary500;
-        iconColor = Colors.white;
         textColor = Colors.white;
-        border = null;
+        border = Border.all(color: TripClipPalette.tertiary500, width: 1);
       } else {
         background = TripClipPalette.neutral100;
-        iconColor = TripClipPalette.neutral600;
-        textColor = TripClipPalette.tertiary500;
-        border = null;
+        textColor = textBase;
+        border = Border.all(
+          color: context.tripClipColors.borderSubtle,
+          width: 1,
+        );
       }
     }
+
+    final Color iconTint = selected
+        ? Colors.white
+        : (isDark ? TripClipPalette.neutral300 : TripClipPalette.neutral600);
 
     Widget child = Container(
       width: width,
@@ -83,14 +88,16 @@ class TripClipFormRadioButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            iconAsset,
-            width: iconSize,
-            height: iconSize,
-            fit: BoxFit.contain,
-            colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-          ),
-          SizedBox(width: gap),
+          if (iconAsset case final String asset) ...[
+            SvgPicture.asset(
+              asset,
+              width: iconSize,
+              height: iconSize,
+              fit: BoxFit.contain,
+              colorFilter: ColorFilter.mode(iconTint, BlendMode.srcIn),
+            ),
+            SizedBox(width: gap),
+          ],
           Text(
             label,
             textAlign: contentAlignment == MainAxisAlignment.center

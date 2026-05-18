@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../app/theme/trip_clip_colors.dart';
-import '../../app/theme/trip_clip_palette.dart';
 
 class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
   const TripClipTitleBar({
@@ -23,12 +21,11 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
   final bool includeStatusBarInset;
   final BorderRadius? clipBorderRadius;
 
-  /// Right slot (same width as back affordance). Omit for an empty spacer.
   final Widget? trailing;
 
-  static const double toolbarHeight = 56;
+  static const double toolbarHeight = 40;
 
-  static const double _horizontalPadding = 16;
+  static const double _horizontalPadding = 10;
   static const double _chevronTapSize = 40;
   static const double _chevronIconSize = 24;
 
@@ -45,21 +42,15 @@ class TripClipTitleBar extends StatelessWidget implements PreferredSizeWidget {
   );
 
   static TextStyle titleTextStyle(BuildContext context) {
-    final light = Theme.of(context).brightness == Brightness.light;
-    return GoogleFonts.rubik(
-      fontSize: 18,
-      height: 22 / 18,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0,
-      color: light ? TripClipPalette.tertiary500 : Colors.white,
-    );
+    return Theme.of(context).textTheme.headlineSmall!.copyWith(
+          color: context.tripClipColors.textBase,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final bg = context.tripClipColors.pageBackground;
-    final light = Theme.of(context).brightness == Brightness.light;
-    final iconColor = light ? TripClipPalette.tertiary500 : Colors.white;
+    final iconColor = context.tripClipColors.textBase;
 
     final column = Column(
       mainAxisSize: MainAxisSize.min,

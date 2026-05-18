@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../app/theme/trip_clip_palette.dart';
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../ui/components/buttons/trip_clip_button.dart';
 import '../../../ui/components/buttons/trip_clip_button_models.dart';
 import '../../../ui/components/forms/trip_clip_form_radio_button.dart';
@@ -21,55 +21,71 @@ class _TripClipCreateAccountPageState extends State<TripClipCreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final headerBorder = context.tripClipColors.borderSubtle;
+    final topTextColor = context.tripClipColors.textBase;
 
-    final headerBorder = isDark
-        ? const Color(0xFF2E343D)
-        : const Color(0xFFDCE1E6);
-    final headerColor = isDark
-        ? TripClipPalette.primary400
-        : TripClipPalette.primary500;
+    final headerStyle = Theme.of(context).textTheme.headlineLarge!.copyWith(
+          color: context.tripClipColors.heading,
+        );
 
-    final topTextColor = isDark ? Colors.white : TripClipPalette.tertiary500;
+    final topStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(
+          color: topTextColor,
+        );
 
-    final headerStyle = GoogleFonts.rubik(
-      fontSize: 28,
-      fontWeight: FontWeight.w600,
-      height: 32 / 28,
-      letterSpacing: 0,
-      color: headerColor,
-    );
-
-    final topStyle = GoogleFonts.rubik(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      height: 24 / 16,
-      letterSpacing: 0,
-      color: topTextColor,
-    );
-
-    final optionTextStyle = GoogleFonts.rubik(
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-      height: 22 / 18,
-      letterSpacing: 0,
-    );
+    final optionTextStyle = Theme.of(context).textTheme.headlineSmall!.copyWith(
+          color: context.tripClipColors.textBase,
+        );
 
     return Scaffold(
+      backgroundColor: context.tripClipColors.pageBackground,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               height: 44,
-              padding: const EdgeInsets.only(left: 16),
+              padding: const EdgeInsets.only(left: 4, right: 16),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: headerBorder, width: 1),
                 ),
               ),
-              alignment: Alignment.centerLeft,
-              child: Text('Create Account', style: headerStyle),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Material(
+                    type: MaterialType.transparency,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).maybePop(),
+                      customBorder: const CircleBorder(),
+                      child: SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/icons/chevron-left.svg',
+                            width: 24,
+                            height: 24,
+                            alignment: Alignment.center,
+                            colorFilter: ColorFilter.mode(
+                              context.tripClipColors.heading,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Create Account',
+                      style: headerStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Padding(
@@ -119,7 +135,7 @@ class _TripClipCreateAccountPageState extends State<TripClipCreateAccountPage> {
                       expanded: true,
                       label: 'Continue',
                       onPressed: () {
-                        Navigator.of(context).push<void>(
+                        Navigator.of(context, rootNavigator: true).push<void>(
                           MaterialPageRoute<void>(
                             builder: (_) => TripClipCreateAccountDetailsPage(
                               accountType: _selected,

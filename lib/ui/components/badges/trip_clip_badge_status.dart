@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-enum TripClipBadgeStatusTone {
-  danger,
-  warning,
-  success,
-  primary,
-  neutral,
-}
+enum TripClipBadgeStatusTone { danger, warning, success, primary, neutral }
 
 class _StatusToneColors {
   const _StatusToneColors({
@@ -99,12 +93,12 @@ class TripClipBadgeStatus extends StatelessWidget {
     final text = Text(
       label,
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            height: 20 / 14,
-            letterSpacing: 0,
-            color: foreground,
-          ),
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 20 / 14,
+        letterSpacing: 0,
+        color: foreground,
+      ),
     );
 
     final icon = SvgPicture.asset(
@@ -115,15 +109,9 @@ class TripClipBadgeStatus extends StatelessWidget {
     );
 
     final rowChildren = <Widget>[
-      if (showLeadingIcon) ...[
-        icon,
-        const SizedBox(width: 4),
-      ],
+      if (showLeadingIcon) ...[icon, const SizedBox(width: 4)],
       text,
-      if (showTrailingIcon) ...[
-        const SizedBox(width: 4),
-        icon,
-      ],
+      if (showTrailingIcon) ...[const SizedBox(width: 4), icon],
     ];
 
     return Container(
@@ -133,10 +121,7 @@ class TripClipBadgeStatus extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: borderColor, width: 1),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: rowChildren,
-      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: rowChildren),
     );
   }
 }

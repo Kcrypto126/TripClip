@@ -16,7 +16,6 @@ class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
 
-  /// When false, removes the outline (full-bleed panels).
   final bool bordered;
   final VoidCallback? onTap;
 

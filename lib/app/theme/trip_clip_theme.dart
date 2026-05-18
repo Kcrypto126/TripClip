@@ -8,7 +8,7 @@ import 'trip_clip_text_theme.dart';
 abstract final class TripClipTheme {
   static ThemeData light() {
     final semantic = TripClipColors.light;
-    final textTheme = buildTripClipTextTheme(semantic);
+    final textTheme = buildTripClipTextTheme();
     final colorScheme = ColorScheme.light(
       primary: TripClipPalette.primary500,
       onPrimary: semantic.textFixedOnPrimary,
@@ -34,7 +34,7 @@ abstract final class TripClipTheme {
         backgroundColor: semantic.pageBackground,
         foregroundColor: semantic.textBase,
         surfaceTintColor: Colors.transparent,
-        titleTextStyle: textTheme.titleLarge,
+        titleTextStyle: textTheme.titleLarge?.copyWith(color: semantic.textBase),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: semantic.pageBackground,
@@ -44,16 +44,14 @@ abstract final class TripClipTheme {
           return textTheme.labelSmall?.copyWith(
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 12,
-            color: selected
-                ? TripClipPalette.primary500
-                : semantic.textSubtle,
+            color: selected ? semantic.heading : semantic.textSubtle,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
             size: 24,
-            color: selected ? TripClipPalette.primary500 : semantic.iconBase,
+            color: selected ? semantic.heading : semantic.iconBase,
           );
         }),
       ),
@@ -72,10 +70,10 @@ abstract final class TripClipTheme {
 
   static ThemeData dark() {
     final semantic = TripClipColors.dark;
-    final textTheme = buildTripClipTextTheme(semantic);
+    final textTheme = buildTripClipTextTheme();
     final page = TripClipPalette.darkPageBackground;
     final colorScheme = ColorScheme.dark(
-      primary: TripClipPalette.primary500,
+      primary: semantic.heading,
       onPrimary: semantic.textFixedOnPrimary,
       secondary: TripClipPalette.secondary500,
       onSecondary: Colors.white,
@@ -110,7 +108,7 @@ abstract final class TripClipTheme {
         backgroundColor: semantic.pageBackground,
         foregroundColor: semantic.textBase,
         surfaceTintColor: Colors.transparent,
-        titleTextStyle: textTheme.titleLarge,
+        titleTextStyle: textTheme.titleLarge?.copyWith(color: semantic.textBase),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: semantic.pageBackground,
@@ -120,16 +118,14 @@ abstract final class TripClipTheme {
           return textTheme.labelSmall?.copyWith(
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 12,
-            color: selected
-                ? TripClipPalette.primary500
-                : semantic.textSubtle,
+            color: selected ? semantic.heading : semantic.textSubtle,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
             size: 24,
-            color: selected ? TripClipPalette.primary500 : semantic.iconBase,
+            color: selected ? semantic.heading : semantic.iconBase,
           );
         }),
       ),

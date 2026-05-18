@@ -18,6 +18,10 @@ class TripClipFormTextarea extends StatefulWidget {
     this.density = TripClipFormDensity.standard,
     this.minLines = 4,
     this.maxLines,
+    /// When set, fixes the text field to this height (e.g. 112) and uses
+    /// [expands] for multiline input. Ignores [minLines] / [maxLines] in that case.
+    this.fieldHeight,
+    this.maxLength,
     this.keyboardType = TextInputType.multiline,
     this.textInputAction = TextInputAction.newline,
     this.onSubmitted,
@@ -33,6 +37,10 @@ class TripClipFormTextarea extends StatefulWidget {
   final TripClipFormDensity density;
   final int minLines;
   final int? maxLines;
+
+  final double? fieldHeight;
+  final int? maxLength;
+
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final ValueChanged<String>? onSubmitted;
@@ -116,32 +124,74 @@ class _TripClipFormTextareaState extends State<TripClipFormTextarea> {
     );
 
     final labelStyle = theme.textTheme.bodySmall?.copyWith(
-          color: dec.label,
-          fontWeight: FontWeight.w500,
-          fontSize: 14,
-          height: 20 / 14,
-          letterSpacing: 0,
-          fontFeatures: const [
-            FontFeature.tabularFigures(),
-            FontFeature.liningFigures(),
-          ],
-        );
+      color: dec.label,
+      fontWeight: FontWeight.w500,
+      fontFeatures: const [
+        FontFeature.tabularFigures(),
+        FontFeature.liningFigures(),
+      ],
+    );
 
     final isLarge = widget.density == TripClipFormDensity.large;
     final fieldFontSize = isLarge ? 36.0 : 16.0;
     final fieldLineHeight = isLarge ? 44 / 36 : 24 / 16;
     final fieldStyle = theme.textTheme.bodyLarge?.copyWith(
-          color: dec.foreground,
-          fontSize: fieldFontSize,
-          height: fieldLineHeight,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0,
-        );
+      color: dec.foreground,
+      fontSize: fieldFontSize,
+      height: fieldLineHeight,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+    );
 
     const fieldPadding = 16.0;
     const radius = 4.0;
 
     final showDisabledOpacity = !widget.enabled;
+
+    final textField = widget.fieldHeight != null
+        ? TextField(
+            controller: controller,
+            focusNode: _focusNode,
+            enabled: widget.enabled,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            onSubmitted: widget.onSubmitted,
+            expands: true,
+            minLines: null,
+            maxLines: null,
+            maxLength: widget.maxLength,
+            style: fieldStyle,
+            textAlignVertical: TextAlignVertical.top,
+            decoration: InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              hintText: widget.hintText,
+              hintStyle: fieldStyle?.copyWith(color: dec.hintOrPlaceholder),
+              contentPadding: const EdgeInsets.all(fieldPadding),
+              counterText: '',
+            ),
+          )
+        : TextField(
+            controller: controller,
+            focusNode: _focusNode,
+            enabled: widget.enabled,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            onSubmitted: widget.onSubmitted,
+            minLines: widget.minLines,
+            maxLines: widget.maxLines,
+            maxLength: widget.maxLength,
+            style: fieldStyle,
+            textAlignVertical: TextAlignVertical.top,
+            decoration: InputDecoration(
+              isDense: true,
+              border: InputBorder.none,
+              hintText: widget.hintText,
+              hintStyle: fieldStyle?.copyWith(color: dec.hintOrPlaceholder),
+              contentPadding: const EdgeInsets.all(fieldPadding),
+              counterText: widget.maxLength != null ? '' : null,
+            ),
+          );
 
     Widget field = Container(
       decoration: BoxDecoration(
@@ -152,25 +202,9 @@ class _TripClipFormTextareaState extends State<TripClipFormTextarea> {
             : null,
       ),
       alignment: Alignment.topLeft,
-      child: TextField(
-        controller: controller,
-        focusNode: _focusNode,
-        enabled: widget.enabled,
-        keyboardType: widget.keyboardType,
-        textInputAction: widget.textInputAction,
-        onSubmitted: widget.onSubmitted,
-        minLines: widget.minLines,
-        maxLines: widget.maxLines,
-        style: fieldStyle,
-        textAlignVertical: TextAlignVertical.top,
-        decoration: InputDecoration(
-          isDense: true,
-          border: InputBorder.none,
-          hintText: widget.hintText,
-          hintStyle: fieldStyle?.copyWith(color: dec.hintOrPlaceholder),
-          contentPadding: const EdgeInsets.all(fieldPadding),
-        ),
-      ),
+      child: widget.fieldHeight != null
+          ? SizedBox(height: widget.fieldHeight, child: textField)
+          : textField,
     );
 
     Widget? helper;
@@ -211,10 +245,7 @@ class _TripClipFormTextareaState extends State<TripClipFormTextarea> {
           const SizedBox(height: AppSpacing.sm),
         ],
         field,
-        if (helper != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          helper,
-        ],
+        if (helper != null) ...[const SizedBox(height: AppSpacing.sm), helper],
       ],
     );
 

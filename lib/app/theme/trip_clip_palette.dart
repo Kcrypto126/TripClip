@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Raw design tokens from the TripClip palette (Figma variables).
-/// Use [TripClipColors] (ThemeExtension) for semantic UI colors.
 abstract final class TripClipPalette {
   // Primary
   static const Color primary50 = Color(0xFFEFF2FF);
@@ -65,7 +63,6 @@ abstract final class TripClipPalette {
   static const Color neutral900 = Color(0xFF1F242B);
   static const Color neutral1000 = Color(0xFF14181F);
 
-  /// Dark theme full-screen / page canvas (`#14181F`).
   static const Color darkPageBackground = Color(0xFF14181F);
 
   // Error
@@ -92,7 +89,7 @@ abstract final class TripClipPalette {
   static const Color warning800 = Color(0xFF9E6E0F);
   static const Color warning900 = Color(0xFF7A5207);
 
-  // Success (source listed duplicate hex for 500; using mid-ramp green)
+  // Success
   static const Color success50 = Color(0xFFF3FCF8);
   static const Color success100 = Color(0xFFD9F4E7);
   static const Color success200 = Color(0xFFB4E8CF);

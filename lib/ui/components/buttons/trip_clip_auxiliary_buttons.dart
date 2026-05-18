@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
-/// Large circular control with a caption (TripClip `button-action`).
-class TripClipLabeledCircleActionButton extends StatelessWidget {
+class TripClipLabeledCircleActionButton extends StatefulWidget {
   const TripClipLabeledCircleActionButton({
     super.key,
     this.icon,
@@ -24,9 +24,7 @@ class TripClipLabeledCircleActionButton extends StatelessWidget {
        assert(inset >= 0);
 
   final IconData? icon;
-  /// Asset path registered in `pubspec.yaml` (e.g. `assets/icons/heart24.svg`).
   final String? svgAsset;
-  /// Optional active-state SVG (filled art). Ignored when [icon] is used.
   final String? svgAssetSelected;
   final String label;
   final VoidCallback? onPressed;
@@ -35,34 +33,46 @@ class TripClipLabeledCircleActionButton extends StatelessWidget {
   final double inset;
 
   @override
+  State<TripClipLabeledCircleActionButton> createState() =>
+      _TripClipLabeledCircleActionButtonState();
+}
+
+class _TripClipLabeledCircleActionButtonState
+    extends State<TripClipLabeledCircleActionButton> {
+  bool _pressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final idleFill = isDark
         ? TripClipPalette.neutral900
         : TripClipPalette.neutral100;
-    final idleBorder = isDark
-        ? TripClipPalette.neutral850
-        : TripClipPalette.neutral200;
-    final idleIcon = isDark
-        ? TripClipPalette.neutral300
-        : TripClipPalette.neutral600;
+    final idleBorder = context.tripClipColors.borderSubtle;
+    final idleIcon = context.tripClipColors.textSubtle;
 
-    final fill = selected
-        ? TripClipPalette.buttonActionActiveFill
-        : idleFill;
+    final idlePressedFill = context.tripClipColors.borderSubtle;
+    const activeFill = TripClipPalette.buttonActionActiveFill;
+    final activePressedFill =
+        Color.lerp(activeFill, Colors.black, 0.12) ?? activeFill;
+
+    final active = widget.selected;
+    final interactive = widget.onPressed != null;
+    final showPressed = interactive && _pressed;
+
+    final fill = showPressed
+        ? (active ? activePressedFill : idlePressedFill)
+        : (active ? activeFill : idleFill);
     final activeBorder = TripClipPalette.buttonActionActiveFill;
-    final iconColor =
-        selected ? Colors.white : idleIcon;
-    final iconSize = diameter - 2 * inset;
-    final overlayBase = theme.colorScheme.onSurface;
+    final iconColor = active ? Colors.white : idleIcon;
+    final iconSize = widget.diameter - 2 * widget.inset;
 
-    final String? svgResolved = svgAsset == null
+    final String? svgResolved = widget.svgAsset == null
         ? null
-        : (selected
-            ? (svgAssetSelected ??
-                _defaultFilledSvgPath(svgAsset!))
-            : svgAsset);
+        : (active
+              ? (widget.svgAssetSelected ??
+                  _defaultFilledSvgPath(widget.svgAsset!))
+              : widget.svgAsset);
 
     final Widget iconChild = svgResolved != null
         ? SvgPicture.asset(
@@ -72,7 +82,7 @@ class TripClipLabeledCircleActionButton extends StatelessWidget {
             fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
           )
-        : Icon(icon!, color: iconColor, size: iconSize);
+        : Icon(widget.icon!, color: iconColor, size: iconSize);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -80,32 +90,30 @@ class TripClipLabeledCircleActionButton extends StatelessWidget {
         Material(
           color: fill,
           shape: CircleBorder(
-            side: BorderSide(
-              color: selected ? activeBorder : idleBorder,
-            ),
+            side: BorderSide(color: active ? activeBorder : idleBorder),
           ),
           clipBehavior: Clip.antiAlias,
           elevation: 0,
           shadowColor: Colors.transparent,
           child: InkWell(
-            onTap: onPressed,
+            onTap: widget.onPressed,
             customBorder: const CircleBorder(),
             splashFactory: NoSplash.splashFactory,
-            overlayColor: WidgetStateProperty.resolveWith((states) {
-              if (onPressed == null) return null;
-              if (states.contains(WidgetState.pressed)) {
-                return overlayBase.withValues(alpha: 0.12);
-              }
-              if (states.contains(WidgetState.hovered)) {
-                return overlayBase.withValues(alpha: 0.06);
-              }
-              return null;
-            }),
+            overlayColor: WidgetStateProperty.all<Color?>(Colors.transparent),
+            onTapDown: interactive
+                ? (_) => setState(() => _pressed = true)
+                : null,
+            onTapUp: interactive
+                ? (_) => setState(() => _pressed = false)
+                : null,
+            onTapCancel: interactive
+                ? () => setState(() => _pressed = false)
+                : null,
             child: SizedBox(
-              width: diameter,
-              height: diameter,
+              width: widget.diameter,
+              height: widget.diameter,
               child: Padding(
-                padding: EdgeInsets.all(inset),
+                padding: EdgeInsets.all(widget.inset),
                 child: iconChild,
               ),
             ),
@@ -113,12 +121,12 @@ class TripClipLabeledCircleActionButton extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          label,
+          widget.label,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall?.copyWith(
-                color: TripClipPalette.buttonActionCaption,
-                fontWeight: FontWeight.w500,
-              ),
+            color: TripClipPalette.buttonActionCaption,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -133,7 +141,6 @@ String _defaultFilledSvgPath(String svgAsset) {
   return '${svgAsset.substring(0, i)}_filled${svgAsset.substring(i)}';
 }
 
-/// Compact circular favorite toggle for list rows (`button-listing-favorite`).
 class TripClipFavoriteListButton extends StatelessWidget {
   const TripClipFavoriteListButton({
     super.key,
@@ -150,9 +157,7 @@ class TripClipFavoriteListButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double size;
   final double inset;
-  /// Outline heart (or other) SVG; omit to use built-in Material icons.
   final String? svgAsset;
-  /// Filled SVG when favorited; defaults to [svgAsset] with `_filled` before `.svg`.
   final String? svgAssetFavorite;
 
   @override
@@ -162,12 +167,8 @@ class TripClipFavoriteListButton extends StatelessWidget {
     final idleFill = isDark
         ? TripClipPalette.neutral900
         : TripClipPalette.neutral100;
-    final idleBorder = isDark
-        ? TripClipPalette.neutral850
-        : TripClipPalette.neutral200;
-    final idleIcon = isDark
-        ? TripClipPalette.neutral300
-        : TripClipPalette.neutral600;
+    final idleBorder = context.tripClipColors.borderSubtle;
+    final idleIcon = context.tripClipColors.textSubtle;
     final overlayBase = theme.colorScheme.onSurface;
 
     final favoriteFill = TripClipPalette.secondary500;
@@ -178,8 +179,8 @@ class TripClipFavoriteListButton extends StatelessWidget {
     final String? svgResolved = svgAsset == null
         ? null
         : (isFavorite
-            ? (svgAssetFavorite ?? _defaultFilledSvgPath(svgAsset!))
-            : svgAsset);
+              ? (svgAssetFavorite ?? _defaultFilledSvgPath(svgAsset!))
+              : svgAsset);
 
     final Widget iconChild = svgResolved != null
         ? SvgPicture.asset(
@@ -198,9 +199,7 @@ class TripClipFavoriteListButton extends StatelessWidget {
     return Material(
       color: fill,
       shape: CircleBorder(
-        side: BorderSide(
-          color: isFavorite ? favoriteFill : idleBorder,
-        ),
+        side: BorderSide(color: isFavorite ? favoriteFill : idleBorder),
       ),
       clipBehavior: Clip.antiAlias,
       elevation: 0,
@@ -222,10 +221,7 @@ class TripClipFavoriteListButton extends StatelessWidget {
         child: SizedBox(
           width: size,
           height: size,
-          child: Padding(
-            padding: EdgeInsets.all(inset),
-            child: iconChild,
-          ),
+          child: Padding(padding: EdgeInsets.all(inset), child: iconChild),
         ),
       ),
     );
@@ -261,33 +257,32 @@ class TripClipSubNavButton extends StatelessWidget {
   static const double _iconSize = 16;
   static const double _iconGap = 4;
 
+  static const Color _bgLightIdle = Color(0xFFEFF2F5);
+  static const Color _bgLightSelected = Color(0xFF141E46);
+  static const Color _bgDarkIdle = Color(0xFF1F242B);
+  static const Color _bgDarkSelected = Color(0xFF7C86AE);
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final bg = selected
-        ? TripClipPalette.buttonActionActiveFill
-        : (isDark
-            ? TripClipPalette.neutral900
-            : TripClipPalette.neutral100);
-    final fg = selected
-        ? Colors.white
-        : (isDark
-            ? TripClipPalette.neutral300
-            : TripClipPalette.neutral600);
+        ? (isDark ? _bgDarkSelected : _bgLightSelected)
+        : (isDark ? _bgDarkIdle : _bgLightIdle);
+    final fg = selected ? Colors.white : context.tripClipColors.textSubtle;
     final overlay = selected || isDark ? Colors.white : Colors.black;
 
     final labelStyle = theme.textTheme.bodySmall?.copyWith(
-          fontSize: 14,
-          height: 20 / 14,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0,
-          color: fg,
-          fontFeatures: const [
-            FontFeature.tabularFigures(),
-            FontFeature.liningFigures(),
-          ],
-        );
+      fontSize: 14,
+      height: 20 / 14,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0,
+      color: fg,
+      fontFeatures: const [
+        FontFeature.tabularFigures(),
+        FontFeature.liningFigures(),
+      ],
+    );
 
     final Widget leadingIcon = svgAsset != null
         ? SvgPicture.asset(
@@ -343,7 +338,7 @@ class TripClipSquareIconButton extends StatefulWidget {
   const TripClipSquareIconButton({
     super.key,
     this.icon,
-    this.svgAsset,
+    this.svgAsset = 'assets/icons/pencil-edit.svg',
     this.onPressed,
     this.size = 32,
     this.radius = 4,
@@ -371,7 +366,8 @@ class TripClipSquareIconButton extends StatefulWidget {
   final Color? iconColor;
 
   @override
-  State<TripClipSquareIconButton> createState() => _TripClipSquareIconButtonState();
+  State<TripClipSquareIconButton> createState() =>
+      _TripClipSquareIconButtonState();
 }
 
 class _TripClipSquareIconButtonState extends State<TripClipSquareIconButton> {
@@ -381,22 +377,15 @@ class _TripClipSquareIconButtonState extends State<TripClipSquareIconButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final resolvedBorder = widget.borderColor ??
-        (isDark
-            ? TripClipPalette.neutral850
-            : TripClipPalette.neutral200);
+    final resolvedBorder =
+        widget.borderColor ?? context.tripClipColors.borderSubtle;
     final resolvedBg = widget.backgroundColor ??
-        (isDark
-            ? TripClipPalette.darkPageBackground
-            : const Color(0xFFFFFFFF));
-    final resolvedPressed = widget.pressedBackgroundColor ??
-        (isDark
-            ? TripClipPalette.neutral900
-            : TripClipPalette.neutral100);
-    final resolvedIcon = widget.iconColor ??
-        (isDark
-            ? TripClipPalette.neutral300
-            : TripClipPalette.neutral600);
+        (isDark ? TripClipPalette.neutral1000 : Colors.white);
+    final resolvedPressed =
+        widget.pressedBackgroundColor ??
+        (isDark ? TripClipPalette.neutral900 : TripClipPalette.neutral100);
+    final resolvedIcon =
+        widget.iconColor ?? context.tripClipColors.textSubtle;
 
     final inner = widget.size - 2 * widget.inset;
     final iconSize = inner * 0.5625;

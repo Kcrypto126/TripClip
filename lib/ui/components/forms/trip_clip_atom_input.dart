@@ -68,8 +68,7 @@ class TripClipAtomInput extends StatefulWidget {
 
   final List<TextInputFormatter>? inputFormatters;
 
-  static const EdgeInsets contentPadding =
-      EdgeInsets.symmetric(horizontal: 16);
+  static const EdgeInsets contentPadding = EdgeInsets.symmetric(horizontal: 16);
 
   static const double fieldHeight = 40;
 
@@ -173,8 +172,9 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
     final showDisabledOpacity = !widget.enabled;
 
     final isLarge = widget.density == TripClipFormDensity.large;
-    final controlHeight =
-        isLarge ? TripClipAtomInput.fieldHeightLarge : TripClipAtomInput.fieldHeight;
+    final controlHeight = isLarge
+        ? TripClipAtomInput.fieldHeightLarge
+        : TripClipAtomInput.fieldHeight;
     final fieldFontSize = isLarge ? 36.0 : 16.0;
     final fieldLineHeight = isLarge ? 44 / 36 : 24 / 16;
     final fieldStyle = theme.textTheme.bodyLarge?.copyWith(
@@ -184,21 +184,19 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
       fontWeight: FontWeight.w400,
       letterSpacing: 0,
     );
+    final iconColor = widget.status != TripClipFormStatus.none
+        ? dec.hintOrPlaceholder
+        : ((focused || _hasValue) ? dec.foreground : TripClipPalette.neutral500);
 
     Widget? leading;
     if (widget.showLeading) {
-      final leadingColor = widget.status != TripClipFormStatus.none
-          ? dec.hintOrPlaceholder
-          : ((focused || _hasValue)
-                ? dec.foreground
-                : TripClipPalette.neutral500);
       leading =
           widget.leading ??
           _TripClipAtomSvg(
             asset:
                 widget.leadingIconAsset ??
                 TripClipAtomInput.defaultLeadingIconAsset,
-            color: leadingColor,
+            color: iconColor,
           );
     }
 
@@ -212,22 +210,21 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
       if (shouldHideTrailing) {
         trailing = null;
       } else {
-        final trailingColor = widget.status != TripClipFormStatus.none
-            ? dec.hintOrPlaceholder
-            : dec.foreground;
-        trailing =
-            widget.trailing ??
-            _TripClipAtomSvg(
-              asset:
-                  widget.trailingIconAsset ??
-                  TripClipAtomInput.defaultTrailingIconAssetForStatus(
-                    widget.status,
-                  ),
-              color: trailingColor,
-            );
+        trailing = widget.trailing != null
+            ? ColorFiltered(
+                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                child: widget.trailing!,
+              )
+            : _TripClipAtomSvg(
+                asset:
+                    widget.trailingIconAsset ??
+                    TripClipAtomInput.defaultTrailingIconAssetForStatus(
+                      widget.status,
+                    ),
+                color: iconColor,
+              );
       }
     } else {
-      // Still allow a custom trailing widget even when the default trailing icon is hidden.
       trailing = widget.trailing;
     }
 
@@ -247,6 +244,10 @@ class _TripClipAtomInputState extends State<TripClipAtomInput> {
                 focusNode: _focusNode,
                 enabled: widget.enabled,
                 readOnly: widget.readOnly,
+                onTap:
+                    (widget.onTap != null && widget.readOnly && widget.enabled)
+                        ? widget.onTap
+                        : null,
                 obscureText: widget.obscureText,
                 keyboardType: widget.keyboardType,
                 textInputAction: widget.textInputAction,

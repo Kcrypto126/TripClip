@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme/trip_clip_colors.dart';
 
 class AppBadge extends StatelessWidget {
-  const AppBadge({
-    super.key,
-    required this.count,
-    this.maxCount = 99,
-  });
+  const AppBadge({super.key, required this.count, this.maxCount = 99});
 
   final int count;
   final int maxCount;
@@ -35,11 +31,11 @@ class AppBadge extends StatelessWidget {
       child: Text(
         _label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: 10,
-              height: 1,
-              fontWeight: FontWeight.w700,
-              color: colors.badgeForeground,
-            ),
+          fontSize: 10,
+          height: 1,
+          fontWeight: FontWeight.w700,
+          color: colors.badgeForeground,
+        ),
       ),
     );
   }

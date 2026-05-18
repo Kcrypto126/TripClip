@@ -1,142 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'trip_clip_colors.dart';
+TextStyle tripClipRubik({
+  required double fontSize,
+  required double lineHeightPx,
+  required FontWeight fontWeight,
+  double letterSpacing = 0,
+  TextDecoration? decoration,
+}) {
+  return GoogleFonts.rubik(
+    fontSize: fontSize,
+    height: lineHeightPx / fontSize,
+    fontWeight: fontWeight,
+    letterSpacing: letterSpacing,
+    decoration: decoration,
+  );
+}
 
-/// Rubik typescale from TripClip design (sizes / line heights in px).
-TextTheme buildTripClipTextTheme(TripClipColors semantic) {
-  TextStyle rubik({
-    required double size,
-    required double lineHeight,
-    required FontWeight weight,
-    required Color color,
-    TextDecoration? decoration,
-  }) {
-    return GoogleFonts.rubik(
-      fontSize: size,
-      height: lineHeight / size,
-      fontWeight: weight,
-      color: color,
-      decoration: decoration,
-    );
-  }
-
-  final Color body = semantic.textBase;
-  final Color subtle = semantic.textSubtle;
-  final Color headingColor = semantic.heading;
-
+TextTheme buildTripClipTextTheme() {
   return TextTheme(
-    displayLarge: rubik(
-      size: 60,
-      lineHeight: 64,
-      weight: FontWeight.w600,
-      color: headingColor,
+    displayLarge: tripClipRubik(
+      fontSize: 60,
+      lineHeightPx: 64,
+      fontWeight: FontWeight.w600,
     ),
-    displayMedium: rubik(
-      size: 42,
-      lineHeight: 48,
-      weight: FontWeight.w600,
-      color: headingColor,
+    displayMedium: tripClipRubik(
+      fontSize: 42,
+      lineHeightPx: 48,
+      fontWeight: FontWeight.w600,
     ),
-    displaySmall: rubik(
-      size: 36,
-      lineHeight: 40,
-      weight: FontWeight.w600,
-      color: headingColor,
+    displaySmall: tripClipRubik(
+      fontSize: 36,
+      lineHeightPx: 40,
+      fontWeight: FontWeight.w600,
     ),
-    headlineLarge: rubik(
-      size: 28,
-      lineHeight: 32,
-      weight: FontWeight.w600,
-      color: headingColor,
+    headlineLarge: tripClipRubik(
+      fontSize: 28,
+      lineHeightPx: 32,
+      fontWeight: FontWeight.w600,
     ),
-    headlineMedium: rubik(
-      size: 22,
-      lineHeight: 26,
-      weight: FontWeight.w600,
-      color: headingColor,
+    headlineMedium: tripClipRubik(
+      fontSize: 22,
+      lineHeightPx: 26,
+      fontWeight: FontWeight.w600,
     ),
-    headlineSmall: rubik(
-      size: 18,
-      lineHeight: 22,
-      weight: FontWeight.w600,
-      color: headingColor,
+    headlineSmall: tripClipRubik(
+      fontSize: 18,
+      lineHeightPx: 22,
+      fontWeight: FontWeight.w600,
     ),
-    titleLarge: rubik(
-      size: 16,
-      lineHeight: 20,
-      weight: FontWeight.w600,
-      color: headingColor,
+    titleLarge: tripClipRubik(
+      fontSize: 16,
+      lineHeightPx: 20,
+      fontWeight: FontWeight.w600,
     ),
-    titleMedium: rubik(
-      size: 14,
-      lineHeight: 16,
-      weight: FontWeight.w600,
-      color: headingColor,
+    titleMedium: tripClipRubik(
+      fontSize: 14,
+      lineHeightPx: 16,
+      fontWeight: FontWeight.w600,
     ),
-    titleSmall: rubik(
-      size: 12,
-      lineHeight: 14,
-      weight: FontWeight.w600,
-      color: headingColor,
+    titleSmall: tripClipRubik(
+      fontSize: 12,
+      lineHeightPx: 14,
+      fontWeight: FontWeight.w600,
     ),
-    labelLarge: rubik(
-      size: 16,
-      lineHeight: 24,
-      weight: FontWeight.w700,
-      color: body,
+    bodyLarge: tripClipRubik(
+      fontSize: 20,
+      lineHeightPx: 26,
+      fontWeight: FontWeight.w400,
     ),
-    bodyLarge: rubik(
-      size: 20,
-      lineHeight: 26,
-      weight: FontWeight.w400,
-      color: body,
+    bodyMedium: tripClipRubik(
+      fontSize: 16,
+      lineHeightPx: 24,
+      fontWeight: FontWeight.w400,
     ),
-    bodyMedium: rubik(
-      size: 16,
-      lineHeight: 24,
-      weight: FontWeight.w400,
-      color: body,
+    bodySmall: tripClipRubik(
+      fontSize: 14,
+      lineHeightPx: 20,
+      fontWeight: FontWeight.w400,
     ),
-    bodySmall: rubik(
-      size: 14,
-      lineHeight: 20,
-      weight: FontWeight.w400,
-      color: body,
+    labelMedium: tripClipRubik(
+      fontSize: 12,
+      lineHeightPx: 18,
+      fontWeight: FontWeight.w400,
     ),
-    labelMedium: rubik(
-      size: 12,
-      lineHeight: 18,
-      weight: FontWeight.w400,
-      color: body,
-    ),
-    labelSmall: rubik(
-      size: 12,
-      lineHeight: 18,
-      weight: FontWeight.w400,
-      color: subtle,
+    labelSmall: tripClipRubik(
+      fontSize: 12,
+      lineHeightPx: 18,
+      fontWeight: FontWeight.w400,
     ),
   );
 }
 
-/// Named helpers for body strong / link / subheading.
 class TripClipTextStyles {
-  TripClipTextStyles._(this._theme, this._semantic);
+  TripClipTextStyles._(this._theme);
 
   factory TripClipTextStyles.of(BuildContext context) {
-    return TripClipTextStyles._(
-      Theme.of(context).textTheme,
-      context.tripClipColors,
-    );
+    return TripClipTextStyles._(Theme.of(context).textTheme);
   }
 
   final TextTheme _theme;
-  final TripClipColors _semantic;
 
-  TextStyle get bodyLgStrong => _theme.bodyLarge!.copyWith(
-        fontWeight: FontWeight.w600,
-        color: _semantic.textBase,
-      );
+  TextStyle get bodyLgStrong =>
+      _theme.bodyLarge!.copyWith(fontWeight: FontWeight.w600);
 
   TextStyle get bodyLgLink =>
       _theme.bodyLarge!.copyWith(decoration: TextDecoration.underline);
@@ -162,11 +128,10 @@ class TripClipTextStyles {
         decoration: TextDecoration.underline,
       );
 
-  TextStyle get subheading => GoogleFonts.rubik(
+  TextStyle get subheading => tripClipRubik(
         fontSize: 11,
-        height: 14 / 11,
+        lineHeightPx: 14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.6,
-        color: _semantic.textSubtle,
       );
 }

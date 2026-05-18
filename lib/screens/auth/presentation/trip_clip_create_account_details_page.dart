@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../../app/theme/trip_clip_colors.dart';
-import '../../../app/theme/trip_clip_palette.dart';
-import '../../../app/trip_clip_app.dart';
 import '../../../ui/components/app_toast.dart';
 import '../../../ui/components/buttons/trip_clip_button.dart';
 import '../../../ui/components/buttons/trip_clip_button_models.dart';
@@ -14,10 +10,10 @@ import '../../../ui/components/forms/trip_clip_form_checkbox.dart';
 import '../../../ui/components/forms/trip_clip_form_message.dart';
 import '../../../ui/components/forms/trip_clip_form_models.dart';
 import '../../../ui/components/forms/trip_clip_password_visibility_toggle.dart';
-import '../../legal/presentation/trip_clip_terms_of_service_sheet.dart';
+import '../../../ui/sheets/trip_clip_terms_of_service_sheet.dart';
 import 'trip_clip_account_type.dart';
+import 'trip_clip_verify_mobile_number_page.dart';
 
-/// Second step: account details (name, email, mobile, passwords, terms).
 class TripClipCreateAccountDetailsPage extends StatefulWidget {
   const TripClipCreateAccountDetailsPage({super.key, required this.accountType});
 
@@ -125,7 +121,6 @@ class _TripClipCreateAccountDetailsPageState
 
   bool _validatePassword(String value) => value.trim().length >= 8;
 
-  /// Null if valid; otherwise an error message (length rule, then match).
   String? _confirmValidationError(String password, String confirm) {
     final c = confirm.trim();
     final p = password.trim();
@@ -161,27 +156,17 @@ class _TripClipCreateAccountDetailsPageState
         text: errorText.trim(),
         kind: TripClipFormMessageKind.error,
         iconSize: 16,
-        colorOverride: const Color(0xFFA4332B),
       ),
     ];
   }
 
   Widget _passwordLengthHint(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = isDark
-        ? TripClipPalette.neutral400
-        : TripClipPalette.neutral600;
+    final color = context.tripClipColors.textSubtle;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Text(
         'Must be at least 8 characters',
-        style: GoogleFonts.rubik(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          height: 20 / 14,
-          letterSpacing: 0,
-          color: color,
-        ),
+        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: color),
       ),
     );
   }
@@ -233,12 +218,21 @@ class _TripClipCreateAccountDetailsPageState
 
     if (!emailOk || !mobileOk || !passwordOk || !confirmOk) return;
 
-    TripClipAppScope.of(context).goToMainShell();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => TripClipVerifyMobileNumberPage(
+            accountType: widget.accountType,
+            mobileRaw: mobile,
+          ),
+        ),
+      );
+    });
   }
 
   ButtonStyle _termsLinkButtonStyle(BuildContext context, TextStyle textStyle) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fg = isDark ? Colors.white : TripClipPalette.tertiary500;
+    final fg = context.tripClipColors.textBase;
     return ButtonStyle(
       minimumSize: WidgetStateProperty.all(const Size(0, 0)),
       padding: WidgetStateProperty.all(EdgeInsets.zero),
@@ -282,45 +276,24 @@ class _TripClipCreateAccountDetailsPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final headerBorder = isDark
-        ? const Color(0xFF2E343D)
-        : const Color(0xFFDCE1E6);
-    final headerColor = isDark
-        ? TripClipPalette.primary400
-        : TripClipPalette.primary500;
-
+    final headerBorder = context.tripClipColors.borderSubtle;
     final title = switch (widget.accountType) {
       TripClipAccountType.individual => 'Individual Account',
       TripClipAccountType.business => 'Business Account',
     };
 
-    final headerStyle = GoogleFonts.rubik(
-      fontSize: 28,
-      fontWeight: FontWeight.w600,
-      height: 32 / 28,
-      letterSpacing: 0,
-      color: headerColor,
-    );
+    final t = Theme.of(context).textTheme;
+    final headerStyle =
+        t.headlineLarge!.copyWith(color: context.tripClipColors.heading);
 
-    final labelColor =
-        isDark ? Colors.white : TripClipPalette.tertiary500; // #141E46
+    final labelColor = context.tripClipColors.textBase;
 
-    final labelStyle = GoogleFonts.rubik(
-      fontSize: 14,
+    final labelStyle = t.bodySmall!.copyWith(
       fontWeight: FontWeight.w500,
-      height: 20 / 14,
-      letterSpacing: 0,
       color: labelColor,
     );
 
-    final termsPrefixStyle = GoogleFonts.rubik(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      height: 24 / 16,
-      letterSpacing: 0,
-      color: labelColor,
-    );
+    final termsPrefixStyle = t.bodyMedium!.copyWith(color: labelColor);
 
     final termsLinkStyle = termsPrefixStyle.copyWith(
       decoration: TextDecoration.underline,
@@ -358,7 +331,7 @@ class _TripClipCreateAccountDetailsPageState
                             height: 24,
                             alignment: Alignment.center,
                             colorFilter: ColorFilter.mode(
-                              headerColor,
+                              context.tripClipColors.heading,
                               BlendMode.srcIn,
                             ),
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme/trip_clip_colors.dart';
 import '../../../app/theme/trip_clip_palette.dart';
 import '../../foundations/app_spacing.dart';
 
@@ -29,31 +30,29 @@ class TripClipFormSlider extends StatelessWidget {
   static const double _trackHeight = 4;
   static const double _thumbRadius = 12;
 
-  static const Color _textLight = Color(0xFF141E46);
-  static const Color _textDark = Color(0xFFFFFFFF);
-
   @override
   Widget build(BuildContext context) {
     final enabled = onChanged != null;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bg =
-        isDark ? TripClipPalette.neutral900 : TripClipPalette.neutral100;
-    final activeTrack =
-        isDark ? TripClipPalette.tertiary300 : TripClipPalette.tertiary500;
-    final inactiveTrack =
-        isDark ? TripClipPalette.neutral700 : TripClipPalette.neutral300;
-    final thumbColor =
-        isDark ? TripClipPalette.tertiary300 : TripClipPalette.tertiary500;
-    final textColor = isDark ? _textDark : _textLight;
+    final bg = isDark ? TripClipPalette.neutral900 : TripClipPalette.neutral100;
+    final activeTrack = isDark
+        ? TripClipPalette.tertiary300
+        : TripClipPalette.tertiary500;
+    final inactiveTrack = isDark
+        ? TripClipPalette.neutral700
+        : TripClipPalette.neutral300;
+    final thumbColor = isDark
+        ? TripClipPalette.tertiary300
+        : TripClipPalette.tertiary500;
 
     final labelStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
-          fontSize: 14,
-          height: 20 / 14,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 0,
-          color: textColor,
-        );
+      fontSize: 14,
+      height: 20 / 14,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0,
+      color: context.tripClipColors.textBase,
+    );
 
     final clamped = value.clamp(min, max);
 
@@ -77,6 +76,7 @@ class TripClipFormSlider extends StatelessWidget {
         max: max,
         divisions: divisions,
         onChanged: onChanged,
+        padding: EdgeInsets.zero,
       ),
     );
 
@@ -97,7 +97,7 @@ class TripClipFormSlider extends StatelessWidget {
               Text(labelRight, style: labelStyle),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.sm),
           slider,
         ],
       ),

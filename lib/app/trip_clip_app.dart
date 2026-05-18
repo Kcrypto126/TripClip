@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../screens/loading/presentation/trip_clip_start_loading_page.dart';
+import '../screens/account/presentation/id_verification/trip_clip_verify_success_loading_page.dart';
 import '../screens/login/presentation/trip_clip_login_page.dart';
 import '../screens/onboarding/presentation/trip_clip_onboarding_splash_page.dart';
 import '../screens/welcome/presentation/trip_clip_welcome_splash_page.dart';
@@ -20,6 +20,7 @@ class _TripClipAppState extends State<TripClipApp> {
   ThemeMode _themeMode = ThemeMode.system;
   _BootPhase _bootPhase = _BootPhase.loading;
   bool _isLoggedIn = false;
+  int _shellInitialTabIndex = 0;
 
   void _applyThemeMode(ThemeMode mode) {
     setState(() => _themeMode = mode);
@@ -55,6 +56,15 @@ class _TripClipAppState extends State<TripClipApp> {
     setState(() => _isLoggedIn = value);
   }
 
+  void _enterMainShell({int initialTabIndex = 0}) {
+    if (!mounted) return;
+    setState(() {
+      _isLoggedIn = true;
+      _bootPhase = _BootPhase.shell;
+      _shellInitialTabIndex = initialTabIndex;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return TripClipAppScope(
@@ -63,16 +73,8 @@ class _TripClipAppState extends State<TripClipApp> {
       replayStartLoading: _replayStartLoading,
       isLoggedIn: _isLoggedIn,
       setLoggedIn: _setLoggedIn,
-      goToMainShell: () {
-        if (!mounted) return;
-        setState(() {
-          _isLoggedIn = true;
-          _bootPhase = _BootPhase.shell;
-        });
-      },
+      goToMainShell: _enterMainShell,
       child: MaterialApp(
-        // New phase must reset the root navigator so pushed routes (e.g. create
-        // account) are not left above [MainShellPage].
         key: ValueKey(_bootPhase),
         title: 'TripClip',
         theme: TripClipTheme.light(),
@@ -83,7 +85,7 @@ class _TripClipAppState extends State<TripClipApp> {
           return ColoredBox(color: bg, child: child ?? const SizedBox.shrink());
         },
         home: switch (_bootPhase) {
-          _BootPhase.loading => TripClipStartLoadingPage(
+          _BootPhase.loading => TripClipVerifySuccessLoadingPage(
             onFinished: _onStartLoadingFinished,
           ),
           _BootPhase.welcome => TripClipWelcomeSplashPage(
@@ -94,15 +96,12 @@ class _TripClipAppState extends State<TripClipApp> {
             onBackToWelcome: _onOnboardingBackToWelcome,
           ),
           _BootPhase.login => TripClipLoginPage(
-            onLoggedIn: () {
-              if (!mounted) return;
-              setState(() {
-                _isLoggedIn = true;
-                _bootPhase = _BootPhase.shell;
-              });
-            },
+            onLoggedIn: () => _enterMainShell(initialTabIndex: 0),
           ),
-          _BootPhase.shell => const MainShellPage(),
+          _BootPhase.shell => MainShellPage(
+            key: ValueKey<int>(_shellInitialTabIndex),
+            initialTabIndex: _shellInitialTabIndex,
+          ),
         },
       ),
     );
@@ -124,14 +123,12 @@ class TripClipAppScope extends InheritedWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> applyThemeMode;
 
-  /// Replays loading, welcome, onboarding, then [MainShellPage].
   final VoidCallback replayStartLoading;
 
   final bool isLoggedIn;
   final ValueChanged<bool> setLoggedIn;
 
-  /// Marks the user signed in and shows [MainShellPage] (home tab is index 0).
-  final VoidCallback goToMainShell;
+  final void Function({int initialTabIndex}) goToMainShell;
 
   static TripClipAppScope of(BuildContext context) {
     final scope = context

@@ -35,12 +35,12 @@ class TripClipBadgeCounter extends StatelessWidget {
 
     final label = _label;
     final style = Theme.of(context).textTheme.labelMedium?.copyWith(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0,
-          height: 1,
-          color: _foreground,
-        );
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0,
+      height: 1,
+      color: _foreground,
+    );
 
     final tp = TextPainter(
       text: TextSpan(text: label, style: style),
